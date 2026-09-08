@@ -139,9 +139,10 @@ collections:
         label: Home page
         file: src/content/settings/site.json
         fields:
-          - { label: Hero eyebrow, name: heroEyebrow, widget: string, hint: "Small line above the headline." }
-          - { label: Hero headline, name: heroTitle, widget: string, hint: "Keep it to a few words. It's set very large." }
-          - { label: Philosophy line, name: heroPhilosophy, widget: string, hint: "Shown in italic under the headline, in quotes." }
-          - { label: Featured YouTube video ID, name: featuredYoutubeId, widget: string, hint: "The part after v= in the YouTube URL, e.g. dQw4w9WgXcQ" }
+          - { label: Hero eyebrow, name: heroEyebrow, widget: string, hint: "Small brass line at the top left of the home page photo." }
+          - { label: Hero tagline, name: heroTagline, widget: string, hint: "Italic line under the name. One sentence." }
+          - { label: Philosophy headline, name: heroTitle, widget: string, hint: "Big blue band under the photo. Keep it to a few words." }
+          - { label: Philosophy line, name: heroPhilosophy, widget: string, hint: "Shown in italic next to the headline, in quotes." }
+          - { label: Featured YouTube video ID, name: featuredYoutubeId, widget: string, hint: "Shown first on the Music page. The part after v= in the YouTube URL, e.g. dQw4w9WgXcQ" }
           - { label: Short bio, name: shortBio, widget: text, hint: "Two or three sentences for the home page." }
           - { label: Booking email, name: bookingEmail, widget: string, required: false, hint: "Shown on the contact page if filled in." }

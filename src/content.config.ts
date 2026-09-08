@@ -65,6 +65,7 @@ const settings = defineCollection({
   loader: file('./src/content/settings/site.json', { parser: (text) => [{ id: 'site', ...JSON.parse(text) }] }),
   schema: z.object({
     heroEyebrow: z.string(),
+    heroTagline: z.string(),
     heroTitle: z.string(),
     heroPhilosophy: z.string(),
     featuredYoutubeId: z.string(),

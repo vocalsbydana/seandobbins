@@ -100,7 +100,7 @@ Sidebar → **Site settings** → **Home page**.
 
 ![Site settings](docs/handover/07-settings.png)
 
-- **Hero headline**: keep it to a few words; it's set very large.
+- **Hero tagline**: the italic line under the name on the home page. **Philosophy headline**: a few words for the blue band under the photo.
 - **Featured YouTube video ID**: the part after `v=` in a YouTube link. For `https://www.youtube.com/watch?v=abc123XYZ` the ID is `abc123XYZ`.
 - **Short bio**: two or three sentences for the home page.
 - **Booking email**: fill this in to show it on the contact page.

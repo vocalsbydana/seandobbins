@@ -5,7 +5,10 @@ import SectionHead from '../components/SectionHead.astro';
 import music from '../data/music.json';
 import { Image } from 'astro:assets';
 import laugh from '../assets/photos/laugh-warm.jpg';
-const [lead, ...rest] = music.videos;
+import { getEntry } from 'astro:content';
+const settings = (await getEntry('settings', 'site'))!.data;
+const [first, ...rest] = music.videos;
+const lead = { ...first, id: settings.featuredYoutubeId || first.id };
 const description = 'Watch and listen: Sean Dobbins live, on record, and on the streaming service of your choice. Selected discography as leader and sideman.';
 ---
 <Base title="Music" description={description}>
