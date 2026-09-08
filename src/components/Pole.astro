@@ -1,23 +1,58 @@
 ---
-/** The barber pole spot graphic. Lower in the Barbershop section, apart from the badge. Stripes rotate slowly. */
+/**
+ * The barber pole spot graphic. Lower in the Barbershop section, apart from the badge.
+ * Continuous diagonal bands slide upward inside a clipped cylinder, shaded at the edges,
+ * so it reads as a pole turning rather than a tiled gradient. Stripes stay inside the pole.
+ */
 interface Props { height?: number; class?: string }
 const { height = 220, class: cls = '' } = Astro.props;
-const w = Math.round(height / 4.4);
+
+const w = 40;                       // body width in SVG units
+const capH = 14, neckH = 6, capW = 32, neckW = 20;
+const bodyH = Math.round((height / (height / 4.4)) * w) ; // keep the guide's ~1:4.4 proportion
+const t = Math.round(w * 0.55);      // vertical thickness of one band
+const period = t * 3;                // blue · ivory · brass
+const colors = ['#2D45C8', '#F3EEE5', '#C49A5F'];
+const bands: { y: number; fill: string }[] = [];
+for (let y = -w - period; y < bodyH + period; y += t) bands.push({ y, fill: colors[(((y + w + period) / t) % 3 + 3) % 3] });
+const totalH = capH + neckH + bodyH + neckH + capH;
+const bodyY = capH + neckH;
+const uid = `pole-${Math.random().toString(36).slice(2, 8)}`;
 ---
-<div class:list={['pole', cls]} style={`--h:${height}px;--w:${w}px`} aria-hidden="true">
-  <div class="pole__cap pole__cap--top"></div>
-  <div class="pole__neck"></div>
-  <div class="pole__body"></div>
-  <div class="pole__neck"></div>
-  <div class="pole__cap pole__cap--bottom"></div>
-</div>
+<svg class:list={['pole', cls]} viewBox={`0 0 ${w} ${totalH}`} width={Math.round(w * (height / bodyH))} height={Math.round(totalH * (height / bodyH))} aria-hidden="true" style={`--period:${period}px`}>
+  <defs>
+    <clipPath id={`${uid}-clip`}><rect x="0" y={bodyY} width={w} height={bodyH} rx={w / 2} ry={w / 2} /></clipPath>
+    <linearGradient id={`${uid}-shade`} x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="#0B0B14" stop-opacity=".55" />
+      <stop offset=".22" stop-color="#0B0B14" stop-opacity=".08" />
+      <stop offset=".42" stop-color="#FFFFFF" stop-opacity=".18" />
+      <stop offset=".6" stop-color="#0B0B14" stop-opacity="0" />
+      <stop offset="1" stop-color="#0B0B14" stop-opacity=".6" />
+    </linearGradient>
+    <linearGradient id={`${uid}-cap`} x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="#8A6A3E" /><stop offset=".45" stop-color="#C49A5F" /><stop offset="1" stop-color="#8A6A3E" />
+    </linearGradient>
+  </defs>
+  <!-- caps and necks -->
+  <rect x={(w - capW) / 2} y="0" width={capW} height={capH} rx="6" fill={`url(#${uid}-cap)`} />
+  <rect x={(w - neckW) / 2} y={capH} width={neckW} height={neckH} fill="#8A6A3E" />
+  <rect x={(w - neckW) / 2} y={bodyY + bodyH} width={neckW} height={neckH} fill="#8A6A3E" />
+  <rect x={(w - capW) / 2} y={bodyY + bodyH + neckH} width={capW} height={capH} rx="6" fill={`url(#${uid}-cap)`} />
+  <!-- body -->
+  <g clip-path={`url(#${uid}-clip)`}>
+    <rect x="0" y={bodyY} width={w} height={bodyH} fill="#F3EEE5" />
+    <g class="pole__bands" transform={`translate(0 ${bodyY})`}>
+      <g class="pole__slide">
+        {bands.map((b) => <polygon points={`0,${b.y} ${w},${b.y - w} ${w},${b.y - w + t} 0,${b.y + t}`} fill={b.fill} />)}
+      </g>
+    </g>
+    <rect x="0" y={bodyY} width={w} height={bodyH} fill={`url(#${uid}-shade)`} />
+  </g>
+</svg>
 <style>
-  .pole { display: inline-flex; flex-direction: column; align-items: center; width: var(--w); }
-  .pole__cap { width: 80%; height: calc(var(--w) * .4); background: var(--brass); }
-  .pole__cap--top { border-radius: calc(var(--w) * .4) calc(var(--w) * .4) 2px 2px; }
-  .pole__cap--bottom { border-radius: 2px 2px calc(var(--w) * .4) calc(var(--w) * .4); }
-  .pole__neck { width: 50%; height: calc(var(--w) * .2); background: var(--brass-dark); }
-  .pole__body { width: 100%; height: var(--h); border-radius: calc(var(--w) / 2); background: repeating-linear-gradient(-55deg, var(--royal) 0 calc(var(--w) * .3), var(--ivory) calc(var(--w) * .3) calc(var(--w) * .6), var(--brass) calc(var(--w) * .6) calc(var(--w) * .9)); background-size: 100% calc(var(--w) * 1.286); box-shadow: inset calc(var(--w) * .2) 0 calc(var(--w) * .3) rgba(11,11,20,.25), inset calc(var(--w) * -.2) 0 calc(var(--w) * .3) rgba(11,11,20,.35); }
-  @media (prefers-reduced-motion: no-preference) { .pole__body { animation: pole-turn 2.4s linear infinite; } }
-  @keyframes pole-turn { to { background-position: 0 calc(var(--w) * 1.286); } }
+  .pole { display: block; flex: none; overflow: visible; }
+  @media (prefers-reduced-motion: no-preference) {
+    .pole__slide { animation: pole-turn 1.8s linear infinite; }
+  }
+  @keyframes pole-turn { from { transform: translateY(0); } to { transform: translateY(calc(var(--period) * -1)); } }
 </style>
