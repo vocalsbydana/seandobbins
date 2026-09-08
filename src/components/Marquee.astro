@@ -1,0 +1,34 @@
+---
+/** "Played with" wall: two rows of names in Bebas, scrolling opposite directions, pause on hover. Pure CSS. */
+interface Props { items: string[]; speed?: number; class?: string }
+const { items, speed = 60, class: cls = '' } = Astro.props;
+const half = Math.ceil(items.length / 2);
+const rows = [items.slice(0, half), items.slice(half)];
+---
+<div class:list={['marquee', cls]} aria-label="Musicians Sean has performed, toured or recorded with">
+  {rows.map((row, r) => (
+    <div class:list={['marquee__row', { 'marquee__row--reverse': r === 1 }]} style={`--speed:${speed + r * 14}s`}>
+      {[0, 1].map((dup) => (
+        <ul role="list" class="marquee__track" aria-hidden={dup === 1 ? 'true' : undefined}>
+          {row.map((name) => <li><span class="marquee__name">{name}</span><span class="marquee__dot" aria-hidden="true"></span></li>)}
+        </ul>
+      ))}
+    </div>
+  ))}
+</div>
+<style>
+  .marquee { overflow: hidden; display: flex; flex-direction: column; gap: 6px; -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent); }
+  .marquee__row { display: flex; width: max-content; }
+  .marquee__track { display: flex; align-items: center; flex: none; padding-right: 0; }
+  .marquee__track li { display: flex; align-items: center; }
+  .marquee__name { font-family: var(--font-display); font-size: clamp(44px, 7vw, 104px); line-height: 1; text-transform: uppercase; letter-spacing: .01em; white-space: nowrap; padding: 0 .28em; transition: color var(--dur-fast); }
+  .marquee__name:hover { color: var(--brass); }
+  .marquee__dot { width: .16em; height: .16em; font-size: clamp(44px, 7vw, 104px); background: var(--brass); border-radius: 50%; flex: none; }
+  @media (prefers-reduced-motion: no-preference) {
+    .marquee__row { animation: marquee var(--speed) linear infinite; }
+    .marquee__row--reverse { animation-direction: reverse; }
+    .marquee:hover .marquee__row { animation-play-state: paused; }
+  }
+  @media (prefers-reduced-motion: reduce) { .marquee { -webkit-mask-image: none; mask-image: none; } .marquee__row { flex-wrap: wrap; width: auto; } .marquee__track[aria-hidden] { display: none; } .marquee__name { font-size: clamp(28px, 4vw, 44px); } }
+  @keyframes marquee { to { transform: translateX(-50%); } }
+</style>

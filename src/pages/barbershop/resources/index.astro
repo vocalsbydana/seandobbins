@@ -1,0 +1,60 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import ResourceCard from '../../../components/ResourceCard.astro';
+import SectionHead from '../../../components/SectionHead.astro';
+import Pole from '../../../components/Pole.astro';
+import { TOPICS } from '../../../content.config';
+
+const resources = (await getCollection('resources')).sort((a, b) => b.data.publishedDate.getTime() - a.data.publishedDate.getTime());
+const topics = TOPICS.filter((t) => resources.some((r) => r.data.topic === t));
+const description = 'Free PDF resources for jazz drummers from Sean Dobbins: time and feel, comping, brushes, reading, practice routines, and bandstand know-how. One email unlocks the whole library.';
+---
+<Base title="Free Resources" description={description}>
+  <section class="section">
+    <div class="container">
+      <SectionHead num="The Barbershop" title="Free resources" as="h1" blurb="PDFs from Sean's studio. Leave your email once and every download unlocks, on any page, forever." />
+      <div class="filters" role="group" aria-label="Filter by topic" data-reveal>
+        <button type="button" class="chip is-active" data-filter="all" aria-pressed="true">All <span class="chip__n">{resources.length}</span></button>
+        {topics.map((t) => <button type="button" class="chip" data-filter={t} aria-pressed="false">{t} <span class="chip__n">{resources.filter((r) => r.data.topic === t).length}</span></button>)}
+      </div>
+      <div class="grid grid-3 rgrid" data-resource-grid>
+        {resources.map((r, i) => <ResourceCard slug={r.data.slug} title={r.data.title} description={r.data.description} topic={r.data.topic} cover={r.data.cover || undefined} index={i} />)}
+      </div>
+      <p class="rgrid__empty muted" hidden data-empty>Nothing in that topic yet.</p>
+      <div class="pole-row" aria-hidden="true"><Pole height={160} /></div>
+    </div>
+  </section>
+</Base>
+<style>
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: var(--s-4); }
+  .chip { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border: 1.5px solid var(--ink-25); font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink); transition: all var(--dur-fast); }
+  .chip:hover { border-color: var(--ink); }
+  .chip.is-active { background: var(--royal); border-color: var(--royal); color: var(--ivory); }
+  .chip__n { font-family: var(--font-display); font-size: 15px; letter-spacing: .04em; opacity: .7; }
+  .rgrid { align-items: stretch; }
+  .rgrid :global(.rcard.is-hidden) { display: none; }
+  .rgrid__empty { padding: var(--s-4) 0; }
+  .pole-row { display: flex; justify-content: flex-end; margin-top: var(--s-8); opacity: .9; }
+</style>
+<script>
+  function bind() {
+    const grid = document.querySelector<HTMLElement>('[data-resource-grid]');
+    if (!grid || grid.dataset.bound) return; grid.dataset.bound = '1';
+    const chips = Array.from(document.querySelectorAll<HTMLButtonElement>('.chip'));
+    const cards = Array.from(grid.querySelectorAll<HTMLElement>('.rcard'));
+    const empty = document.querySelector<HTMLElement>('[data-empty]')!;
+    const apply = (topic: string) => {
+      let shown = 0;
+      cards.forEach((c) => { const show = topic === 'all' || c.dataset.topic === topic; c.classList.toggle('is-hidden', !show); if (show) { shown++; c.classList.add('is-visible'); } });
+      empty.hidden = shown > 0;
+      chips.forEach((ch) => { const on = ch.dataset.filter === topic; ch.classList.toggle('is-active', on); ch.setAttribute('aria-pressed', String(on)); });
+      history.replaceState(null, '', topic === 'all' ? location.pathname : `${location.pathname}?topic=${encodeURIComponent(topic)}`);
+    };
+    chips.forEach((ch) => ch.addEventListener('click', () => apply(ch.dataset.filter!)));
+    const initial = new URLSearchParams(location.search).get('topic');
+    if (initial && chips.some((c) => c.dataset.filter === initial)) apply(initial);
+  }
+  bind();
+  document.addEventListener('astro:page-load', bind);
+</script>

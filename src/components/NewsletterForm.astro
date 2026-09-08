@@ -1,0 +1,62 @@
+---
+/** Newsletter signup → /api/subscribe (drummers group, source=newsletter). */
+interface Props { heading?: string; blurb?: string; compact?: boolean; source?: string }
+const { heading = 'Notes from the drum chair', blurb = 'New free resources, dates, and the occasional story from the road. One email a month at most.', compact = false, source = 'newsletter' } = Astro.props;
+---
+<form class:list={['newsletter', { 'newsletter--compact': compact }]} data-subscribe data-source={source} novalidate>
+  {!compact && (
+    <div class="newsletter__head">
+      <h3 class="display-3">{heading}</h3>
+      <p class="muted">{blurb}</p>
+    </div>
+  )}
+  <div class="newsletter__row">
+    <div class="field">
+      <label for={`nl-email-${source}`}>Email</label>
+      <input id={`nl-email-${source}`} type="email" name="email" placeholder="you@venue.com" autocomplete="email" required />
+    </div>
+    <label class="hp" aria-hidden="true">Leave this empty <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+    <button class="btn btn--primary" type="submit">Subscribe</button>
+  </div>
+  <p class="form-msg" role="status" aria-live="polite"></p>
+</form>
+<style>
+  .newsletter { display: flex; flex-direction: column; gap: var(--s-3); }
+  .newsletter__head { display: flex; flex-direction: column; gap: 10px; }
+  .newsletter__row { display: grid; gap: var(--s-2); align-items: end; }
+  @media (min-width: 560px) { .newsletter__row { grid-template-columns: 1fr auto; } }
+  .newsletter .btn { height: 49px; }
+  .form-msg:empty { display: none; }
+  .form-msg { font-size: 14px; font-weight: 600; }
+  .form-msg.is-error { color: var(--walnut); }
+  .stage .form-msg.is-error, .dark .form-msg.is-error { color: var(--brass); }
+</style>
+<script>
+  function bind() {
+    document.querySelectorAll<HTMLFormElement>('form[data-subscribe]:not([data-bound])').forEach((form) => {
+      form.dataset.bound = '1';
+      const msg = form.querySelector<HTMLElement>('.form-msg')!;
+      const btn = form.querySelector<HTMLButtonElement>('button[type=submit]')!;
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = (form.elements.namedItem('email') as HTMLInputElement).value.trim();
+        const hp = (form.elements.namedItem('website') as HTMLInputElement).value;
+        msg.className = 'form-msg';
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { msg.textContent = 'Please enter a valid email.'; msg.classList.add('is-error'); return; }
+        btn.disabled = true; btn.textContent = 'Sending…';
+        try {
+          const res = await fetch('/api/subscribe', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email, hp, source: form.dataset.source || 'newsletter' }) });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok) throw new Error(data.error || 'Something went wrong.');
+          form.querySelector('.newsletter__row')?.setAttribute('hidden', '');
+          msg.textContent = 'You’re on the list. Check your inbox to confirm.';
+        } catch (err) {
+          msg.textContent = (err as Error).message || 'Something went wrong. Try again in a minute.'; msg.classList.add('is-error');
+          btn.disabled = false; btn.textContent = 'Subscribe';
+        }
+      });
+    });
+  }
+  bind();
+  document.addEventListener('astro:page-load', bind);
+</script>

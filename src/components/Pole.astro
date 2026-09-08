@@ -1,0 +1,23 @@
+---
+/** The barber pole spot graphic. Lower in the Barbershop section, apart from the badge. Stripes rotate slowly. */
+interface Props { height?: number; class?: string }
+const { height = 220, class: cls = '' } = Astro.props;
+const w = Math.round(height / 4.4);
+---
+<div class:list={['pole', cls]} style={`--h:${height}px;--w:${w}px`} aria-hidden="true">
+  <div class="pole__cap pole__cap--top"></div>
+  <div class="pole__neck"></div>
+  <div class="pole__body"></div>
+  <div class="pole__neck"></div>
+  <div class="pole__cap pole__cap--bottom"></div>
+</div>
+<style>
+  .pole { display: inline-flex; flex-direction: column; align-items: center; width: var(--w); }
+  .pole__cap { width: 80%; height: calc(var(--w) * .4); background: var(--brass); }
+  .pole__cap--top { border-radius: calc(var(--w) * .4) calc(var(--w) * .4) 2px 2px; }
+  .pole__cap--bottom { border-radius: 2px 2px calc(var(--w) * .4) calc(var(--w) * .4); }
+  .pole__neck { width: 50%; height: calc(var(--w) * .2); background: var(--brass-dark); }
+  .pole__body { width: 100%; height: var(--h); border-radius: calc(var(--w) / 2); background: repeating-linear-gradient(-55deg, var(--royal) 0 calc(var(--w) * .3), var(--ivory) calc(var(--w) * .3) calc(var(--w) * .6), var(--brass) calc(var(--w) * .6) calc(var(--w) * .9)); background-size: 100% calc(var(--w) * 1.286); box-shadow: inset calc(var(--w) * .2) 0 calc(var(--w) * .3) rgba(11,11,20,.25), inset calc(var(--w) * -.2) 0 calc(var(--w) * .3) rgba(11,11,20,.35); }
+  @media (prefers-reduced-motion: no-preference) { .pole__body { animation: pole-turn 2.4s linear infinite; } }
+  @keyframes pole-turn { to { background-position: 0 calc(var(--w) * 1.286); } }
+</style>

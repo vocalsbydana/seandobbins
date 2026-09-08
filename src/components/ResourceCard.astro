@@ -1,0 +1,37 @@
+---
+interface Props { slug: string; title: string; description: string; topic: string; cover?: string; featured?: boolean; index?: number }
+const { slug, title, description, topic, cover, featured = false, index = 0 } = Astro.props;
+const href = `/barbershop/resources/${slug}`;
+---
+<article class:list={['rcard', { 'rcard--featured': featured }]} data-topic={topic} data-reveal style={`--reveal-delay:${(index % 6) * 70}ms`}>
+  <a href={href} class="rcard__cover" aria-hidden="true" tabindex="-1">
+    {cover ? <img src={cover} alt="" loading="lazy" decoding="async" width="640" height="800" /> : (
+      <div class="rcard__placeholder"><span class="rcard__initial">{title.charAt(0)}</span></div>
+    )}
+    <span class="rcard__topic">{topic}</span>
+  </a>
+  <div class="rcard__body">
+    <h3 class="rcard__title"><a href={href}>{title}</a></h3>
+    <p class="rcard__desc">{description}</p>
+    <span class="link rcard__cta">Free PDF <span class="arrow">→</span></span>
+  </div>
+</article>
+<style>
+  .rcard { display: flex; flex-direction: column; background: var(--paper); border: 1px solid var(--ink-10); transition: border-color var(--dur), transform var(--dur) var(--ease-out); }
+  .rcard:hover { border-color: var(--ink-25); transform: translateY(-3px); }
+  .rcard__cover { position: relative; display: block; aspect-ratio: 4 / 5; overflow: hidden; background: var(--stage); }
+  .rcard__cover img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s var(--ease-out); }
+  .rcard:hover .rcard__cover img { transform: scale(1.04); }
+  .rcard__placeholder { position: absolute; inset: 0; display: grid; place-items: center; background: radial-gradient(circle at 30% 20%, rgba(45,69,200,.85), var(--stage) 60%); }
+  .rcard__initial { font-family: var(--font-display); font-size: clamp(120px, 14vw, 200px); color: var(--ivory); opacity: .18; line-height: 1; transition: opacity var(--dur), transform 1s var(--ease-out); }
+  .rcard:hover .rcard__initial { opacity: .3; transform: scale(1.06); }
+  .rcard__topic { position: absolute; left: 14px; top: 14px; font-size: 10.5px; letter-spacing: var(--track-label); text-transform: uppercase; color: var(--ivory); background: rgba(11,11,20,.7); padding: 6px 8px; }
+  .rcard__body { display: flex; flex-direction: column; gap: 8px; padding: 18px 20px 22px; }
+  .rcard__title { font-family: var(--font-text); text-transform: none; font-weight: 700; font-size: 19px; line-height: 1.15; letter-spacing: -.015em; }
+  .rcard__title a { color: var(--ink); }
+  .rcard__title a:hover { color: var(--royal); }
+  .rcard__desc { font-size: 14px; line-height: 1.45; color: var(--walnut); flex: 1; }
+  .rcard__cta { align-self: flex-start; font-size: 13px; margin-top: 6px; }
+  .rcard--featured { grid-column: span 1; }
+  @media (min-width: 900px) { .rcard--featured { grid-column: span 2; flex-direction: row; } .rcard--featured .rcard__cover { flex: 0 0 46%; aspect-ratio: auto; } .rcard--featured .rcard__body { justify-content: center; padding: 28px 32px; } .rcard--featured .rcard__title { font-size: 26px; } }
+</style>

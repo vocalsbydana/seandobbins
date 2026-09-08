@@ -1,0 +1,39 @@
+---
+/** Hairline event row per the brand guide: Bebas month in Royal, day in Ink. */
+interface Props { start: Date | string; title: string; meta: string; cta?: string; href?: string; ics?: string; last?: boolean }
+const { start, title, meta, cta, href, ics, last = false } = Astro.props;
+const d = typeof start === 'string' ? new Date(start) : start;
+const month = new Intl.DateTimeFormat('en-US', { month: 'short', timeZone: 'America/New_York' }).format(d);
+const day = new Intl.DateTimeFormat('en-US', { day: '2-digit', timeZone: 'America/New_York' }).format(d);
+---
+<div class:list={['event', { 'event--last': last }]} data-reveal>
+  <time class="event__date" datetime={d.toISOString()}><span class="event__month">{month}</span><span class="event__day">{day}</span></time>
+  <div class="event__body">
+    <div class="event__title">{title}</div>
+    <div class="event__meta">{meta}</div>
+  </div>
+  <div class="event__actions">
+    {ics && <a class="event__cal" href={ics} download title="Add to calendar">+ Cal</a>}
+    {cta && (href ? <a class="link" href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noopener">{cta}</a> : <span class="event__free">{cta}</span>)}
+  </div>
+</div>
+<style>
+  .event { display: grid; grid-template-columns: 56px 1fr auto; gap: var(--s-2); align-items: center; padding: 16px 0; border-top: var(--hairline); position: relative; transition: padding-left var(--dur) var(--ease-out); }
+  .event--last { border-bottom: var(--hairline); }
+  .event::before { content: ''; position: absolute; left: 0; top: -1px; height: 1px; width: 0; background: var(--brass); transition: width var(--dur-slow) var(--ease-out); }
+  .event:hover::before { width: 100%; }
+  .event__date { display: flex; flex-direction: column; font-family: var(--font-display); font-size: 32px; line-height: .9; }
+  .event__month { color: var(--royal); } .event__day { color: var(--ink); }
+  .dark .event, .stage .event { border-color: var(--ivory-14); }
+  .dark .event__month, .stage .event__month { color: var(--brass); }
+  .dark .event__day, .stage .event__day { color: var(--ivory); }
+  .event__title { font-weight: 600; font-size: 16px; line-height: 1.2; }
+  .event__meta { font-size: 13px; color: var(--walnut); margin-top: 2px; }
+  .dark .event__meta, .stage .event__meta { color: var(--ivory-65); }
+  .event__actions { display: flex; align-items: center; gap: 16px; font-size: 13px; }
+  .event__cal { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--walnut); border: 1px solid var(--ink-25); padding: 6px 8px; }
+  .event__cal:hover { border-color: var(--royal); color: var(--royal); }
+  .dark .event__cal { color: var(--ivory-65); border-color: var(--ivory-14); }
+  .event__free { font-weight: 600; color: var(--walnut); }
+  @media (max-width: 520px) { .event { grid-template-columns: 48px 1fr; } .event__actions { grid-column: 2; } .event__date { font-size: 28px; } }
+</style>

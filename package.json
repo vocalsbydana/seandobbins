@@ -1,0 +1,26 @@
+{
+  "name": "seandobbins",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "prebuild": "node scripts/hash-pdfs.mjs",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "cms": "npx decap-server"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3",
+    "@astrojs/vercel": "^11",
+    "@resvg/resvg-js": "^2.6",
+    "astro": "^7.3",
+    "satori": "^0.33",
+    "sharp": "^0.34"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9",
+    "typescript": "^5"
+  }
+}

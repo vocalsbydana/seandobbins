@@ -1,0 +1,8 @@
+{
+  "_note": "SAMPLE DATA for the Auralis placeholder. Replace the AuralisFeed component's data source with the real embed/API.",
+  "gigs": [
+    { "id": "g1", "title": "Sean Dobbins Trio", "venue": "Cliff Bell's", "city": "Detroit, MI", "start": "2026-10-14T20:00:00-04:00", "end": "2026-10-14T23:00:00-04:00", "url": "#", "cta": "Tickets", "note": "Sample date, not real." },
+    { "id": "g2", "title": "Masterclass: Comping", "venue": "Jacobs School of Music", "city": "Bloomington, IN", "start": "2026-11-02T18:00:00-05:00", "end": "2026-11-02T19:30:00-05:00", "url": "", "cta": "Free", "note": "Sample date, not real." },
+    { "id": "g3", "title": "Sean Dobbins Organ Quartet", "venue": "Blue LLama Jazz Club", "city": "Ann Arbor, MI", "start": "2026-11-20T19:30:00-05:00", "end": "2026-11-20T22:00:00-05:00", "url": "#", "cta": "Tickets", "note": "Sample date, not real." }
+  ]
+}

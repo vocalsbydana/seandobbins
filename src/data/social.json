@@ -1,0 +1,9 @@
+{
+  "_note": "PLACEHOLDER. Fill in real profile URLs. Empty url hides the link.",
+  "links": [
+    { "label": "Instagram", "url": "" },
+    { "label": "Facebook", "url": "" },
+    { "label": "YouTube", "url": "" },
+    { "label": "Spotify", "url": "" }
+  ]
+}

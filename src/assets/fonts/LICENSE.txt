@@ -1,0 +1,3 @@
+Bebas Neue, Bricolage Grotesque and Newsreader are licensed under the SIL Open Font License 1.1.
+Copies here (static TTF/WOFF instances) are used only to render Open Graph images at build time. Web versions are in /public/fonts.
+https://openfontlicense.org

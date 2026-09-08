@@ -1,0 +1,174 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import YouTube from '../components/YouTube.astro';
+import AuralisFeed from '../components/AuralisFeed.astro';
+import Marquee from '../components/Marquee.astro';
+import ResourceCard from '../components/ResourceCard.astro';
+import NewsletterForm from '../components/NewsletterForm.astro';
+import BarbershopBadge from '../components/BarbershopBadge.astro';
+import SectionHead from '../components/SectionHead.astro';
+import playedWith from '../data/played-with.json';
+import stageBlue from '../assets/photos/stage-blue.jpg';
+import bwStars from '../assets/photos/bw-stars.jpg';
+import { SITE, fmtDate } from '../lib/site';
+
+const settings = (await getEntry('settings', 'site'))!.data;
+const resources = (await getCollection('resources')).sort((a, b) => b.data.publishedDate.getTime() - a.data.publishedDate.getTime());
+const latest = resources.find((r) => r.data.featured) ?? resources[0];
+const announcements = (await getCollection('announcements')).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const announcement = announcements[0];
+const words = settings.heroTitle.split(' ');
+---
+<Base title={SITE.name} description={SITE.description}>
+  <!-- Hero -->
+  <section class="hero dark">
+    <div class="hero__wash" aria-hidden="true">
+      <Image src={stageBlue} alt="" widths={[800, 1400, 2000]} sizes="100vw" loading="eager" fetchpriority="high" />
+    </div>
+    <div class="container container--wide hero__inner">
+      <div class="hero__copy">
+        <p class="label hero__eyebrow">{settings.heroEyebrow}</p>
+        <h1 class="hero__title" aria-label={settings.heroTitle}>
+          {words.map((w, i) => <span class="hero__word" style={`--i:${i}`} aria-hidden="true">{w}</span>)}
+        </h1>
+        <p class="voice hero__voice">“{settings.heroPhilosophy}”</p>
+        <div class="hero__actions">
+          <a href="/music" class="btn btn--primary">Listen</a>
+          <a href="/contact" class="btn btn--secondary">Book Sean</a>
+          <a href="/barbershop" class="link hero__bs">The Barbershop <span class="arrow">→</span></a>
+        </div>
+      </div>
+      <div class="hero__video">
+        <YouTube id={settings.featuredYoutubeId} title="Sean Dobbins playing" />
+        <p class="hero__caption small muted">Watch · Sean live</p>
+      </div>
+    </div>
+  </section>
+
+  {announcement && (
+    <a href={announcement.data.link ?? '/gigs'} class="ticker" aria-label={`Announcement: ${announcement.data.title}`}>
+      <div class="container container--wide ticker__inner">
+        <span class="label">Latest</span>
+        <span class="ticker__title">{announcement.data.title}</span>
+        <span class="ticker__date small">{fmtDate(announcement.data.date)}</span>
+        <span class="arrow" aria-hidden="true">→</span>
+      </div>
+    </a>
+  )}
+
+  <!-- Next gig -->
+  <section class="section">
+    <div class="container">
+      <SectionHead num="01" title="Next up" blurb="Where to hear the band next. Every date, with add-to-calendar, is on the gigs page." />
+      <AuralisFeed limit={3} />
+      <p class="section__more" data-reveal><a href="/gigs" class="link">All dates <span class="arrow">→</span></a></p>
+    </div>
+  </section>
+
+  <!-- Bio teaser -->
+  <section class="section bio-teaser stage">
+    <div class="container bio-teaser__inner">
+      <div class="photo photo--bw bio-teaser__photo" data-reveal="scale">
+        <Image src={bwStars} alt="Sean Dobbins at the drums, black and white. Photo: Mark Sheldon." widths={[600, 1000, 1400]} sizes="(min-width: 900px) 46vw, 100vw" />
+      </div>
+      <div class="bio-teaser__copy" data-reveal>
+        <p class="label">About</p>
+        <h2 class="display-2">Detroit's<br />drum chair</h2>
+        <p class="lede">{settings.shortBio}</p>
+        <a href="/about" class="link">Read the full bio <span class="arrow">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Played with -->
+  <section class="section--tight played dark">
+    <div class="container container--wide">
+      <p class="label played__label" data-reveal>Performed, toured and recorded with</p>
+    </div>
+    <Marquee items={playedWith} />
+  </section>
+
+  <!-- Latest resource / Barbershop -->
+  <section class="section">
+    <div class="container">
+      <SectionHead num="02" title="From The Barbershop" blurb="Sean's studio at IU, and a library of free PDFs for drummers everywhere. One email unlocks all of them.">
+        <BarbershopBadge size={96} />
+      </SectionHead>
+      <div class="latest">
+        {latest && <ResourceCard slug={latest.data.slug} title={latest.data.title} description={latest.data.description} topic={latest.data.topic} cover={latest.data.cover || undefined} featured />}
+        <div class="latest__aside paper" data-reveal style="--reveal-delay:120ms">
+          <p class="label">Study with Sean</p>
+          <h3 class="display-3">Come sit in.</h3>
+          <p class="small muted">Jazz drumset at the Indiana University Jacobs School of Music. Audition info, what the studio is like, and a form if you want Sean to know you're coming.</p>
+          <a href="/barbershop#study" class="link">Prospective students <span class="arrow">→</span></a>
+        </div>
+      </div>
+      <p class="section__more" data-reveal><a href="/barbershop/resources" class="link">All free resources <span class="arrow">→</span></a></p>
+    </div>
+  </section>
+
+  <!-- Newsletter -->
+  <section class="section--tight">
+    <div class="container">
+      <div class="paper newsletter-panel" data-reveal>
+        <NewsletterForm />
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero { position: relative; overflow: hidden; }
+  .hero__wash { position: absolute; inset: 0; opacity: .32; }
+  .hero__wash img { width: 100%; height: 100%; object-fit: cover; object-position: 70% 20%; filter: grayscale(1) contrast(1.05); mix-blend-mode: luminosity; }
+  .hero__wash::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, var(--ink) 0%, rgba(11,11,20,.7) 45%, rgba(18,18,106,.35) 100%); }
+  .hero__inner { position: relative; display: grid; gap: var(--s-6); padding-block: clamp(48px, 8vw, 112px); align-items: center; }
+  @media (min-width: 900px) { .hero__inner { grid-template-columns: 1.05fr 1fr; gap: clamp(32px, 5vw, 80px); } }
+  .hero__copy { display: flex; flex-direction: column; gap: var(--s-3); }
+  .hero__eyebrow { color: var(--brass); }
+  .hero__title { display: flex; flex-wrap: wrap; gap: 0 .22em; font-size: clamp(64px, 10.5vw, 150px); line-height: .84; }
+  .hero__word { display: inline-block; }
+  .hero__voice { color: var(--ivory-80); max-width: 26ch; }
+  .hero__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2) var(--s-3); margin-top: var(--s-1); }
+  .hero__bs { font-size: 14px; }
+  .hero__video { display: flex; flex-direction: column; gap: 10px; }
+  .hero__video .yt { border: 1px solid var(--ivory-14); }
+  .hero__caption { color: var(--ivory-55); letter-spacing: var(--track-label); text-transform: uppercase; font-size: 11px; }
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__word { animation: word-up .9s var(--ease-out) both; animation-delay: calc(120ms + var(--i) * 90ms); }
+    .hero__eyebrow, .hero__voice, .hero__actions { animation: fade-up .8s var(--ease-out) both; }
+    .hero__voice { animation-delay: .5s; } .hero__actions { animation-delay: .65s; }
+    .hero__video { animation: fade-up 1s var(--ease-out) .35s both; }
+    .hero__wash img { animation: wash-in 2.4s var(--ease-out) both; }
+  }
+  @keyframes word-up { from { opacity: 0; transform: translateY(.5em) rotate(1.5deg); } }
+  @keyframes fade-up { from { opacity: 0; transform: translateY(14px); } }
+  @keyframes wash-in { from { transform: scale(1.06); opacity: 0; } }
+
+  .ticker { display: block; background: var(--royal); color: var(--ivory); }
+  .ticker:hover { color: var(--ivory); background: var(--stage); }
+  .ticker__inner { display: flex; align-items: center; gap: var(--s-2); padding-block: 12px; }
+  .ticker .label { color: var(--ivory); opacity: .8; }
+  .ticker__title { font-weight: 600; flex: 1; font-size: 15px; }
+  .ticker__date { opacity: .75; }
+  .ticker .arrow { transition: transform var(--dur-fast) var(--ease-out); }
+  .ticker:hover .arrow { transform: translateX(4px); }
+
+  .section__more { margin-top: var(--s-4); }
+
+  .bio-teaser__inner { display: grid; gap: var(--s-5); align-items: center; }
+  @media (min-width: 900px) { .bio-teaser__inner { grid-template-columns: 1fr 1fr; gap: clamp(40px, 6vw, 96px); } }
+  .bio-teaser__photo { aspect-ratio: 4 / 3; }
+  .bio-teaser__copy { display: flex; flex-direction: column; gap: var(--s-3); }
+  .bio-teaser__copy .lede { color: var(--ivory-80); }
+
+  .played { padding-block: var(--s-6) var(--s-8); }
+  .played__label { margin-bottom: var(--s-3); }
+
+  .latest { display: grid; gap: var(--s-3); }
+  @media (min-width: 900px) { .latest { grid-template-columns: 2fr 1fr; } }
+  .latest__aside { padding: 28px; display: flex; flex-direction: column; gap: 12px; justify-content: center; }
+  .newsletter-panel { padding: clamp(24px, 4vw, 48px); }
+</style>

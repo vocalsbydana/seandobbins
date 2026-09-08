@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+import Mark from '../components/Mark.astro';
+---
+<Base title="Not found" noindex ogImage="/og/home.png">
+  <section class="section dark nf">
+    <div class="container nf__inner">
+      <Mark size={72} spin />
+      <h1 class="display-1">Dropped a beat.</h1>
+      <p class="lede">That page isn't here. Count it back in from the top.</p>
+      <div class="nf__actions"><a href="/" class="btn btn--primary">Home</a><a href="/barbershop/resources" class="link">Free resources <span class="arrow">→</span></a></div>
+    </div>
+  </section>
+</Base>
+<style>
+  .nf { min-height: 60vh; display: flex; align-items: center; }
+  .nf__inner { display: flex; flex-direction: column; gap: var(--s-3); align-items: flex-start; }
+  .nf__actions { display: flex; align-items: center; gap: var(--s-3); }
+</style>

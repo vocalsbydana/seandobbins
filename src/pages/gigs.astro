@@ -1,0 +1,23 @@
+---
+import Base from '../layouts/Base.astro';
+import AuralisFeed from '../components/AuralisFeed.astro';
+import SectionHead from '../components/SectionHead.astro';
+import NewsletterForm from '../components/NewsletterForm.astro';
+const description = 'Upcoming dates for Sean Dobbins: trio, quartet and sideman gigs in Detroit, Bloomington and on the road. Add any show to your calendar.';
+---
+<Base title="Gigs" description={description}>
+  <section class="section">
+    <div class="container">
+      <SectionHead num="Gigs" title="Upcoming dates" as="h1" blurb="Hairline rows, no fuss. Tap + Cal to add a show to your calendar." />
+      <!-- AURALIS PLACEHOLDER: see src/components/AuralisFeed.astro -->
+      <AuralisFeed />
+      <p class="note small muted" data-reveal>Times are local to the venue. Dates from Sean's calendar via Auralis.</p>
+    </div>
+  </section>
+  <section class="section--tight stage">
+    <div class="container">
+      <NewsletterForm heading="Never miss a date" blurb="Get new gigs in your inbox when they're announced. Occasional, never spammy." source="gigs" />
+    </div>
+  </section>
+</Base>
+<style>.note { margin-top: var(--s-3); }</style>

@@ -1,0 +1,120 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Marquee from '../components/Marquee.astro';
+import SectionHead from '../components/SectionHead.astro';
+import playedWith from '../data/played-with.json';
+import influences from '../data/influences.json';
+import awards from '../data/awards.json';
+import bwStars from '../assets/photos/bw-stars.jpg';
+import profile from '../assets/photos/profile-brushes.jpg';
+import laugh from '../assets/photos/laugh-warm.jpg';
+import kit from '../assets/photos/stage-kit.jpg';
+
+const description = 'Sean Dobbins, jazz drummer: Detroit sideman, bandleader, Woody Herman Jazz Award recipient, and Professor of Music (Jazz Studies) at the Indiana University Jacobs School of Music.';
+---
+<Base title="About" description={description}>
+  <section class="about-hero dark">
+    <div class="photo photo--bw about-hero__photo" aria-hidden="true">
+      <Image src={bwStars} alt="" widths={[800, 1400, 2000]} sizes="100vw" loading="eager" />
+    </div>
+    <div class="container container--wide about-hero__inner">
+      <p class="label" style="color:var(--brass)">About</p>
+      <h1 class="about-hero__title"><span>Sean</span><span>Dobbins</span></h1>
+      <p class="lede about-hero__lede">Drummer. Bandleader. Professor of Jazz Drumset at the Jacobs School of Music.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container bio">
+      <aside class="bio__side" data-reveal="left">
+        <div class="photo bio__portrait">
+          <Image src={profile} alt="Sean Dobbins with brushes, in profile." widths={[500, 900, 1300]} sizes="(min-width: 900px) 34vw, 100vw" />
+        </div>
+        <div class="bio__facts">
+          <div class="fact"><span class="label">Now</span><span>Professor of Music (Jazz Studies), IU Jacobs School of Music</span></div>
+          <div class="fact"><span class="label">From</span><span>Ann Arbor · Detroit, Michigan</span></div>
+          <div class="fact"><span class="label">Awards</span><span>{awards.map((a) => a.title).join(' · ')}</span></div>
+          <div class="fact"><span class="label">Influences</span><span>{influences.join(', ')}</span></div>
+        </div>
+      </aside>
+      <div class="bio__body prose" data-reveal>
+        <p class="lede"><strong>Drummer Sean Dobbins is Professor of Music (Jazz Studies) at the Indiana University Jacobs School of Music, where he leads the jazz drumset studio.</strong></p>
+        <p>He got his start as a sought-after Detroit-area jazz sideman at a young age, playing regularly with Blue Note artist Louis Smith. As his career progressed he became the recipient of numerous awards and accolades, including the Woody Herman Jazz Award for outstanding musicianship and the Louis Armstrong Scholarship. As both a player and an educator he has been the focus of countless news articles, jazz radio programs, and documentaries.</p>
+        <p>Though still young by jazz standards, Dobbins has amassed an impressive list of playing companions. He has performed, toured, and recorded with Benny Golson, Dr. Lonnie Smith, Frank Morgan, Joey DeFrancesco, George Cables, James “Blood” Ulmer, Marcus Belgrave, Larry Willis, Rodney Whitaker, Claude Black, Johnny O'Neal, Paul Keller, Tad Weed, Kurt Krahnke, Jon Hendricks, David “Fathead” Newman, Donald Walden, Cyrus Chestnut, Barry Harris, David Baker, Randy Johnston, Marion Hayden, Mose Allison, Johnnie Bassett, and a host of other great musicians.</p>
+        <p>His sound can best be described as hard-driving, solid rhythm with refreshing melodic sensibility. His influences include Art Blakey, Jeff Hamilton, Jeff “Tain” Watts, Ed Thigpen, Sonny Payne, and Detroit-area greats Gerald Cleaver and the one and only Elvin Jones.</p>
+        <h3>The educator</h3>
+        <p>A product of the Ann Arbor Public Schools, Dobbins has stayed devoted to education throughout his life. Early mentor Louis Smith, an Ann Arbor band teacher, impressed the importance of a good education on him at an early age. In 1999 he was asked to direct the Ann Arbor Public Schools Summer Jazz Program, a program that a year earlier had been in danger of cancellation for low enrollment. A year after he took over, enrollment had more than tripled; a year after that, the group was featured on WEMU.</p>
+        <p>Before joining the Jacobs faculty he served as director of jazz studies at Oakland University and jazz program director at Community Music School–Detroit. He has also taught at the University of Michigan and Wayne State University, and served as Artistic Director of Jazz Ensembles for the Detroit Symphony Orchestra and as Executive and Artistic Director of the Southeastern Michigan Jazz Association. <em class="todo">[TODO: confirm the organization name; the source bio was cut off at “Southeastern Music”.]</em></p>
+        <p>As a father of three, Dobbins knows, understands, and accepts the challenge of continuing the art form through clinics, masterclasses, and concerts for up-and-coming musicians. He makes a point of building educational opportunities into every road trip. That work has a name now: <a href="/barbershop">The Barbershop</a>.</p>
+        <div class="bio__actions">
+          <a href="/contact" class="btn btn--primary">Book Sean</a>
+          <a href="/outreach" class="link">Clinics and masterclasses <span class="arrow">→</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="played stage">
+    <div class="container container--wide">
+      <SectionHead num="01" title="Played with" blurb="Performed, toured, or recorded with. A partial list, growing." />
+    </div>
+    <Marquee items={playedWith} speed={70} />
+    <div class="container container--wide">
+      <ul role="list" class="names" aria-label="Full list">
+        {playedWith.map((n, i) => <li data-reveal style={`--reveal-delay:${(i % 8) * 40}ms`}>{n}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section--tight strip">
+    <div class="container container--wide strip__grid">
+      <figure class="photo strip__a" data-reveal="scale">
+        <Image src={laugh} alt="Sean laughing at the kit under warm light. Photo: Jeff Dunn Jazz Photography." widths={[600, 1000, 1400]} sizes="(min-width: 900px) 58vw, 100vw" />
+        <figcaption class="small muted">Keep the joy. The laugh is the brand.</figcaption>
+      </figure>
+      <figure class="photo strip__b" data-reveal="scale" style="--reveal-delay:120ms">
+        <Image src={kit} alt="Sean behind a Yamaha kit against blue curtains." widths={[500, 900, 1200]} sizes="(min-width: 900px) 40vw, 100vw" />
+        <figcaption class="small muted">Show the kit, show the work.</figcaption>
+      </figure>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .about-hero { position: relative; overflow: hidden; min-height: clamp(420px, 60vh, 680px); display: flex; align-items: flex-end; }
+  .about-hero__photo { position: absolute; inset: 0; }
+  .about-hero__photo img { object-position: 60% 25%; }
+  .about-hero__photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, var(--ink) 8%, rgba(11,11,20,.35) 55%, rgba(11,11,20,.15)); }
+  .about-hero__inner { position: relative; padding-block: var(--s-6) var(--s-6); display: flex; flex-direction: column; gap: var(--s-2); }
+  .about-hero__title { display: flex; flex-direction: column; font-size: clamp(72px, 14vw, 190px); line-height: .82; }
+  .about-hero__lede { color: var(--ivory-80); max-width: 40ch; }
+  @media (prefers-reduced-motion: no-preference) {
+    .about-hero__title span { animation: up .9s var(--ease-out) both; } .about-hero__title span:nth-child(2) { animation-delay: .12s; }
+    .about-hero__lede, .about-hero .label { animation: up .8s var(--ease-out) .3s both; }
+    .about-hero__photo img { animation: zoom 3s var(--ease-out) both; }
+  }
+  @keyframes up { from { opacity: 0; transform: translateY(.4em); } }
+  @keyframes zoom { from { transform: scale(1.06); } }
+
+  .bio { display: grid; gap: var(--s-6); }
+  @media (min-width: 900px) { .bio { grid-template-columns: 34% 1fr; gap: clamp(40px, 6vw, 96px); align-items: start; } .bio__side { position: sticky; top: 88px; } }
+  .bio__portrait { aspect-ratio: 3 / 4; }
+  .bio__facts { display: flex; flex-direction: column; margin-top: var(--s-3); }
+  .fact { display: grid; grid-template-columns: 96px 1fr; gap: 12px; padding: 12px 0; border-top: var(--hairline); font-size: 14px; line-height: 1.4; }
+  .fact:last-child { border-bottom: var(--hairline); }
+  .bio__body .lede { font-size: clamp(19px, 1.8vw, 23px); }
+  .bio__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3); margin-top: var(--s-4); }
+  .todo { color: var(--brass); font-style: normal; font-size: 13px; }
+
+  .played { padding-block: clamp(48px, 8vw, 96px) var(--s-8); }
+  .names { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px 24px; margin-top: var(--s-6); font-size: 14px; color: var(--ivory-80); }
+  .names li { padding: 6px 0; border-top: var(--hairline-dark); }
+
+  .strip__grid { display: grid; gap: var(--s-3); }
+  @media (min-width: 900px) { .strip__grid { grid-template-columns: 1.45fr 1fr; align-items: end; } }
+  .strip figure { background: none; display: flex; flex-direction: column; }
+  .strip figure :global(img) { width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; }
+  .strip__b :global(img) { aspect-ratio: 4 / 5; }
+  .strip figcaption { margin-top: 8px; }
+</style>

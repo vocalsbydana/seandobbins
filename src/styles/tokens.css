@@ -1,0 +1,61 @@
+/* Sean Dobbins brand tokens — from Brand Guidelines v1 (September 2026).
+   Do not add colors. Blue does the talking; brass is never more than a line, a number, or a word. */
+:root {
+  /* Color · sampled from the stage */
+  --ink: #0B0B14;      /* backgrounds, body text on ivory */
+  --stage: #12126A;    /* the deep wash: section panels, photo overlays */
+  --royal: #2D45C8;    /* his suit: links, buttons, the one bright note */
+  --brass: #C49A5F;    /* cymbals and curtain light: rules, small type, accents only */
+  --walnut: #5E3A1A;   /* captions and secondary text on ivory */
+  --ivory: #F3EEE5;    /* paper: page backgrounds, text on dark */
+  --paper: #FBF8F2;    /* raised panels on ivory */
+  --brass-dark: #8A6A3E; /* pole hardware only */
+
+  --ink-60: rgba(11, 11, 20, .6);
+  --ink-45: rgba(11, 11, 20, .45);
+  --ink-25: rgba(11, 11, 20, .25);
+  --ink-12: rgba(11, 11, 20, .12);
+  --ink-10: rgba(11, 11, 20, .1);
+  --ivory-80: rgba(243, 238, 229, .8);
+  --ivory-70: rgba(243, 238, 229, .7);
+  --ivory-65: rgba(243, 238, 229, .65);
+  --ivory-55: rgba(243, 238, 229, .55);
+  --ivory-14: rgba(243, 238, 229, .14);
+
+  /* Typography · three voices */
+  --font-display: 'Bebas Neue', 'Oswald', Impact, 'Arial Narrow', sans-serif;
+  --font-text: 'Bricolage Grotesque', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-voice: 'Newsreader', Georgia, 'Times New Roman', serif;
+
+  --display-leading: .86;
+  --track-label: .16em;
+  --track-button: .12em;
+  --track-wide: .3em;
+
+  /* Spacing · 8px grid */
+  --s-1: 8px;
+  --s-2: 16px;
+  --s-3: 24px;
+  --s-4: 32px;
+  --s-5: 40px;
+  --s-6: 48px;
+  --s-8: 64px;
+  --s-10: 80px;
+  --s-12: 96px;
+  --s-16: 128px;
+
+  /* Radii are 0 everywhere except the mark */
+  --radius: 0;
+
+  --hairline: 1px solid var(--ink-12);
+  --hairline-dark: 1px solid var(--ivory-14);
+
+  --container: 1200px;
+  --gutter: clamp(20px, 5vw, 56px);
+
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  --ease-in-out: cubic-bezier(.65, 0, .35, 1);
+  --dur-fast: 180ms;
+  --dur: 320ms;
+  --dur-slow: 720ms;
+}

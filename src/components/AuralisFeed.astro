@@ -1,0 +1,47 @@
+---
+/**
+ * ┌──────────────────────────────────────────────────────────────────────┐
+ * │  AURALIS PLACEHOLDER                                                 │
+ * │  Upcoming gigs come from Dana's app Auralis. This component reads    │
+ * │  sample data from src/data/gigs.sample.json until the embed / API    │
+ * │  details are supplied. Swap `gigs` below for the real source; keep   │
+ * │  the shape { id, title, venue, city, start, end?, url?, cta? }.      │
+ * └──────────────────────────────────────────────────────────────────────┘
+ */
+import EventRow from './EventRow.astro';
+import sample from '../data/gigs.sample.json';
+
+interface Props { limit?: number; showEmpty?: boolean; heading?: boolean }
+const { limit = 50, showEmpty = true } = Astro.props;
+
+const now = Date.now();
+const gigs = sample.gigs
+  .map((g) => ({ ...g, startDate: new Date(g.start) }))
+  .filter((g) => g.startDate.getTime() > now - 6 * 3600 * 1000)
+  .sort((a, b) => a.startDate.getTime() - b.startDate.getTime())
+  .slice(0, limit);
+
+function icsHref(g: typeof gigs[number]) {
+  const fmt = (d: Date) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  const end = g.end ? new Date(g.end) : new Date(g.startDate.getTime() + 2 * 3600 * 1000);
+  const lines = [
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Sean Dobbins//Gigs//EN', 'BEGIN:VEVENT',
+    `UID:${g.id}@seandobbins`, `DTSTAMP:${fmt(new Date())}`, `DTSTART:${fmt(g.startDate)}`, `DTEND:${fmt(end)}`,
+    `SUMMARY:${g.title}`, `LOCATION:${g.venue}, ${g.city}`, g.url && g.url !== '#' ? `URL:${g.url}` : '',
+    'END:VEVENT', 'END:VCALENDAR',
+  ].filter(Boolean);
+  return `data:text/calendar;charset=utf-8,${encodeURIComponent(lines.join('\r\n'))}`;
+}
+---
+<div class="auralis" data-auralis-placeholder>
+  {gigs.length ? gigs.map((g, i) => (
+    <EventRow start={g.startDate} title={g.title} meta={`${g.venue} · ${g.city} · ${new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' }).format(g.startDate)}`} cta={g.cta} href={g.url && g.url !== '#' ? g.url : undefined} ics={icsHref(g)} last={i === gigs.length - 1} />
+  )) : showEmpty && (
+    <p class="auralis__empty muted">No public dates on the calendar right now. <a class="link" href="/contact">Book Sean</a> or check back soon.</p>
+  )}
+  {import.meta.env.DEV && <p class="auralis__dev">DEV NOTE: sample gigs from src/data/gigs.sample.json. Wire up Auralis in src/components/AuralisFeed.astro.</p>}
+</div>
+<style>
+  .auralis__empty { padding: var(--s-3) 0; border-top: var(--hairline); border-bottom: var(--hairline); }
+  .auralis__dev { margin-top: 12px; font-size: 12px; color: var(--brass); }
+</style>

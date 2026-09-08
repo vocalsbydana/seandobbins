@@ -1,0 +1,81 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import GateModal from '../../../components/GateModal.astro';
+import ResourceCard from '../../../components/ResourceCard.astro';
+import { fmtDate } from '../../../lib/site';
+
+export async function getStaticPaths() {
+  const resources = await getCollection('resources');
+  return resources.map((r) => ({ params: { slug: r.data.slug }, props: { entry: r } }));
+}
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const all = (await getCollection('resources')).sort((a, b) => b.data.publishedDate.getTime() - a.data.publishedDate.getTime());
+const related = all.filter((r) => r.id !== entry.id && r.data.topic === entry.data.topic).concat(all.filter((r) => r.id !== entry.id && r.data.topic !== entry.data.topic)).slice(0, 3);
+const d = entry.data;
+---
+<Base title={d.title} description={d.description} ogImage={`/og/resources/${d.slug}.png`}>
+  <article class="res">
+    <div class="container res__inner">
+      <div class="res__media" data-reveal="scale">
+        <div class="res__cover">
+          {d.cover ? <img src={d.cover} alt="" width="800" height="1000" /> : <div class="res__placeholder"><span>{d.title.charAt(0)}</span></div>}
+        </div>
+      </div>
+      <div class="res__body">
+        <p class="label" data-reveal><a href="/barbershop/resources">The Barbershop · Free resources</a> · {d.topic}</p>
+        <h1 class="res__title" data-reveal>{d.title}</h1>
+        <p class="lede muted" data-reveal>{d.description}</p>
+        <div class="res__meta small muted" data-reveal>PDF · Added {fmtDate(d.publishedDate)} · Free</div>
+        <div class="res__cta" data-reveal>
+          <button type="button" class="btn btn--primary" data-download={d.slug}>Download the PDF</button>
+          <p class="small muted res__gate-note">First time? You'll be asked for your email once. After that every resource downloads instantly.</p>
+          <p class="small res__locked" hidden data-locked-msg>Please unlock the library first, then the download will start.</p>
+        </div>
+        <div class="prose res__content" data-reveal><Content /></div>
+      </div>
+    </div>
+  </article>
+
+  {related.length > 0 && (
+    <section class="section--tight res__related">
+      <div class="container">
+        <p class="label" data-reveal>More from the library</p>
+        <div class="grid grid-3" style="margin-top:16px">
+          {related.map((r, i) => <ResourceCard slug={r.data.slug} title={r.data.title} description={r.data.description} topic={r.data.topic} cover={r.data.cover || undefined} index={i} />)}
+        </div>
+      </div>
+    </section>
+  )}
+  <GateModal />
+</Base>
+<style>
+  .res { padding-block: clamp(40px, 6vw, 88px); }
+  .res__inner { display: grid; gap: var(--s-5); }
+  @media (min-width: 860px) { .res__inner { grid-template-columns: 38% 1fr; gap: clamp(32px, 5vw, 80px); align-items: start; } .res__media { position: sticky; top: 88px; } }
+  .res__cover { aspect-ratio: 4 / 5; background: var(--stage); overflow: hidden; }
+  .res__cover img { width: 100%; height: 100%; object-fit: cover; }
+  .res__placeholder { width: 100%; height: 100%; display: grid; place-items: center; background: radial-gradient(circle at 30% 20%, rgba(45,69,200,.85), var(--stage) 60%); }
+  .res__placeholder span { font-family: var(--font-display); font-size: clamp(140px, 22vw, 260px); color: var(--ivory); opacity: .18; line-height: 1; }
+  .res__body { display: flex; flex-direction: column; gap: var(--s-2); }
+  .res__body .label a { color: var(--walnut); }
+  .res__body .label a:hover { color: var(--royal); }
+  .res__title { font-family: var(--font-text); text-transform: none; font-weight: 700; font-size: clamp(32px, 4.4vw, 56px); line-height: 1.02; letter-spacing: -.025em; }
+  .res__cta { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; padding: var(--s-3) 0; border-top: var(--hairline); border-bottom: var(--hairline); margin-top: var(--s-1); }
+  .res__gate-note { max-width: 46ch; }
+  .res__locked { color: var(--walnut); font-weight: 600; }
+  .res__content { margin-top: var(--s-2); }
+</style>
+<script>
+  // If /api/download bounced us back with ?locked=1, show the note and open the gate.
+  function check() {
+    if (new URLSearchParams(location.search).get('locked')) {
+      document.querySelector<HTMLElement>('[data-locked-msg]')?.removeAttribute('hidden');
+      history.replaceState(null, '', location.pathname);
+      setTimeout(() => document.querySelector<HTMLButtonElement>('[data-download]')?.click(), 250);
+    }
+  }
+  check();
+  document.addEventListener('astro:page-load', check);
+</script>

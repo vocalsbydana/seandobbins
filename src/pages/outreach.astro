@@ -1,0 +1,95 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import SectionHead from '../components/SectionHead.astro';
+import { REGIONS } from '../content.config';
+
+const all = (await getCollection('outreach')).sort((a, b) => b.data.year - a.data.year || a.data.institution.localeCompare(b.data.institution));
+const groups = REGIONS.map((region) => ({ region, items: all.filter((o) => o.data.region === region) })).filter((g) => g.items.length);
+const countries = new Set(all.map((o) => o.data.country));
+const cities = new Set(all.map((o) => o.data.city));
+const years = all.map((o) => o.data.year);
+const span = years.length ? `${Math.min(...years)}–${Math.max(...years)}` : '';
+const description = 'Clinics, masterclasses, residencies and concerts Sean Dobbins has given for students across the United States and around the world.';
+---
+<Base title="Outreach" description={description}>
+  <section class="section">
+    <div class="container">
+      <SectionHead num="Outreach" title="Clinics, masterclasses, residencies" as="h1" blurb="Sean builds teaching into every trip. The list grows as he adds dates in the CMS." />
+      <ul role="list" class="stats" data-reveal>
+        <li><span class="stats__n" data-count={all.length}>{all.length}</span><span class="label">Engagements</span></li>
+        <li><span class="stats__n" data-count={cities.size}>{cities.size}</span><span class="label">Cities</span></li>
+        <li><span class="stats__n" data-count={countries.size}>{countries.size}</span><span class="label">Countries</span></li>
+        <li><span class="stats__n">{span}</span><span class="label">Years</span></li>
+      </ul>
+      <nav class="regions" aria-label="Regions" data-reveal>
+        {groups.map((g) => <a href={`#${g.region.toLowerCase().replace(/[^a-z]+/g, '-')}`}>{g.region} <span>{g.items.length}</span></a>)}
+      </nav>
+      {groups.map((g) => (
+        <section class="region" id={g.region.toLowerCase().replace(/[^a-z]+/g, '-')}>
+          <h2 class="region__title" data-reveal><span class="region__dot" aria-hidden="true"></span>{g.region}</h2>
+          <ol role="list" class="rows">
+            {g.items.map((o, i) => (
+              <li class="row" data-reveal style={`--reveal-delay:${Math.min(i, 6) * 50}ms`}>
+                <span class="row__year">{o.data.year}</span>
+                <div class="row__main">
+                  <div class="row__inst">{o.data.institution}</div>
+                  <div class="row__place small muted">{o.data.city}, {o.data.country}{o.data.note ? ` · ${o.data.note}` : ''}</div>
+                </div>
+                <span class="row__type label">{o.data.type}</span>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ))}
+      <div class="cta paper" data-reveal>
+        <div>
+          <p class="label">Bring Sean to your school</p>
+          <p>Clinics, masterclasses and residencies for high school, college and community programs. Sean tailors each visit to the room: rhythm section basics, comping, brushes, or a full ensemble workshop.</p>
+        </div>
+        <a href="/contact" class="btn btn--primary">Ask about a clinic</a>
+      </div>
+    </div>
+  </section>
+</Base>
+<style>
+  .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--s-3); padding: var(--s-3) 0; border-bottom: var(--hairline); margin-bottom: var(--s-4); }
+  @media (min-width: 720px) { .stats { grid-template-columns: repeat(4, 1fr); } }
+  .stats li { display: flex; flex-direction: column; gap: 4px; }
+  .stats__n { font-family: var(--font-display); font-size: clamp(44px, 6vw, 72px); line-height: .9; color: var(--royal); }
+  .regions { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-bottom: var(--s-6); }
+  .regions a { font-size: 12px; letter-spacing: var(--track-label); text-transform: uppercase; font-weight: 600; color: var(--ink); border-bottom: 1.5px solid var(--brass); }
+  .regions a span { color: var(--walnut); font-weight: 400; margin-left: 4px; }
+  .region { margin-bottom: var(--s-8); scroll-margin-top: 80px; }
+  .region__title { display: flex; align-items: center; gap: 12px; font-size: clamp(28px, 3.4vw, 40px); margin-bottom: var(--s-2); }
+  .region__dot { width: 10px; height: 10px; background: var(--brass); border-radius: 50%; }
+  .row { display: grid; grid-template-columns: 64px 1fr auto; gap: var(--s-2); align-items: center; padding: 14px 0; border-top: var(--hairline); position: relative; }
+  .rows li:last-child { border-bottom: var(--hairline); }
+  .row::before { content: ''; position: absolute; left: 0; top: -1px; height: 1px; width: 0; background: var(--brass); transition: width var(--dur-slow) var(--ease-out); }
+  .row:hover::before { width: 100%; }
+  .row__year { font-family: var(--font-display); font-size: 28px; color: var(--royal); line-height: 1; }
+  .row__inst { font-weight: 600; font-size: 16px; line-height: 1.2; }
+  .row__type { font-size: 11px; }
+  @media (max-width: 520px) { .row { grid-template-columns: 56px 1fr; } .row__type { grid-column: 2; } }
+  .cta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s-3); padding: clamp(24px, 4vw, 40px); }
+  .cta p:not(.label) { max-width: 60ch; margin-top: 6px; }
+</style>
+<script>
+  // Count-up on the stats when they scroll in.
+  function countUp() {
+    const els = document.querySelectorAll<HTMLElement>('[data-count]:not([data-done])');
+    if (!els.length || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (!e.isIntersecting) continue;
+        const el = e.target as HTMLElement; el.dataset.done = '1'; io.unobserve(el);
+        const target = Number(el.dataset.count); const t0 = performance.now(); const dur = 900;
+        const tick = (t: number) => { const p = Math.min(1, (t - t0) / dur); el.textContent = String(Math.round(target * (1 - Math.pow(1 - p, 3)))); if (p < 1) requestAnimationFrame(tick); };
+        requestAnimationFrame(tick);
+      }
+    }, { threshold: .5 });
+    els.forEach((el) => io.observe(el));
+  }
+  countUp();
+  document.addEventListener('astro:page-load', countUp);
+</script>

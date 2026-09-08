@@ -1,0 +1,96 @@
+---
+/** One-time email gate for resources. Mounted once per page that has [data-download] buttons. */
+---
+<div class="gate" id="gate" hidden>
+  <div class="gate__backdrop" data-gate-close></div>
+  <div class="gate__panel dark" role="dialog" aria-modal="true" aria-labelledby="gate-title" aria-describedby="gate-desc">
+    <button type="button" class="gate__close" aria-label="Close" data-gate-close>×</button>
+    <div class="label">The Barbershop · Free resources</div>
+    <h2 id="gate-title" class="display-3">Once, and you're in.</h2>
+    <p id="gate-desc" class="gate__desc">Leave your email once and every PDF in the library unlocks, now and later. You'll get an occasional note from Sean; no spam, unsubscribe anytime.</p>
+    <form class="gate__form" novalidate>
+      <div class="field">
+        <label for="gate-name">Name <span class="muted">(optional)</span></label>
+        <input id="gate-name" type="text" name="name" autocomplete="name" />
+      </div>
+      <div class="field">
+        <label for="gate-email">Email</label>
+        <input id="gate-email" type="email" name="email" autocomplete="email" required placeholder="you@venue.com" />
+      </div>
+      <label class="hp" aria-hidden="true">Leave this empty <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+      <button class="btn btn--primary btn--block" type="submit">Unlock &amp; download</button>
+      <p class="form-msg" role="alert"></p>
+    </form>
+  </div>
+</div>
+<style>
+  .gate { position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; padding: var(--s-2); }
+  .gate[hidden] { display: none; }
+  .gate__backdrop { position: absolute; inset: 0; background: rgba(18,18,106,.72); backdrop-filter: blur(3px); }
+  .gate__panel { position: relative; width: min(520px, 100%); padding: clamp(24px, 4vw, 40px); display: flex; flex-direction: column; gap: 14px; border-top: 3px solid var(--brass); }
+  .gate__close { position: absolute; right: 12px; top: 8px; font-size: 28px; line-height: 1; color: var(--ivory-65); width: 40px; height: 40px; }
+  .gate__close:hover { color: var(--ivory); }
+  .gate__desc { color: var(--ivory-70); font-size: 15px; line-height: 1.5; }
+  .gate__form { display: flex; flex-direction: column; gap: 14px; margin-top: 6px; }
+  .gate .form-msg:empty { display: none; }
+  .gate .form-msg { color: var(--brass); font-size: 14px; font-weight: 600; }
+  @media (prefers-reduced-motion: no-preference) {
+    .gate:not([hidden]) .gate__backdrop { animation: gate-fade .25s both; }
+    .gate:not([hidden]) .gate__panel { animation: gate-up .45s var(--ease-out) both; }
+  }
+  @keyframes gate-fade { from { opacity: 0; } }
+  @keyframes gate-up { from { opacity: 0; transform: translateY(24px); } }
+</style>
+<script>
+  const COOKIE = 'barbershop_unlocked';
+  const unlocked = () => document.cookie.split(';').some((c) => c.trim().startsWith(COOKIE + '='));
+
+  function bind() {
+    const gate = document.getElementById('gate');
+    if (!gate || gate.dataset.bound) return;
+    gate.dataset.bound = '1';
+    const form = gate.querySelector<HTMLFormElement>('form')!;
+    const msg = gate.querySelector<HTMLElement>('.form-msg')!;
+    const submit = form.querySelector<HTMLButtonElement>('button[type=submit]')!;
+    let currentSlug = '';
+    let lastFocus: HTMLElement | null = null;
+
+    const open = (slug: string) => { currentSlug = slug; lastFocus = document.activeElement as HTMLElement; gate.hidden = false; document.documentElement.style.overflow = 'hidden'; gate.querySelector<HTMLInputElement>('#gate-name')?.focus(); };
+    const close = () => { gate.hidden = true; document.documentElement.style.overflow = ''; lastFocus?.focus(); };
+    const go = (slug: string) => { window.location.href = `/api/download?slug=${encodeURIComponent(slug)}`; };
+
+    gate.querySelectorAll('[data-gate-close]').forEach((el) => el.addEventListener('click', close));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !gate.hidden) close(); });
+
+    document.querySelectorAll<HTMLElement>('[data-download]').forEach((btn) => {
+      if (btn.dataset.bound) return; btn.dataset.bound = '1';
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const slug = btn.dataset.download!;
+        if (unlocked()) go(slug); else open(slug);
+      });
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = (form.elements.namedItem('email') as HTMLInputElement).value.trim();
+      const name = (form.elements.namedItem('name') as HTMLInputElement).value.trim();
+      const hp = (form.elements.namedItem('website') as HTMLInputElement).value;
+      msg.textContent = '';
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { msg.textContent = 'Please enter a valid email.'; return; }
+      submit.disabled = true; submit.textContent = 'Unlocking…';
+      try {
+        const res = await fetch('/api/subscribe', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email, name, hp, slug: currentSlug, source: 'resource' }) });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || 'Something went wrong.');
+        submit.textContent = 'Downloading…';
+        setTimeout(() => { close(); go(currentSlug); submit.disabled = false; submit.textContent = 'Unlock & download'; }, 350);
+      } catch (err) {
+        msg.textContent = (err as Error).message || 'Something went wrong. Try again in a minute.';
+        submit.disabled = false; submit.textContent = 'Unlock & download';
+      }
+    });
+  }
+  bind();
+  document.addEventListener('astro:page-load', bind);
+</script>

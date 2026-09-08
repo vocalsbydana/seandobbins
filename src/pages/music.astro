@@ -1,0 +1,90 @@
+---
+import Base from '../layouts/Base.astro';
+import YouTube from '../components/YouTube.astro';
+import SectionHead from '../components/SectionHead.astro';
+import music from '../data/music.json';
+import { Image } from 'astro:assets';
+import laugh from '../assets/photos/laugh-warm.jpg';
+const [lead, ...rest] = music.videos;
+const description = 'Watch and listen: Sean Dobbins live, on record, and on the streaming service of your choice. Selected discography as leader and sideman.';
+---
+<Base title="Music" description={description}>
+  <section class="section">
+    <div class="container">
+      <SectionHead num="Music" title="Watch & listen" as="h1" blurb="Let the playing brag. Videos first, then where to stream, then the records." />
+      <div class="videos">
+        <div class="videos__lead" data-reveal="scale">
+          <YouTube id={lead.id} title={lead.title} />
+          <p class="small muted vcap">{lead.title}</p>
+        </div>
+        <div class="videos__rest">
+          {rest.map((v, i) => (
+            <div data-reveal style={`--reveal-delay:${(i + 1) * 90}ms`}>
+              <YouTube id={v.id} title={v.title} poster="hq" />
+              <p class="small muted vcap">{v.title}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+      <p class="small todo" data-reveal>PLACEHOLDER VIDEOS. Replace IDs in src/data/music.json.</p>
+    </div>
+  </section>
+
+  <section class="section--tight stage">
+    <div class="container stream">
+      <div class="stream__copy" data-reveal>
+        <p class="label">Stream</p>
+        <h2 class="display-2">Hear him<br />everywhere</h2>
+      </div>
+      <ul role="list" class="stream__links" data-reveal style="--reveal-delay:120ms">
+        {music.streaming.map((s) => <li><a href={s.url} class="stream__link" target="_blank" rel="noopener">{s.label} <span class="arrow" aria-hidden="true">↗</span></a></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container disc">
+      <div class="disc__list">
+        <SectionHead num="01" title="Selected discography" blurb="As leader and as sideman. Not everything; the ones that matter." />
+        <ol role="list">
+          {music.discography.map((d, i) => (
+            <li class="disc__row" data-reveal style={`--reveal-delay:${Math.min(i, 6) * 60}ms`}>
+              <span class="disc__year">{d.year}</span>
+              <div class="disc__main">
+                <div class="disc__title">{d.url && d.url !== '#' ? <a href={d.url} target="_blank" rel="noopener">{d.title}</a> : d.title}</div>
+                <div class="small muted">{d.artist} · {d.label}</div>
+              </div>
+              <span class="label">{d.role}</span>
+            </li>
+          ))}
+        </ol>
+        <p class="small todo">PLACEHOLDER DISCOGRAPHY. Edit src/data/music.json.</p>
+      </div>
+      <figure class="photo disc__photo" data-reveal="scale">
+        <Image src={laugh} alt="Sean laughing behind the cymbals. Photo: Jeff Dunn Jazz Photography." widths={[500, 900]} sizes="(min-width: 900px) 36vw, 100vw" />
+      </figure>
+    </div>
+  </section>
+</Base>
+<style>
+  .videos { display: grid; gap: var(--s-3); }
+  @media (min-width: 900px) { .videos { grid-template-columns: 2fr 1fr; } .videos__rest { display: flex; flex-direction: column; gap: var(--s-3); } }
+  @media (max-width: 899px) { .videos__rest { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-2); } }
+  .vcap { margin-top: 8px; }
+  .todo { color: var(--brass); margin-top: var(--s-3); }
+  .stream { display: grid; gap: var(--s-4); align-items: center; }
+  @media (min-width: 800px) { .stream { grid-template-columns: 1fr 1fr; } }
+  .stream__links { display: grid; grid-template-columns: 1fr 1fr; gap: 0 var(--s-3); }
+  .stream__link { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: var(--hairline-dark); font-family: var(--font-display); font-size: 30px; letter-spacing: .03em; text-transform: uppercase; color: var(--ivory); }
+  .stream__link:hover { color: var(--brass); }
+  .stream__link .arrow { font-size: 18px; transition: transform var(--dur-fast); }
+  .stream__link:hover .arrow { transform: translate(3px, -3px); }
+  .disc { display: grid; gap: var(--s-5); }
+  @media (min-width: 900px) { .disc { grid-template-columns: 1.6fr 1fr; gap: clamp(32px, 5vw, 80px); align-items: start; } .disc__photo { position: sticky; top: 88px; } }
+  .disc__row { display: grid; grid-template-columns: 64px 1fr auto; gap: var(--s-2); align-items: center; padding: 14px 0; border-top: var(--hairline); }
+  .disc ol li:last-child { border-bottom: var(--hairline); }
+  .disc__year { font-family: var(--font-display); font-size: 28px; color: var(--royal); line-height: 1; }
+  .disc__title { font-weight: 600; }
+  .disc__title a { color: var(--ink); border-bottom: 1.5px solid var(--brass); }
+  .disc__photo { aspect-ratio: 4 / 5; }
+</style>

@@ -1,0 +1,12 @@
+---
+interface Props { num?: string; title: string; blurb?: string; as?: 'h1' | 'h2' | 'h3'; id?: string }
+const { num, title, blurb, as: Tag = 'h2', id } = Astro.props;
+---
+<div class="section-head" id={id} data-reveal>
+  <div class="section-head__title">
+    {num && <span class="section-head__num" aria-hidden="true">{num}</span>}
+    <Tag class="display-3">{title}</Tag>
+  </div>
+  {blurb && <p>{blurb}</p>}
+  <slot />
+</div>

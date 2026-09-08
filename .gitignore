@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.vercel/
+.astro/
+.env
+.env.*
+!.env.example
+# Hashed PDF copies are generated at build time from private/resources
+public/files/
+.DS_Store

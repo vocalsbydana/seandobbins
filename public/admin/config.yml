@@ -1,0 +1,147 @@
+# Decap CMS configuration — what Sean can edit at /admin.
+# Everything not listed here lives in code and is edited by Dana. See CLAUDE.md and HANDOVER.md.
+
+backend:
+  name: github
+  repo: vocalsbydana/seandobbins
+  branch: main
+  base_url: https://seandobbins.com   # the deployed site; the OAuth handler is /api/auth on this domain
+  auth_endpoint: api/auth
+  commit_messages:
+    create: "content: add {{collection}} “{{slug}}”"
+    update: "content: update {{collection}} “{{slug}}”"
+    delete: "content: delete {{collection}} “{{slug}}”"
+    uploadMedia: "content: upload {{path}}"
+    deleteMedia: "content: delete {{path}}"
+
+# Lets `npx decap-server` proxy the CMS to the local checkout during development.
+local_backend: true
+
+site_url: https://seandobbins.com
+display_url: https://seandobbins.com
+logo_url: /favicon.svg
+locale: en
+
+media_folder: public/uploads
+public_folder: /uploads
+
+slug:
+  encoding: unicode
+  clean_accents: true
+  sanitize_replacement: "-"
+
+collections:
+  - name: resources
+    label: Resources
+    label_singular: Resource
+    description: "Free PDFs in The Barbershop library. Upload the PDF and a cover image; the site handles the email gate."
+    folder: src/content/resources
+    create: true
+    delete: true
+    extension: md
+    format: frontmatter
+    slug: "{{slug}}"
+    identifier_field: title
+    summary: "{{title}} · {{topic}}"
+    sortable_fields: [publishedDate, title, topic]
+    view_filters:
+      - label: Featured
+        field: featured
+        pattern: true
+    editor:
+      preview: false
+    fields:
+      - { label: Title, name: title, widget: string, hint: "Short and specific. Shows on the card." }
+      - { label: URL slug, name: slug, widget: string, pattern: ['^[a-z0-9-]+$', 'Lowercase letters, numbers and hyphens only'], hint: "Becomes the web address, e.g. ride-cymbal-vocabulary. Don't change it after publishing." }
+      - { label: Description, name: description, widget: text, hint: "One or two sentences. What it is and who it's for." }
+      - { label: Topic, name: topic, widget: select, options: ["Time & Feel", "Comping", "Brushes", "Reading", "Practice", "On the Bandstand"] }
+      - { label: PDF, name: pdf, widget: file, media_folder: /private/resources, public_folder: /private/resources, allow_multiple: false, hint: "The file people download. Stored privately; only unlocked visitors get a link." }
+      - { label: Cover image, name: cover, widget: image, required: false, hint: "Portrait (4:5) works best. Optional; a blue placeholder is used otherwise." }
+      - { label: Published date, name: publishedDate, widget: datetime, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false, picker_utc: true }
+      - { label: Featured, name: featured, widget: boolean, default: false, hint: "Featured resources show first on the home page." }
+      - { label: More about this resource, name: body, widget: markdown, required: false, hint: "Optional longer notes shown on the resource page." }
+
+  - name: testimonials
+    label: Testimonials
+    label_singular: Testimonial
+    description: "Quotes from students, parents and bandleaders. Shown in The Barbershop."
+    folder: src/content/testimonials
+    create: true
+    delete: true
+    extension: md
+    format: frontmatter
+    slug: "{{name}}"
+    identifier_field: name
+    summary: "{{name}} · {{role}}"
+    editor:
+      preview: false
+    fields:
+      - { label: Name, name: name, widget: string }
+      - { label: Role, name: role, widget: string, hint: "e.g. Jacobs alum, 2019" }
+      - { label: Quote, name: quote, widget: text }
+      - { label: Photo, name: photo, widget: image, required: false, hint: "Optional. Square headshot." }
+      - { label: Order, name: order, widget: number, default: 50, value_type: int, hint: "Lower numbers show first." }
+      - { label: body, name: body, widget: hidden, default: "" }
+
+  - name: outreach
+    label: Outreach
+    label_singular: Outreach entry
+    description: "Clinics, masterclasses, residencies and concerts. Grouped by region on the Outreach page."
+    folder: src/content/outreach
+    create: true
+    delete: true
+    extension: md
+    format: frontmatter
+    slug: "{{year}}-{{institution}}"
+    identifier_field: institution
+    summary: "{{year}} · {{institution}} · {{city}}"
+    sortable_fields: [year, institution, region]
+    editor:
+      preview: false
+    fields:
+      - { label: Institution, name: institution, widget: string }
+      - { label: City, name: city, widget: string, hint: "e.g. Bloomington, IN or Paris" }
+      - { label: Country, name: country, widget: string, default: "United States" }
+      - { label: Region, name: region, widget: select, options: ["Midwest", "Northeast", "South", "West", "Canada", "Europe", "Asia & Pacific", "Africa", "Latin America"], default: "Midwest" }
+      - { label: Year, name: year, widget: number, value_type: int, min: 1990, max: 2100 }
+      - { label: Type, name: type, widget: select, options: ["Clinic", "Masterclass", "Residency", "Concert", "Faculty", "Festival"], default: "Clinic" }
+      - { label: Note, name: note, widget: string, required: false, hint: "One line, e.g. 'Two-day rhythm section intensive'." }
+      - { label: body, name: body, widget: hidden, default: "" }
+
+  - name: announcements
+    label: Announcements
+    label_singular: Announcement
+    description: "The newest one shows in the blue strip under the home page video."
+    folder: src/content/announcements
+    create: true
+    delete: true
+    extension: md
+    format: frontmatter
+    slug: "{{slug}}"
+    identifier_field: title
+    summary: "{{date}} · {{title}}"
+    sortable_fields: [date, title]
+    editor:
+      preview: false
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Date, name: date, widget: datetime, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false, picker_utc: true }
+      - { label: Link, name: link, widget: string, required: false, hint: "Where the strip should go when clicked, e.g. /gigs or a full URL." }
+      - { label: Body, name: body, widget: markdown, required: false }
+
+  - name: settings
+    label: Site settings
+    description: "Home page hero text and the featured video."
+    editor:
+      preview: false
+    files:
+      - name: site
+        label: Home page
+        file: src/content/settings/site.json
+        fields:
+          - { label: Hero eyebrow, name: heroEyebrow, widget: string, hint: "Small line above the headline." }
+          - { label: Hero headline, name: heroTitle, widget: string, hint: "Keep it to a few words. It's set very large." }
+          - { label: Philosophy line, name: heroPhilosophy, widget: string, hint: "Shown in italic under the headline, in quotes." }
+          - { label: Featured YouTube video ID, name: featuredYoutubeId, widget: string, hint: "The part after v= in the YouTube URL, e.g. dQw4w9WgXcQ" }
+          - { label: Short bio, name: shortBio, widget: text, hint: "Two or three sentences for the home page." }
+          - { label: Booking email, name: bookingEmail, widget: string, required: false, hint: "Shown on the contact page if filled in." }

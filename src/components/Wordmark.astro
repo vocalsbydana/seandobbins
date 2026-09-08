@@ -1,0 +1,14 @@
+---
+import Mark from './Mark.astro';
+interface Props { size?: number; href?: string; class?: string; spin?: boolean }
+const { size = 30, href = '/', class: cls = '', spin = false } = Astro.props;
+---
+<a href={href} class:list={['wordmark', cls]} aria-label="Sean Dobbins — home">
+  <Mark size={size} spin={spin} />
+  <span class="wordmark__text" style={`font-size:${Math.round(size * 0.93)}px`}>Sean Dobbins</span>
+</a>
+<style>
+  .wordmark { display: inline-flex; align-items: center; gap: .45em; color: inherit; }
+  .wordmark:hover { color: inherit; }
+  .wordmark__text { font-family: var(--font-display); letter-spacing: .03em; line-height: 1; text-transform: uppercase; white-space: nowrap; }
+</style>
