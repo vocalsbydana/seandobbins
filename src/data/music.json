@@ -2,19 +2,19 @@
   "_note": "Video and discography data, edited in code by Dana. `videos` are landscape (16:9); `shorts` are vertical YouTube Shorts (9:16). Titles are optional captions. Streaming links and discography are still placeholders where marked.",
   "videos": [
     {
-      "id": "dQw4w9WgXcQ",
-      "title": "Placeholder: Sean Dobbins Trio, live",
-      "caption": "Replace with a real YouTube ID"
+      "id": "YqjD8EilwCc",
+      "title": "",
+      "caption": ""
     },
     {
-      "id": "dQw4w9WgXcQ",
-      "title": "Placeholder: Drum feature",
-      "caption": "Replace with a real YouTube ID"
+      "id": "Zaal-0UkeaE",
+      "title": "",
+      "caption": ""
     },
     {
-      "id": "dQw4w9WgXcQ",
-      "title": "Placeholder: Masterclass excerpt",
-      "caption": "Replace with a real YouTube ID"
+      "id": "pCgOS3zK4cc",
+      "title": "",
+      "caption": ""
     }
   ],
   "streaming": [

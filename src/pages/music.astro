@@ -18,18 +18,17 @@ const description = 'Watch and listen: Sean Dobbins live, on record, and on the 
       <div class="videos">
         <div class="videos__lead" data-reveal="scale">
           <YouTube id={lead.id} title={lead.title} />
-          <p class="small muted vcap">{lead.title}</p>
+          {lead.title && <p class="small muted vcap">{lead.title}</p>}
         </div>
         <div class="videos__rest">
           {rest.map((v, i) => (
             <div data-reveal style={`--reveal-delay:${(i + 1) * 90}ms`}>
               <YouTube id={v.id} title={v.title} poster="hq" />
-              <p class="small muted vcap">{v.title}</p>
+              {v.title && <p class="small muted vcap">{v.title}</p>}
             </div>
           ))}
         </div>
       </div>
-      <p class="small todo" data-reveal>PLACEHOLDER VIDEOS. Replace IDs in src/data/music.json.</p>
     </div>
   </section>
 
