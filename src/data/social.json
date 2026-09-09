@@ -7,7 +7,7 @@
     { "icon": "youtube", "url": "" },
     { "icon": "bandcamp", "url": "" },
     { "icon": "instagram", "url": "" },
-    { "icon": "facebook", "url": "" },
+    { "icon": "facebook", "url": "https://www.facebook.com/sean.dobbins.7" },
     { "icon": "tiktok", "url": "" },
     { "icon": "threads", "url": "" },
     { "icon": "x", "url": "" }
