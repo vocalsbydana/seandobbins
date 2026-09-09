@@ -1,5 +1,5 @@
 {
-  "_note": "PLACEHOLDER DATA. Replace YouTube IDs, streaming links and discography. Edited in code by Dana.",
+  "_note": "Video and discography data, edited in code by Dana. `videos` are landscape (16:9); `shorts` are vertical YouTube Shorts (9:16). Titles are optional captions. Streaming links and discography are still placeholders where marked.",
   "videos": [
     {
       "id": "dQw4w9WgXcQ",
@@ -67,6 +67,20 @@
       "year": 2016,
       "role": "Drums",
       "url": "#"
+    }
+  ],
+  "shorts": [
+    {
+      "id": "gj0lCuwrxSg",
+      "title": ""
+    },
+    {
+      "id": "iEqu3vUrYcU",
+      "title": ""
+    },
+    {
+      "id": "h7MGvMaTKww",
+      "title": ""
     }
   ]
 }

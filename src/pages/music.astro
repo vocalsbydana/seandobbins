@@ -33,6 +33,25 @@ const description = 'Watch and listen: Sean Dobbins live, on record, and on the 
     </div>
   </section>
 
+  {music.shorts?.length > 0 && (
+    <section class="section--tight shorts">
+      <div class="container">
+        <div class="shorts__head" data-reveal>
+          <p class="label">Shorts</p>
+          <h2 class="display-3">Quick hits</h2>
+        </div>
+        <div class="shorts__row">
+          {music.shorts.map((v, i) => (
+            <div class="shorts__item" data-reveal style={`--reveal-delay:${i * 90}ms`}>
+              <YouTube id={v.id} title={v.title || `Short ${i + 1}`} vertical />
+              {v.title && <p class="small muted vcap">{v.title}</p>}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
   <section class="section--tight stage">
     <div class="container stream">
       <div class="stream__copy" data-reveal>
@@ -75,6 +94,13 @@ const description = 'Watch and listen: Sean Dobbins live, on record, and on the 
   @media (max-width: 899px) { .videos__rest { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-2); } }
   .vcap { margin-top: 8px; }
   .todo { color: var(--brass); margin-top: var(--s-3); }
+  .shorts { padding-top: 0; }
+  .shorts__head { display: flex; flex-direction: column; gap: 8px; padding-bottom: var(--s-2); border-bottom: var(--hairline); margin-bottom: var(--s-3); }
+  .shorts__row { display: flex; gap: var(--s-2); overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; padding-bottom: 8px; margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); scrollbar-width: none; }
+  .shorts__row::-webkit-scrollbar { display: none; }
+  .shorts__item { flex: 0 0 min(72vw, 300px); scroll-snap-align: start; }
+  @media (min-width: 720px) { .shorts__row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); overflow: visible; margin-inline: 0; padding-inline: 0; gap: var(--s-3); } .shorts__item { flex: none; } }
+  @media (min-width: 1100px) { .shorts__row { grid-template-columns: repeat(3, 300px); justify-content: start; } }
   .stream { display: grid; gap: var(--s-4); align-items: center; }
   @media (min-width: 800px) { .stream { grid-template-columns: 1fr 1fr; } }
   .stream__links { display: grid; grid-template-columns: 1fr 1fr; gap: 0 var(--s-3); }
