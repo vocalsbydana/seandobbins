@@ -1,9 +1,15 @@
 {
-  "_note": "PLACEHOLDER. Fill in real profile URLs. Empty url hides the link.",
+  "_note": "Profile URLs, edited in code by Dana. Empty url = icon shows dimmed with a 'coming soon' tooltip while showUnlinked is true; set showUnlinked to false before launch to hide unlinked icons. Icon keys must match src/data/social-icons.json.",
+  "showUnlinked": true,
   "links": [
-    { "label": "Instagram", "url": "" },
-    { "label": "Facebook", "url": "" },
-    { "label": "YouTube", "url": "" },
-    { "label": "Spotify", "url": "" }
+    { "icon": "spotify", "url": "https://open.spotify.com/artist/1kfBt5p0LoMyDz7AZd6eos" },
+    { "icon": "applemusic", "url": "" },
+    { "icon": "youtube", "url": "" },
+    { "icon": "bandcamp", "url": "" },
+    { "icon": "instagram", "url": "" },
+    { "icon": "facebook", "url": "" },
+    { "icon": "tiktok", "url": "" },
+    { "icon": "threads", "url": "" },
+    { "icon": "x", "url": "" }
   ]
 }

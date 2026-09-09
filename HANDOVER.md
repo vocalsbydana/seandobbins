@@ -167,7 +167,7 @@ Without the API key the gate still unlocks downloads (so the site never breaks) 
 
 - `src/content/settings/site.json` → `featuredYoutubeId` (currently a dummy ID).
 - `src/data/music.json` → video IDs, streaming links, discography.
-- `src/data/social.json` → profile URLs (empty = hidden).
+- `src/data/social.json` → profile URLs. Spotify is linked; the rest show dimmed with a "coming soon" tooltip until filled in. Set `showUnlinked` to false before launch to hide any still-empty icons. Logos are Simple Icons (CC0) in `src/data/social-icons.json`.
 - `src/data/jacobs.json` → verify the official IU links.
 - `src/pages/barbershop/index.astro` → the "How Sean teaches" draft copy (marked DRAFT COPY on the page).
 - `src/pages/about.astro` → one `[TODO]` in the bio: the "Southeastern Michigan …" organization name was cut off in the source.

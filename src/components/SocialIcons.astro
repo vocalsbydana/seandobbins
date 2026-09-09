@@ -1,0 +1,33 @@
+---
+/** Branded social icon row. Logos from Simple Icons (CC0), rendered in ivory, hover brass. URLs live in src/data/social.json. */
+import social from '../data/social.json';
+import icons from '../data/social-icons.json';
+interface Props { class?: string; size?: number }
+const { class: cls = '', size = 22 } = Astro.props;
+type IconKey = keyof typeof icons;
+const items = social.links
+  .filter((l) => l.url || social.showUnlinked)
+  .map((l) => ({ ...l, ...icons[l.icon as IconKey] }));
+---
+<ul role="list" class:list={['socials', cls]} aria-label="Sean on social media and streaming">
+  {items.map((s) => (
+    <li>
+      {s.url ? (
+        <a href={s.url} class="socials__link" target="_blank" rel="me noopener" aria-label={`Sean Dobbins on ${s.label}`} title={s.label}>
+          <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true"><path d={s.path} fill="currentColor" /></svg>
+        </a>
+      ) : (
+        <span class="socials__link socials__link--soon" title={`${s.label}: coming soon`} aria-label={`${s.label}, link coming soon`}>
+          <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true"><path d={s.path} fill="currentColor" /></svg>
+        </span>
+      )}
+    </li>
+  ))}
+</ul>
+<style>
+  .socials { display: flex; flex-wrap: wrap; gap: 6px; }
+  .socials__link { display: grid; place-items: center; width: 40px; height: 40px; color: var(--ivory); border: 1px solid var(--ivory-14); transition: color var(--dur-fast), border-color var(--dur-fast), transform var(--dur-fast) var(--ease-out); }
+  .socials__link:hover { color: var(--brass); border-color: var(--brass); transform: translateY(-2px); }
+  .socials__link--soon { color: var(--ivory-55); opacity: .45; cursor: default; }
+  .socials__link--soon:hover { color: var(--ivory-55); border-color: var(--ivory-14); transform: none; }
+</style>

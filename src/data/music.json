@@ -1,20 +1,72 @@
 {
   "_note": "PLACEHOLDER DATA. Replace YouTube IDs, streaming links and discography. Edited in code by Dana.",
   "videos": [
-    { "id": "dQw4w9WgXcQ", "title": "Placeholder: Sean Dobbins Trio, live", "caption": "Replace with a real YouTube ID" },
-    { "id": "dQw4w9WgXcQ", "title": "Placeholder: Drum feature", "caption": "Replace with a real YouTube ID" },
-    { "id": "dQw4w9WgXcQ", "title": "Placeholder: Masterclass excerpt", "caption": "Replace with a real YouTube ID" }
+    {
+      "id": "dQw4w9WgXcQ",
+      "title": "Placeholder: Sean Dobbins Trio, live",
+      "caption": "Replace with a real YouTube ID"
+    },
+    {
+      "id": "dQw4w9WgXcQ",
+      "title": "Placeholder: Drum feature",
+      "caption": "Replace with a real YouTube ID"
+    },
+    {
+      "id": "dQw4w9WgXcQ",
+      "title": "Placeholder: Masterclass excerpt",
+      "caption": "Replace with a real YouTube ID"
+    }
   ],
   "streaming": [
-    { "label": "Spotify", "url": "#" },
-    { "label": "Apple Music", "url": "#" },
-    { "label": "Bandcamp", "url": "#" },
-    { "label": "YouTube", "url": "#" }
+    {
+      "label": "Spotify",
+      "url": "https://open.spotify.com/artist/1kfBt5p0LoMyDz7AZd6eos"
+    },
+    {
+      "label": "Apple Music",
+      "url": "#"
+    },
+    {
+      "label": "Bandcamp",
+      "url": "#"
+    },
+    {
+      "label": "YouTube",
+      "url": "#"
+    }
   ],
   "discography": [
-    { "title": "Placeholder Album Title", "artist": "Sean Dobbins Trio", "label": "Label", "year": 2024, "role": "Leader", "url": "#" },
-    { "title": "Placeholder Album Title", "artist": "Sean Dobbins Organ Quartet", "label": "Label", "year": 2021, "role": "Leader", "url": "#" },
-    { "title": "Placeholder Album Title", "artist": "Artist Name", "label": "Label", "year": 2019, "role": "Drums", "url": "#" },
-    { "title": "Placeholder Album Title", "artist": "Artist Name", "label": "Label", "year": 2016, "role": "Drums", "url": "#" }
+    {
+      "title": "Placeholder Album Title",
+      "artist": "Sean Dobbins Trio",
+      "label": "Label",
+      "year": 2024,
+      "role": "Leader",
+      "url": "#"
+    },
+    {
+      "title": "Placeholder Album Title",
+      "artist": "Sean Dobbins Organ Quartet",
+      "label": "Label",
+      "year": 2021,
+      "role": "Leader",
+      "url": "#"
+    },
+    {
+      "title": "Placeholder Album Title",
+      "artist": "Artist Name",
+      "label": "Label",
+      "year": 2019,
+      "role": "Drums",
+      "url": "#"
+    },
+    {
+      "title": "Placeholder Album Title",
+      "artist": "Artist Name",
+      "label": "Label",
+      "year": 2016,
+      "role": "Drums",
+      "url": "#"
+    }
   ]
 }

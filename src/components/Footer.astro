@@ -1,9 +1,8 @@
 ---
 import Wordmark from './Wordmark.astro';
-import social from '../data/social.json';
+import SocialIcons from './SocialIcons.astro';
 import { NAV } from '../lib/site';
 const year = new Date().getFullYear();
-const links = social.links.filter((l) => l.url);
 ---
 <footer class="site-footer dark">
   <div class="container container--wide">
@@ -21,11 +20,7 @@ const links = social.links.filter((l) => l.url);
       </nav>
       <div class="site-footer__social">
         <div class="label">Follow</div>
-        {links.length ? (
-          <ul role="list">{links.map((l) => <li><a href={l.url} rel="me noopener" target="_blank">{l.label}</a></li>)}</ul>
-        ) : (
-          <p class="small muted">Social links coming soon.</p>
-        )}
+        <SocialIcons />
         <a href="/barbershop" class="site-footer__bs" aria-label="The Barbershop">
           <span class="bs-ring"><span></span></span>
           <span class="bs-text">The Barbershop</span>
@@ -48,7 +43,6 @@ const links = social.links.filter((l) => l.url);
   .site-footer a:not(.btn) { font-size: 12px; letter-spacing: var(--track-label); text-transform: uppercase; color: var(--ivory-65); }
   .site-footer a:not(.btn):hover { color: var(--brass); }
   .site-footer__social { display: flex; flex-direction: column; gap: var(--s-2); }
-  .site-footer__social ul { display: flex; flex-wrap: wrap; gap: 8px 20px; }
   .site-footer__bs { display: inline-flex; align-items: center; gap: 12px; margin-top: var(--s-2); }
   .bs-ring { width: 30px; height: 30px; border-radius: 50%; padding: 3px; background: repeating-linear-gradient(135deg, var(--royal) 0 4px, var(--ivory) 4px 8px, var(--brass) 8px 12px); display: block; }
   .bs-ring span { display: block; width: 100%; height: 100%; border-radius: 50%; background: var(--ink); }
