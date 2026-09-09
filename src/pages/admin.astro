@@ -47,7 +47,9 @@ import '../styles/global.css';
         <button type="button" data-view="outreach">Outreach</button>
       </nav>
       <main id="view" class="ad-view"></main>
-      <div id="status" class="ad-status" hidden aria-live="polite"></div>
+      <div id="dock" class="ad-dock">
+        <div id="status" class="ad-status" hidden aria-live="polite"></div>
+      </div>
     </div>
 
     <style is:global>
@@ -70,7 +72,7 @@ import '../styles/global.css';
       .ad-nav { position: sticky; top: 56px; z-index: 29; display: flex; gap: 4px; padding: 8px clamp(12px, 3vw, 28px) 0; background: var(--ivory); border-bottom: var(--hairline); overflow-x: auto; }
       .ad-nav button { padding: 10px 14px; font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--walnut); border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; }
       .ad-nav button.is-active { color: var(--ink); border-bottom-color: var(--royal); }
-      .ad-view { flex: 1; padding: clamp(16px, 3vw, 28px); padding-bottom: 120px; max-width: 1600px; width: 100%; margin-inline: auto; }
+      .ad-view { flex: 1; padding: clamp(16px, 3vw, 28px); padding-bottom: 200px; max-width: 1600px; width: 100%; margin-inline: auto; }
       .ad-h { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 12px 24px; padding-bottom: 12px; border-bottom: var(--hairline); margin-bottom: 20px; }
       .ad-h h2 { font-size: 34px; }
       .ad-h p { color: var(--walnut); font-size: 14px; max-width: 60ch; }
@@ -139,14 +141,16 @@ import '../styles/global.css';
       .ad-frame__hint { position: absolute; left: 12px; bottom: 12px; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ivory); background: rgba(11,11,20,.75); padding: 6px 10px; pointer-events: none; }
       @media (max-width: 959px) { .ad-frame { height: 60vh; } }
       /* save / status bar */
-      .ad-status { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; background: var(--ink); color: var(--ivory); padding: 12px clamp(12px, 3vw, 28px); display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; border-top: 2px solid var(--brass); }
+      /* Bottom dock: the Publish bar always stacks above the status message, never under it. */
+      .ad-dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; display: flex; flex-direction: column; }
+      .ad-status { background: var(--ink); color: var(--ivory); padding: 12px clamp(12px, 3vw, 28px); display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; border-top: 2px solid var(--brass); }
       .ad-status__text { flex: 1; font-size: 14px; min-width: 240px; }
       .ad-status__text strong { color: var(--brass); }
       .ad-status__bar { height: 3px; background: var(--ivory-14); width: 100%; order: 10; }
       .ad-status__fill { height: 100%; background: var(--brass); transition: width .6s ease; }
       .ad-status .btn { padding: 10px 16px; }
       .ad-status__close { color: var(--ivory-65); font-size: 20px; line-height: 1; padding: 0 4px; }
-      .ad-savebar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 39; background: var(--paper); border-top: var(--hairline); padding: 12px clamp(12px, 3vw, 28px); display: flex; align-items: center; gap: 16px; }
+      .ad-savebar { background: var(--paper); border-top: var(--hairline); padding: 12px clamp(12px, 3vw, 28px); display: flex; align-items: center; gap: 16px; }
       .ad-savebar[hidden] { display: none; }
       .ad-savebar__text { flex: 1; font-size: 14px; }
       .ad-spin { display: inline-block; width: 14px; height: 14px; border: 2px solid var(--ivory-55); border-top-color: var(--brass); border-radius: 50%; animation: spin .8s linear infinite; vertical-align: -2px; margin-right: 8px; }
@@ -279,7 +283,7 @@ import '../styles/global.css';
 
       // ---------- Save bar (page editor) ----------
       const saveBar = el('div', { class: 'ad-savebar', hidden: true }, el('span', { class: 'ad-savebar__text' }), el('button', { class: 'btn btn--secondary', type: 'button', text: 'Discard' }), el('button', { class: 'btn btn--primary', type: 'button', text: 'Publish changes' }));
-      document.body.append(saveBar);
+      $('#dock').prepend(saveBar);
       function showSaveBar(count: number, onSave: () => void, onDiscard: () => void) {
         saveBar.hidden = false;
         $('.ad-savebar__text', saveBar).textContent = `${count} unsaved change${count === 1 ? '' : 's'}`;
