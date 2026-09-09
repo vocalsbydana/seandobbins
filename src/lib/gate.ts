@@ -59,6 +59,12 @@ export function rateLimited(key: string, limit = 6, windowMs = 10 * 60 * 1000): 
   return false;
 }
 
+/** Read-only check: true if `key` already hit the limit (does not record an attempt). */
+export function isRateLimited(key: string, limit = 6, windowMs = 10 * 60 * 1000): boolean {
+  const now = Date.now();
+  return (buckets.get(key) ?? []).filter((t) => now - t < windowMs).length >= limit;
+}
+
 export function clientIp(request: Request): string {
   return request.headers.get('x-forwarded-for')?.split(',')[0].trim() || request.headers.get('x-real-ip') || 'unknown';
 }

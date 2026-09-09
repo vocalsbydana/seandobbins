@@ -1,0 +1,48 @@
+{
+  "nav": {
+    "music": "Music",
+    "gigs": "Gigs",
+    "outreach": "Outreach",
+    "about": "About",
+    "barbershop": "The Barbershop",
+    "contact": "Contact",
+    "book": "Book Sean",
+    "menu": "Menu"
+  },
+  "footer": {
+    "tagline": "Drummer. Bandleader. Professor of Jazz Drumset at the Jacobs School of Music.",
+    "place": "Detroit · Bloomington",
+    "follow": "Follow",
+    "freeResources": "Free Resources",
+    "rights": "All rights reserved.",
+    "photoCredit": "Photos: Jeff Dunn Jazz Photography, Mark Sheldon.",
+    "barbershop": "The Barbershop",
+    "edit": "Edit site"
+  },
+  "newsletter": {
+    "heading": "Notes from the drum chair",
+    "blurb": "New free resources, dates, and the occasional story from the road. One email a month at most.",
+    "emailLabel": "Email",
+    "placeholder": "you@venue.com",
+    "button": "Subscribe",
+    "success": "You’re on the list. Check your inbox to confirm.",
+    "invalid": "Please enter a valid email."
+  },
+  "gate": {
+    "eyebrow": "The Barbershop · Free resources",
+    "title": "Once, and you're in.",
+    "description": "Leave your email once and every PDF in the library unlocks, now and later. You'll get an occasional note from Sean; no spam, unsubscribe anytime.",
+    "nameLabel": "Name",
+    "optional": "(optional)",
+    "emailLabel": "Email",
+    "button": "Unlock & download",
+    "unlocking": "Unlocking…",
+    "downloading": "Downloading…"
+  },
+  "gigsFeed": {
+    "empty": "No public dates on the calendar right now.",
+    "emptyLink": "Book Sean",
+    "emptyTail": "or check back soon.",
+    "calendar": "+ Cal"
+  }
+}

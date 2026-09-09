@@ -1,0 +1,13 @@
+---
+/**
+ * Editable text. Renders `value` of a copy key inside `as` (default span) and stamps
+ * data-edit="<key>" so the /admin editor can find and live-update it. Newlines become <br>.
+ * Usage: <T k="home.hero.tagline" as="p" class="lede" />
+ */
+import { text } from '../lib/copy';
+interface Props { k: string; as?: string; class?: string; [key: string]: unknown }
+const { k, as: Tag = 'span', class: cls, ...rest } = Astro.props;
+const value = text(k);
+const lines = value.split('\n');
+---
+<Tag data-edit={k} class={cls} {...rest}>{lines.map((line, i) => <>{i > 0 && <br />}{line}</>)}</Tag>

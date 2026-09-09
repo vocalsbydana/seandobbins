@@ -2,20 +2,21 @@
 
 Website for Sean Dobbins: jazz drummer, bandleader, Professor of Music (Jazz Studies) at the IU Jacobs School of Music. Two jobs: present Sean the artist and educator, and house **The Barbershop** (his teaching brand + a free, email-gated resource library that feeds MailerLite).
 
-Owner/developer: Dana (dana@vocalsbydana.com). Sean is **not technical** and only ever edits content through the CMS at `/admin`.
+Owner/developer: Dana (dana@vocalsbydana.com). Sean is **not technical** and only ever edits content through the site's own editor at `/admin`.
 
 ## Stack
 
 - **Astro 7** (static output) + `@astrojs/vercel` adapter. API routes under `src/pages/api/*` set `prerender = false` and run as Vercel serverless functions. Everything else is prerendered HTML.
-- **Decap CMS** at `/admin` (`public/admin/`), GitHub backend, OAuth handled by `/api/auth` + `/api/callback` (no Netlify, no paid service). Saves commit straight to `main`; Vercel redeploys.
-- **Content collections** in `src/content/` (`src/content.config.ts`): `resources`, `testimonials`, `outreach`, `announcements`, `settings`. Sean edits **only** these. Everything else is code.
+- **In-site editor** at `/admin` (`src/pages/admin.astro`, `src/lib/admin/*`, `src/pages/api/admin/*`). Password login (`ADMIN_PASSWORD`), session is an HMAC cookie. The repository is the database: every save is a commit through the GitHub API (`GITHUB_TOKEN`, fine-grained, contents RW on this repo) to the branch the deployment was built from; Vercel rebuilds. The editor then polls the live site's `<meta name="build-commit">` and reports committed → building → live honestly. In `astro dev` with `ADMIN_STORE=local` it edits the working tree instead.
+- **Editable content** = files under `src/content/`: collections `resources`, `testimonials`, `outreach`, `announcements` (markdown + frontmatter, `src/content.config.ts`) and **page copy** `src/content/copy/<page>.json`. Sean edits **only** these, via the editor. Everything else is code.
+- **Page copy convention**: every visible string on a page lives in its page's JSON and is rendered through `<T k="page.section.key" />` (`src/components/T.astro`) or an element carrying `data-edit="page.section.key"`. That attribute is how the editor's live preview finds text to update and how click-to-edit locates the field. When adding text to a page, add it to the JSON and tag it; never hard-code visible copy in a template.
 - **MailerLite** via `src/lib/mailerlite.ts` (groups: drummers, prospective-students). **Resend** free tier for the contact form.
 - **Hosting**: Vercel (Dana's account). No other paid services, no paid plugins.
 - Node 22+. `npm run dev`, `npm run build` (runs `scripts/hash-pdfs.mjs` first), `npm run check`.
 
 ## Non-negotiables
 
-1. **Sean edits only via the CMS.** Never ask him to touch code, git, Vercel or env vars. If a change needs code, Dana does it. Keep the CMS surface small: add fields only when he genuinely needs them.
+1. **Sean edits only via the editor at /admin.** Never ask him to touch code, git, Vercel or env vars. If a change needs code, Dana does it. Keep the editable surface to content: copy JSON and the four collections. Layout, routes, styles and data shapes stay in code.
 2. **No ongoing costs** beyond Vercel + MailerLite free tiers. Flag anything that would add cost or create dependence on Dana.
 3. **Brand is fixed.** Use `src/styles/tokens.css` and the rules below. Do not invent colors, fonts, radii or shadows.
 4. **Photos are Sean working**: stage-lit, mid-laugh, mid-swing. No stock, no studio portraits. B&W for bio/press; grayscale + Stage blue wash only for text-over-photo.
@@ -50,12 +51,14 @@ Voice: plain-spoken, warm, quick; sure of the craft, light on the ego. Not a pre
 ## Where things live
 
 ```
-src/content/          Sean's content (CMS)          src/data/            code-owned data (played-with, music, socials, Jacobs links, sample gigs)
-src/pages/            routes                        src/pages/api/       serverless: subscribe, download, prospective, contact, auth, callback
-src/pages/og/         build-time OG images          src/components/      UI, incl. AuralisFeed placeholder + GateModal
-src/styles/tokens.css brand tokens                  src/lib/             gate, mailerlite, og, site helpers
-private/resources/    PDFs uploaded by the CMS      public/uploads/      images uploaded by the CMS
-public/admin/         Decap CMS                     scripts/hash-pdfs.mjs
+src/content/copy/*.json   every page's editable text           src/content/{resources,testimonials,outreach,announcements}/  collections
+src/pages/                routes (admin.astro = the editor)    src/pages/api/          serverless: subscribe, download, prospective, contact
+src/pages/api/admin/      editor API: login, logout, session, file, collection, entry, blob, resource
+src/lib/admin/            auth, store (GitHub + local), schema (what is editable), frontmatter
+src/lib/copy.ts + components/T.astro   copy lookup and the data-edit tag
+src/data/                 code-owned data (socials, icons, sample gigs)   src/pages/og/   build-time OG images
+private/resources/        PDFs (uploaded via the editor)       public/uploads/          images (uploaded via the editor)
+scripts/hash-pdfs.mjs     stages hashed PDF copies at build
 ```
 
-Env vars: see `.env.example`. HANDOVER.md is Sean's guide to the CMS.
+Env vars: see `.env.example`. HANDOVER.md is Sean's guide to the editor plus Dana's setup notes.

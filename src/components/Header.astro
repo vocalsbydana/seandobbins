@@ -1,6 +1,8 @@
 ---
 import Wordmark from './Wordmark.astro';
 import { NAV } from '../lib/site';
+import { copy } from '../lib/copy';
+const g = copy.global.nav;
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const isActive = (href: string) => path === href || (href !== '/' && path.startsWith(href));
 ---
@@ -10,13 +12,13 @@ const isActive = (href: string) => path === href || (href !== '/' && path.starts
     <nav class="site-nav" aria-label="Primary">
       <ul role="list">
         {NAV.map((item) => (
-          <li><a href={item.href} class:list={{ 'is-active': isActive(item.href) }} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a></li>
+          <li><a href={item.href} class:list={{ 'is-active': isActive(item.href) }} aria-current={isActive(item.href) ? 'page' : undefined} data-edit={item.key}>{item.label}</a></li>
         ))}
       </ul>
-      <a href="/contact" class="btn btn--primary site-nav__cta">Book Sean</a>
+      <a href="/contact" class="btn btn--primary site-nav__cta" data-edit="global.nav.book">{g.book}</a>
     </nav>
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-toggle>
-      <span class="menu-btn__label">Menu</span>
+      <span class="menu-btn__label" data-edit="global.nav.menu">{g.menu}</span>
       <span class="menu-btn__icon" aria-hidden="true"><i></i><i></i></span>
     </button>
   </div>
@@ -24,7 +26,7 @@ const isActive = (href: string) => path === href || (href !== '/' && path.starts
     <nav aria-label="Mobile">
       <ul role="list">
         {NAV.map((item, i) => (
-          <li style={`--i:${i}`}><a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a></li>
+          <li style={`--i:${i}`}><a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined} data-edit={item.key}>{item.label}</a></li>
         ))}
         <li style={`--i:${NAV.length}`}><a href="/contact">Contact</a></li>
       </ul>

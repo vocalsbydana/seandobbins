@@ -3,7 +3,9 @@ import { getCollection, render } from 'astro:content';
 import Base from '../../../layouts/Base.astro';
 import GateModal from '../../../components/GateModal.astro';
 import ResourceCard from '../../../components/ResourceCard.astro';
+import T from '../../../components/T.astro';
 import { fmtDate } from '../../../lib/site';
+import { copy } from '../../../lib/copy';
 
 export async function getStaticPaths() {
   const resources = await getCollection('resources');
@@ -24,14 +26,14 @@ const d = entry.data;
         </div>
       </div>
       <div class="res__body">
-        <p class="label" data-reveal><a href="/barbershop/resources">The Barbershop · Free resources</a> · {d.topic}</p>
+        <p class="label" data-reveal><a href="/barbershop/resources" data-edit="resources.detail.breadcrumb">{copy.resources.detail.breadcrumb}</a> · {d.topic}</p>
         <h1 class="res__title" data-reveal>{d.title}</h1>
         <p class="lede muted" data-reveal>{d.description}</p>
-        <div class="res__meta small muted" data-reveal>PDF · Added {fmtDate(d.publishedDate)} · Free</div>
+        <div class="res__meta small muted" data-reveal><T k="resources.detail.meta" /> {fmtDate(d.publishedDate)} · <T k="resources.detail.free" /></div>
         <div class="res__cta" data-reveal>
-          <button type="button" class="btn btn--primary" data-download={d.slug}>Download the PDF</button>
-          <p class="small muted res__gate-note">First time? You'll be asked for your email once. After that every resource downloads instantly.</p>
-          <p class="small res__locked" hidden data-locked-msg>Please unlock the library first, then the download will start.</p>
+          <button type="button" class="btn btn--primary" data-download={d.slug} data-edit="resources.detail.button">{copy.resources.detail.button}</button>
+          <T k="resources.detail.gateNote" as="p" class="small muted res__gate-note" />
+          <T k="resources.detail.locked" as="p" class="small res__locked" hidden data-locked-msg />
         </div>
         <div class="prose res__content" data-reveal><Content /></div>
       </div>
@@ -41,7 +43,7 @@ const d = entry.data;
   {related.length > 0 && (
     <section class="section--tight res__related">
       <div class="container">
-        <p class="label" data-reveal>More from the library</p>
+        <T k="resources.detail.related" as="p" class="label" data-reveal />
         <div class="grid grid-3" style="margin-top:16px">
           {related.map((r, i) => <ResourceCard slug={r.data.slug} title={r.data.title} description={r.data.description} topic={r.data.topic} cover={r.data.cover || undefined} index={i} />)}
         </div>

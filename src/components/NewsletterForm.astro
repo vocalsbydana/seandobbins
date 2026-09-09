@@ -1,22 +1,26 @@
 ---
 /** Newsletter signup → /api/subscribe (drummers group, source=newsletter). */
-interface Props { heading?: string; blurb?: string; compact?: boolean; source?: string }
-const { heading = 'Notes from the drum chair', blurb = 'New free resources, dates, and the occasional story from the road. One email a month at most.', compact = false, source = 'newsletter' } = Astro.props;
+import { copy } from '../lib/copy';
+const n = copy.global.newsletter;
+/** headingKey/blurbKey point at editable copy; defaults are the global newsletter copy. */
+interface Props { headingKey?: string; blurbKey?: string; compact?: boolean; source?: string }
+const { headingKey = 'global.newsletter.heading', blurbKey = 'global.newsletter.blurb', compact = false, source = 'newsletter' } = Astro.props;
+import T from './T.astro';
 ---
-<form class:list={['newsletter', { 'newsletter--compact': compact }]} data-subscribe data-source={source} novalidate>
+<form class:list={['newsletter', { 'newsletter--compact': compact }]} data-subscribe data-source={source} data-success={n.success} data-invalid={n.invalid} novalidate>
   {!compact && (
     <div class="newsletter__head">
-      <h3 class="display-3">{heading}</h3>
-      <p class="muted">{blurb}</p>
+      <T k={headingKey} as="h3" class="display-3" />
+      <T k={blurbKey} as="p" class="muted" />
     </div>
   )}
   <div class="newsletter__row">
     <div class="field">
-      <label for={`nl-email-${source}`}>Email</label>
-      <input id={`nl-email-${source}`} type="email" name="email" placeholder="you@venue.com" autocomplete="email" required />
+      <label for={`nl-email-${source}`} data-edit="global.newsletter.emailLabel">{n.emailLabel}</label>
+      <input id={`nl-email-${source}`} type="email" name="email" placeholder={n.placeholder} autocomplete="email" required />
     </div>
     <label class="hp" aria-hidden="true">Leave this empty <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
-    <button class="btn btn--primary" type="submit">Subscribe</button>
+    <button class="btn btn--primary" type="submit" data-edit="global.newsletter.button">{n.button}</button>
   </div>
   <p class="form-msg" role="status" aria-live="polite"></p>
 </form>
@@ -42,17 +46,17 @@ const { heading = 'Notes from the drum chair', blurb = 'New free resources, date
         const email = (form.elements.namedItem('email') as HTMLInputElement).value.trim();
         const hp = (form.elements.namedItem('website') as HTMLInputElement).value;
         msg.className = 'form-msg';
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { msg.textContent = 'Please enter a valid email.'; msg.classList.add('is-error'); return; }
-        btn.disabled = true; btn.textContent = 'Sending…';
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { msg.textContent = form.dataset.invalid || 'Please enter a valid email.'; msg.classList.add('is-error'); return; }
+        btn.dataset.label = btn.textContent || 'Subscribe'; btn.disabled = true; btn.textContent = 'Sending…';
         try {
           const res = await fetch('/api/subscribe', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email, hp, source: form.dataset.source || 'newsletter' }) });
           const data = await res.json().catch(() => ({}));
           if (!res.ok) throw new Error(data.error || 'Something went wrong.');
           form.querySelector('.newsletter__row')?.setAttribute('hidden', '');
-          msg.textContent = 'You’re on the list. Check your inbox to confirm.';
+          msg.textContent = form.dataset.success || 'You’re on the list.';
         } catch (err) {
           msg.textContent = (err as Error).message || 'Something went wrong. Try again in a minute.'; msg.classList.add('is-error');
-          btn.disabled = false; btn.textContent = 'Subscribe';
+          btn.disabled = false; btn.textContent = btn.dataset.label || 'Subscribe';
         }
       });
     });

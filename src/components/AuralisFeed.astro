@@ -10,6 +10,7 @@
  */
 import EventRow from './EventRow.astro';
 import sample from '../data/gigs.sample.json';
+import T from './T.astro';
 
 interface Props { limit?: number; showEmpty?: boolean; heading?: boolean }
 const { limit = 50, showEmpty = true } = Astro.props;
@@ -37,7 +38,7 @@ function icsHref(g: typeof gigs[number]) {
   {gigs.length ? gigs.map((g, i) => (
     <EventRow start={g.startDate} title={g.title} meta={`${g.venue} · ${g.city} · ${new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' }).format(g.startDate)}`} cta={g.cta} href={g.url && g.url !== '#' ? g.url : undefined} ics={icsHref(g)} last={i === gigs.length - 1} />
   )) : showEmpty && (
-    <p class="auralis__empty muted">No public dates on the calendar right now. <a class="link" href="/contact">Book Sean</a> or check back soon.</p>
+    <p class="auralis__empty muted"><T k="global.gigsFeed.empty" /> <a class="link" href="/contact" data-edit="global.gigsFeed.emptyLink"><T k="global.gigsFeed.emptyLink" /></a> <T k="global.gigsFeed.emptyTail" /></p>
   )}
   {import.meta.env.DEV && <p class="auralis__dev">DEV NOTE: sample gigs from src/data/gigs.sample.json. Wire up Auralis in src/components/AuralisFeed.astro.</p>}
 </div>

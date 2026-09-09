@@ -3,14 +3,14 @@ import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Marquee from '../components/Marquee.astro';
 import SectionHead from '../components/SectionHead.astro';
-import playedWith from '../data/played-with.json';
-import influences from '../data/influences.json';
-import awards from '../data/awards.json';
+import T from '../components/T.astro';
+import { copy } from '../lib/copy';
 import bwStars from '../assets/photos/bw-stars.jpg';
 import profile from '../assets/photos/profile-brushes.jpg';
 import laugh from '../assets/photos/laugh-warm.jpg';
 import kit from '../assets/photos/stage-kit.jpg';
 
+const c = copy.about;
 const description = 'Sean Dobbins, jazz drummer: Detroit sideman, bandleader, Woody Herman Jazz Award recipient, and Professor of Music (Jazz Studies) at the Indiana University Jacobs School of Music.';
 ---
 <Base title="About" description={description}>
@@ -19,9 +19,9 @@ const description = 'Sean Dobbins, jazz drummer: Detroit sideman, bandleader, Wo
       <Image src={bwStars} alt="" widths={[800, 1400, 2000]} sizes="100vw" loading="eager" />
     </div>
     <div class="container container--wide about-hero__inner">
-      <p class="label" style="color:var(--brass)">About</p>
-      <h1 class="about-hero__title"><span>Sean</span><span>Dobbins</span></h1>
-      <p class="lede about-hero__lede">Drummer. Bandleader. Professor of Jazz Drumset at the Jacobs School of Music.</p>
+      <T k="about.hero.label" as="p" class="label" style="color:var(--brass)" />
+      <h1 class="about-hero__title"><T k="about.hero.firstName" /><T k="about.hero.lastName" /></h1>
+      <T k="about.hero.lede" as="p" class="lede about-hero__lede" />
     </div>
   </section>
 
@@ -32,24 +32,24 @@ const description = 'Sean Dobbins, jazz drummer: Detroit sideman, bandleader, Wo
           <Image src={profile} alt="Sean Dobbins with brushes, in profile." widths={[500, 900, 1300]} sizes="(min-width: 900px) 34vw, 100vw" />
         </div>
         <div class="bio__facts">
-          <div class="fact"><span class="label">Now</span><span>Professor of Music (Jazz Studies), IU Jacobs School of Music</span></div>
-          <div class="fact"><span class="label">From</span><span>Ann Arbor · Detroit, Michigan</span></div>
-          <div class="fact"><span class="label">Awards</span><span>{awards.map((a) => a.title).join(' · ')}</span></div>
-          <div class="fact"><span class="label">Influences</span><span>{influences.join(', ')}</span></div>
+          <div class="fact"><T k="about.facts.nowLabel" class="label" /><T k="about.facts.now" /></div>
+          <div class="fact"><T k="about.facts.fromLabel" class="label" /><T k="about.facts.from" /></div>
+          <div class="fact"><T k="about.facts.awardsLabel" class="label" /><span>{c.awards.map((a, i) => <>{i > 0 && ' · '}<T k={`about.awards.${i}`} /></>)}</span></div>
+          <div class="fact"><T k="about.facts.influencesLabel" class="label" /><span>{c.influences.map((a, i) => <>{i > 0 && ', '}<T k={`about.influences.${i}`} /></>)}</span></div>
         </div>
       </aside>
       <div class="bio__body prose" data-reveal>
-        <p class="lede"><strong>Drummer Sean Dobbins is Professor of Music (Jazz Studies) at the Indiana University Jacobs School of Music, where he leads the jazz drumset studio.</strong></p>
-        <p>He got his start as a sought-after Detroit-area jazz sideman at a young age, playing regularly with Blue Note artist Louis Smith. As his career progressed he became the recipient of numerous awards and accolades, including the Woody Herman Jazz Award for outstanding musicianship and the Louis Armstrong Scholarship. As both a player and an educator he has been the focus of countless news articles, jazz radio programs, and documentaries.</p>
-        <p>Though still young by jazz standards, Dobbins has amassed an impressive list of playing companions. He has performed, toured, and recorded with Benny Golson, Dr. Lonnie Smith, Frank Morgan, Joey DeFrancesco, George Cables, James “Blood” Ulmer, Marcus Belgrave, Larry Willis, Rodney Whitaker, Claude Black, Johnny O'Neal, Paul Keller, Tad Weed, Kurt Krahnke, Jon Hendricks, David “Fathead” Newman, Donald Walden, Cyrus Chestnut, Barry Harris, David Baker, Randy Johnston, Marion Hayden, Mose Allison, Johnnie Bassett, and a host of other great musicians.</p>
-        <p>His sound can best be described as hard-driving, solid rhythm with refreshing melodic sensibility. His influences include Art Blakey, Jeff Hamilton, Jeff “Tain” Watts, Ed Thigpen, Sonny Payne, and Detroit-area greats Gerald Cleaver and the one and only Elvin Jones.</p>
-        <h3>The educator</h3>
-        <p>A product of the Ann Arbor Public Schools, Dobbins has stayed devoted to education throughout his life. Early mentor Louis Smith, an Ann Arbor band teacher, impressed the importance of a good education on him at an early age. In 1999 he was asked to direct the Ann Arbor Public Schools Summer Jazz Program, a program that a year earlier had been in danger of cancellation for low enrollment. A year after he took over, enrollment had more than tripled; a year after that, the group was featured on WEMU.</p>
-        <p>Before joining the Jacobs faculty he served as director of jazz studies at Oakland University and jazz program director at Community Music School–Detroit. He has also taught at the University of Michigan and Wayne State University, and served as Artistic Director of Jazz Ensembles for the Detroit Symphony Orchestra and as Executive and Artistic Director of the Southeastern Michigan Jazz Association. <em class="todo">[TODO: confirm the organization name; the source bio was cut off at “Southeastern Music”.]</em></p>
-        <p>As a father of three, Dobbins knows, understands, and accepts the challenge of continuing the art form through clinics, masterclasses, and concerts for up-and-coming musicians. He makes a point of building educational opportunities into every road trip. That work has a name now: <a href="/barbershop">The Barbershop</a>.</p>
+        <p class="lede"><T k="about.bio.lede" as="strong" /></p>
+        {c.bio.paragraphs.map((_, i) => <T k={`about.bio.paragraphs.${i}`} as="p" />)}
+        <T k="about.bio.educatorHeading" as="h3" />
+        {c.bio.educatorParagraphs.map((_, i) => (
+          i === c.bio.educatorParagraphs.length - 1
+            ? <p><T k={`about.bio.educatorParagraphs.${i}`} /> <a href="/barbershop" data-edit="about.bio.closingLink">{c.bio.closingLink}</a>.</p>
+            : <T k={`about.bio.educatorParagraphs.${i}`} as="p" />
+        ))}
         <div class="bio__actions">
-          <a href="/contact" class="btn btn--primary">Book Sean</a>
-          <a href="/outreach" class="link">Clinics and masterclasses <span class="arrow">→</span></a>
+          <a href="/contact" class="btn btn--primary" data-edit="about.bio.book">{c.bio.book}</a>
+          <a href="/outreach" class="link"><T k="about.bio.outreachLink" /> <span class="arrow">→</span></a>
         </div>
       </div>
     </div>
@@ -57,12 +57,12 @@ const description = 'Sean Dobbins, jazz drummer: Detroit sideman, bandleader, Wo
 
   <section class="played stage">
     <div class="container container--wide">
-      <SectionHead num="01" title="Played with" blurb="Performed, toured, or recorded with. A partial list, growing." />
+      <SectionHead numKey="about.played.num" titleKey="about.played.title" blurbKey="about.played.blurb" />
     </div>
-    <Marquee items={playedWith} speed={70} />
+    <Marquee items={c.playedWith} speed={70} keyPrefix="about.playedWith" />
     <div class="container container--wide">
       <ul role="list" class="names" aria-label="Full list">
-        {playedWith.map((n, i) => <li data-reveal style={`--reveal-delay:${(i % 8) * 40}ms`}>{n}</li>)}
+        {c.playedWith.map((n, i) => <li data-reveal style={`--reveal-delay:${(i % 8) * 40}ms`} data-edit={`about.playedWith.${i}`}>{n}</li>)}
       </ul>
     </div>
   </section>
@@ -71,11 +71,11 @@ const description = 'Sean Dobbins, jazz drummer: Detroit sideman, bandleader, Wo
     <div class="container container--wide strip__grid">
       <figure class="photo strip__a" data-reveal="scale">
         <Image src={laugh} alt="Sean laughing at the kit under warm light. Photo: Jeff Dunn Jazz Photography." widths={[600, 1000, 1400]} sizes="(min-width: 900px) 58vw, 100vw" />
-        <figcaption class="small muted">Keep the joy. The laugh is the brand.</figcaption>
+        <T k="about.strip.captionA" as="figcaption" class="small muted" />
       </figure>
       <figure class="photo strip__b" data-reveal="scale" style="--reveal-delay:120ms">
         <Image src={kit} alt="Sean behind a Yamaha kit against blue curtains." widths={[500, 900, 1200]} sizes="(min-width: 900px) 40vw, 100vw" />
-        <figcaption class="small muted">Show the kit, show the work.</figcaption>
+        <T k="about.strip.captionB" as="figcaption" class="small muted" />
       </figure>
     </div>
   </section>
@@ -105,7 +105,6 @@ const description = 'Sean Dobbins, jazz drummer: Detroit sideman, bandleader, Wo
   .fact:last-child { border-bottom: var(--hairline); }
   .bio__body .lede { font-size: clamp(19px, 1.8vw, 23px); }
   .bio__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3); margin-top: var(--s-4); }
-  .todo { color: var(--brass); font-style: normal; font-size: 13px; }
 
   .played { padding-block: clamp(48px, 8vw, 96px) var(--s-8); }
   .names { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px 24px; margin-top: var(--s-6); font-size: 14px; color: var(--ivory-80); }

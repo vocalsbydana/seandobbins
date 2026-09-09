@@ -1,0 +1,42 @@
+{
+  "page": {
+    "num": "Music",
+    "title": "Watch & listen",
+    "blurb": "Let the playing brag. Videos first, then where to stream, then the records."
+  },
+  "featuredVideoId": "YqjD8EilwCc",
+  "videos": [
+    { "id": "Zaal-0UkeaE", "title": "" },
+    { "id": "pCgOS3zK4cc", "title": "" }
+  ],
+  "shortsSection": {
+    "label": "Shorts",
+    "title": "Quick hits"
+  },
+  "shorts": [
+    { "id": "gj0lCuwrxSg", "title": "" },
+    { "id": "iEqu3vUrYcU", "title": "" },
+    { "id": "h7MGvMaTKww", "title": "" }
+  ],
+  "stream": {
+    "label": "Stream",
+    "title": "Hear him\neverywhere"
+  },
+  "streaming": [
+    { "label": "Spotify", "url": "https://open.spotify.com/artist/1kfBt5p0LoMyDz7AZd6eos" },
+    { "label": "Apple Music", "url": "" },
+    { "label": "Bandcamp", "url": "" },
+    { "label": "YouTube", "url": "https://www.youtube.com/channel/UCHgx6sslwakCk60DCBLspNg" }
+  ],
+  "disc": {
+    "num": "01",
+    "title": "Selected discography",
+    "blurb": "As leader and as sideman. Not everything; the ones that matter."
+  },
+  "discography": [
+    { "title": "Placeholder Album Title", "artist": "Sean Dobbins Trio", "label": "Label", "year": 2024, "role": "Leader", "url": "" },
+    { "title": "Placeholder Album Title", "artist": "Sean Dobbins Organ Quartet", "label": "Label", "year": 2021, "role": "Leader", "url": "" },
+    { "title": "Placeholder Album Title", "artist": "Artist Name", "label": "Label", "year": 2019, "role": "Drums", "url": "" },
+    { "title": "Placeholder Album Title", "artist": "Artist Name", "label": "Label", "year": 2016, "role": "Drums", "url": "" }
+  ]
+}

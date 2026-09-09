@@ -6,9 +6,11 @@ import BarbershopBadge from '../../components/BarbershopBadge.astro';
 import Pole from '../../components/Pole.astro';
 import ResourceCard from '../../components/ResourceCard.astro';
 import SectionHead from '../../components/SectionHead.astro';
-import jacobs from '../../data/jacobs.json';
+import T from '../../components/T.astro';
+import { copy } from '../../lib/copy';
 import kit from '../../assets/photos/stage-kit.jpg';
 
+const c = copy.barbershop;
 const testimonials = (await getCollection('testimonials')).sort((a, b) => a.data.order - b.data.order);
 const resources = (await getCollection('resources')).sort((a, b) => b.data.publishedDate.getTime() - a.data.publishedDate.getTime()).slice(0, 3);
 const description = "The Barbershop is Sean Dobbins' jazz drumset studio at the Indiana University Jacobs School of Music, and a free library of drum resources for everyone else. Serve the music. Keep the joy.";
@@ -18,12 +20,12 @@ const description = "The Barbershop is Sean Dobbins' jazz drumset studio at the 
     <div class="container bs-hero__inner">
       <BarbershopBadge size={200} class="bs-hero__badge" />
       <div class="bs-hero__copy">
-        <p class="label">Sub-brand · Education</p>
-        <h1 class="bs-hero__title">A weekly hang,<br />not a class.</h1>
-        <p class="lede">The Barbershop is where Sean's students at IU meet, listen, argue, and play. Here it houses his teaching: the philosophy, the studio, the outreach, and a library of free resources for any drummer who wants them.</p>
+        <T k="barbershop.hero.label" as="p" class="label" />
+        <T k="barbershop.hero.title" as="h1" class="bs-hero__title" />
+        <T k="barbershop.hero.lede" as="p" class="lede" />
         <div class="bs-hero__actions">
-          <a href="/barbershop/resources" class="btn btn--primary">Free resources</a>
-          <a href="#study" class="btn btn--secondary">Study with Sean</a>
+          <a href="/barbershop/resources" class="btn btn--primary" data-edit="barbershop.hero.resources">{c.hero.resources}</a>
+          <a href="#study" class="btn btn--secondary" data-edit="barbershop.hero.study">{c.hero.study}</a>
         </div>
       </div>
     </div>
@@ -32,17 +34,14 @@ const description = "The Barbershop is Sean Dobbins' jazz drumset studio at the 
   <section class="section">
     <div class="container philosophy">
       <div class="philosophy__copy prose" data-reveal>
-        <SectionHead num="01" title="How Sean teaches" as="h2" />
-        <p class="lede"><strong>Two rules. Serve the music. Keep the joy.</strong></p>
-        <p>Everything else in the studio hangs off those two. Time, touch, reading, vocabulary: they matter because they let you take care of the band. A drummer who makes the bass player comfortable, who hears the pianist's left hand and stays out of its way, who knows the melody of the tune they're playing, is a drummer who gets called back. That is the whole job, and it is a joyful one.</p>
-        <p>Lessons are built around the bandstand, not the practice room. Students transcribe, they play with records, they play with each other, and they play in public as early as Sean can get them there. Mistakes are information. Ego is noise.</p>
-        <p>The Barbershop itself is the weekly hang: the whole studio in one room, listening to something, arguing about it, and then playing it. Nobody is graded. Everybody plays.</p>
-        <p class="small todo">DRAFT COPY. Written from the brief's brand voice for Sean to edit or replace in code (src/pages/barbershop/index.astro).</p>
+        <SectionHead numKey="barbershop.philosophy.num" titleKey="barbershop.philosophy.title" as="h2" />
+        <p class="lede"><T k="barbershop.philosophy.lede" as="strong" /></p>
+        {c.philosophy.paragraphs.map((_, i) => <T k={`barbershop.philosophy.paragraphs.${i}`} as="p" />)}
       </div>
       <div class="philosophy__aside">
         <blockquote class="voice philosophy__quote" data-reveal style="--reveal-delay:120ms">
-          “You've got to make the band feel good before you make yourself sound good.”
-          <footer class="label">Sean, to a student</footer>
+          “<T k="barbershop.philosophy.quote" />”
+          <T k="barbershop.philosophy.who" as="footer" class="label" />
         </blockquote>
         <div class="photo philosophy__photo" data-reveal="scale" style="--reveal-delay:220ms">
           <Image src={kit} alt="Sean at a Yamaha kit against blue curtains, mid-phrase." widths={[500, 900]} sizes="(min-width: 900px) 34vw, 100vw" />
@@ -53,7 +52,7 @@ const description = "The Barbershop is Sean Dobbins' jazz drumset studio at the 
 
   <section class="section stage testimonials">
     <div class="container">
-      <SectionHead num="02" title="From the studio" blurb="Students, parents, and bandleaders. Sean adds these in the CMS." />
+      <SectionHead numKey="barbershop.testimonials.num" titleKey="barbershop.testimonials.title" blurbKey="barbershop.testimonials.blurb" />
       <ul role="list" class="tgrid">
         {testimonials.map((t, i) => (
           <li class="tcard" data-reveal style={`--reveal-delay:${i * 90}ms`}>
@@ -70,42 +69,38 @@ const description = "The Barbershop is Sean Dobbins' jazz drumset studio at the 
 
   <section class="section">
     <div class="container">
-      <SectionHead num="03" title="Free resources" blurb="PDFs from the studio. Leave your email once and everything unlocks, forever." />
+      <SectionHead numKey="barbershop.resources.num" titleKey="barbershop.resources.title" blurbKey="barbershop.resources.blurb" />
       <div class="grid grid-3">
         {resources.map((r, i) => <ResourceCard slug={r.data.slug} title={r.data.title} description={r.data.description} topic={r.data.topic} cover={r.data.cover || undefined} index={i} />)}
       </div>
-      <p class="more" data-reveal><a href="/barbershop/resources" class="link">Browse the whole library <span class="arrow">→</span></a></p>
+      <p class="more" data-reveal><a href="/barbershop/resources" class="link"><T k="barbershop.resources.more" /> <span class="arrow">→</span></a></p>
     </div>
   </section>
 
   <section class="section dark study" id="study">
     <div class="container study__inner">
       <div class="study__copy">
-        <SectionHead num="04" title="Study with Sean at Jacobs" blurb="Jazz drumset, Indiana University Jacobs School of Music, Bloomington." />
+        <SectionHead numKey="barbershop.study.num" titleKey="barbershop.study.title" blurbKey="barbershop.study.blurb" />
         <div class="prose">
-          <p>The Jacobs School offers Bachelor of Music, Master of Music, and Doctor of Music degrees in Jazz Studies, and drummers in the program study with Sean. Applications go through Jacobs, not through this site; the links below are the official ones.</p>
+          <T k="barbershop.study.text" as="p" />
           <ul>
-            <li><a href={jacobs.jazzStudies} target="_blank" rel="noopener">Jazz Studies at Jacobs</a></li>
-            <li><a href={jacobs.auditions} target="_blank" rel="noopener">Audition requirements and dates</a></li>
-            <li><a href={jacobs.apply} target="_blank" rel="noopener">How to apply</a></li>
-            <li><a href={jacobs.faculty} target="_blank" rel="noopener">Sean's faculty page</a></li>
+            {c.study.links.map((l, i) => <li><a href={l.url} target="_blank" rel="noopener" data-edit={`barbershop.study.links.${i}.label`}>{l.label}</a></li>)}
           </ul>
-          <p class="small todo">Links to verify before launch (src/data/jacobs.json).</p>
         </div>
         <Pole height={200} class="study__pole" />
       </div>
-      <form class="study__form paper" data-prospective novalidate>
-        <p class="label">Interested? Tell Sean you're coming.</p>
-        <p class="small">Not an application. It just lets Sean know who's out there, so he can say hello before audition day.</p>
-        <div class="field"><label for="ps-name">Name</label><input id="ps-name" name="name" type="text" autocomplete="name" required /></div>
-        <div class="field"><label for="ps-email">Email</label><input id="ps-email" name="email" type="email" autocomplete="email" required /></div>
-        <div class="field"><label for="ps-program">Program</label>
-          <select id="ps-program" name="program"><option>Undergraduate (BM)</option><option>Master's (MM)</option><option>Doctoral (DM)</option><option>Not sure yet</option></select></div>
-        <div class="field"><label for="ps-year">Hoping to start</label><input id="ps-year" name="year" type="text" inputmode="numeric" placeholder="Fall 2027" /></div>
-        <div class="field"><label for="ps-city">Where are you now?</label><input id="ps-city" name="city" type="text" placeholder="City, State" /></div>
-        <div class="field"><label for="ps-note">Anything Sean should know? <span class="hint">(optional)</span></label><textarea id="ps-note" name="note" rows="3"></textarea></div>
+      <form class="study__form paper" data-prospective data-success={c.form.success} novalidate>
+        <T k="barbershop.form.label" as="p" class="label" />
+        <T k="barbershop.form.intro" as="p" class="small" />
+        <div class="field"><label for="ps-name" data-edit="barbershop.form.name">{c.form.name}</label><input id="ps-name" name="name" type="text" autocomplete="name" required /></div>
+        <div class="field"><label for="ps-email" data-edit="barbershop.form.email">{c.form.email}</label><input id="ps-email" name="email" type="email" autocomplete="email" required /></div>
+        <div class="field"><label for="ps-program" data-edit="barbershop.form.program">{c.form.program}</label>
+          <select id="ps-program" name="program">{c.form.programs.map((p, i) => <option data-edit={`barbershop.form.programs.${i}`}>{p}</option>)}</select></div>
+        <div class="field"><label for="ps-year" data-edit="barbershop.form.year">{c.form.year}</label><input id="ps-year" name="year" type="text" inputmode="numeric" placeholder={c.form.yearPlaceholder} /></div>
+        <div class="field"><label for="ps-city" data-edit="barbershop.form.city">{c.form.city}</label><input id="ps-city" name="city" type="text" placeholder={c.form.cityPlaceholder} /></div>
+        <div class="field"><label for="ps-note"><T k="barbershop.form.note" /> <span class="hint">(optional)</span></label><textarea id="ps-note" name="note" rows="3"></textarea></div>
         <label class="hp" aria-hidden="true">Leave this empty <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
-        <button class="btn btn--primary" type="submit">Send</button>
+        <button class="btn btn--primary" type="submit" data-edit="barbershop.form.button">{c.form.button}</button>
         <p class="form-msg" role="status" aria-live="polite"></p>
       </form>
     </div>
@@ -128,7 +123,6 @@ const description = "The Barbershop is Sean Dobbins' jazz drumset studio at the 
   .philosophy__aside { display: flex; flex-direction: column; gap: var(--s-4); }
   .philosophy__quote { border-left: 3px solid var(--brass); padding-left: var(--s-3); display: flex; flex-direction: column; gap: 12px; }
   .philosophy__photo { aspect-ratio: 4 / 5; }
-  .todo { color: var(--brass); }
 
   .tgrid { display: grid; gap: var(--s-3); }
   @media (min-width: 800px) { .tgrid { grid-template-columns: repeat(3, 1fr); } }
@@ -164,15 +158,16 @@ const description = "The Barbershop is Sean Dobbins' jazz drumset studio at the 
       fd.forEach((v, k) => { payload[k === 'website' ? 'hp' : k] = String(v); });
       msg.className = 'form-msg';
       if (!payload.name || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(payload.email)) { msg.textContent = 'Please add your name and a valid email.'; msg.classList.add('is-error'); return; }
+      const label = btn.textContent || 'Send';
       btn.disabled = true; btn.textContent = 'Sending…';
       try {
         const res = await fetch('/api/prospective', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
         const data = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(data.error || 'Something went wrong.');
         form.querySelectorAll('.field, button').forEach((el) => el.setAttribute('hidden', ''));
-        msg.textContent = 'Got it. Sean will be in touch. Check your inbox to confirm your email.';
+        msg.textContent = form.dataset.success || 'Got it.';
       } catch (err) {
-        msg.textContent = (err as Error).message; msg.classList.add('is-error'); btn.disabled = false; btn.textContent = 'Send';
+        msg.textContent = (err as Error).message; msg.classList.add('is-error'); btn.disabled = false; btn.textContent = label;
       }
     });
   }

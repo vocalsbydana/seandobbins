@@ -1,0 +1,50 @@
+{
+  "hero": {
+    "label": "About",
+    "firstName": "Sean",
+    "lastName": "Dobbins",
+    "lede": "Drummer. Bandleader. Professor of Jazz Drumset at the Jacobs School of Music."
+  },
+  "facts": {
+    "nowLabel": "Now",
+    "now": "Professor of Music (Jazz Studies), IU Jacobs School of Music",
+    "fromLabel": "From",
+    "from": "Ann Arbor · Detroit, Michigan",
+    "awardsLabel": "Awards",
+    "influencesLabel": "Influences"
+  },
+  "awards": ["Woody Herman Jazz Award", "Louis Armstrong Scholarship"],
+  "influences": ["Art Blakey", "Elvin Jones", "Jeff Hamilton", "Jeff \"Tain\" Watts", "Ed Thigpen", "Sonny Payne", "Gerald Cleaver"],
+  "bio": {
+    "lede": "Drummer Sean Dobbins is Professor of Music (Jazz Studies) at the Indiana University Jacobs School of Music, where he leads the jazz drumset studio.",
+    "paragraphs": [
+      "He got his start as a sought-after Detroit-area jazz sideman at a young age, playing regularly with Blue Note artist Louis Smith. As his career progressed he became the recipient of numerous awards and accolades, including the Woody Herman Jazz Award for outstanding musicianship and the Louis Armstrong Scholarship. As both a player and an educator he has been the focus of countless news articles, jazz radio programs, and documentaries.",
+      "Though still young by jazz standards, Dobbins has amassed an impressive list of playing companions. He has performed, toured, and recorded with Benny Golson, Dr. Lonnie Smith, Frank Morgan, Joey DeFrancesco, George Cables, James “Blood” Ulmer, Marcus Belgrave, Larry Willis, Rodney Whitaker, Claude Black, Johnny O'Neal, Paul Keller, Tad Weed, Kurt Krahnke, Jon Hendricks, David “Fathead” Newman, Donald Walden, Cyrus Chestnut, Barry Harris, David Baker, Randy Johnston, Marion Hayden, Mose Allison, Johnnie Bassett, and a host of other great musicians.",
+      "His sound can best be described as hard-driving, solid rhythm with refreshing melodic sensibility. His influences include Art Blakey, Jeff Hamilton, Jeff “Tain” Watts, Ed Thigpen, Sonny Payne, and Detroit-area greats Gerald Cleaver and the one and only Elvin Jones."
+    ],
+    "educatorHeading": "The educator",
+    "educatorParagraphs": [
+      "A product of the Ann Arbor Public Schools, Dobbins has stayed devoted to education throughout his life. Early mentor Louis Smith, an Ann Arbor band teacher, impressed the importance of a good education on him at an early age. In 1999 he was asked to direct the Ann Arbor Public Schools Summer Jazz Program, a program that a year earlier had been in danger of cancellation for low enrollment. A year after he took over, enrollment had more than tripled; a year after that, the group was featured on WEMU.",
+      "Before joining the Jacobs faculty he served as director of jazz studies at Oakland University and jazz program director at Community Music School–Detroit. He has also taught at the University of Michigan and Wayne State University, and served as Artistic Director of Jazz Ensembles for the Detroit Symphony Orchestra and as Executive and Artistic Director of the Southeastern Michigan Jazz Association.",
+      "As a father of three, Dobbins knows, understands, and accepts the challenge of continuing the art form through clinics, masterclasses, and concerts for up-and-coming musicians. He makes a point of building educational opportunities into every road trip. That work has a name now:"
+    ],
+    "closingLink": "The Barbershop",
+    "book": "Book Sean",
+    "outreachLink": "Clinics and masterclasses"
+  },
+  "played": {
+    "num": "01",
+    "title": "Played with",
+    "blurb": "Performed, toured, or recorded with. A partial list, growing."
+  },
+  "playedWith": [
+    "Benny Golson", "Dr. Lonnie Smith", "Barry Harris", "Mose Allison", "Frank Morgan", "Joey DeFrancesco",
+    "George Cables", "Jon Hendricks", "Cyrus Chestnut", "James \"Blood\" Ulmer", "Marcus Belgrave", "Larry Willis",
+    "Rodney Whitaker", "David \"Fathead\" Newman", "David Baker", "Louis Smith", "Johnny O'Neal", "Claude Black",
+    "Donald Walden", "Marion Hayden", "Randy Johnston", "Paul Keller", "Tad Weed", "Kurt Krahnke", "Johnnie Bassett"
+  ],
+  "strip": {
+    "captionA": "Keep the joy. The laugh is the brand.",
+    "captionB": "Show the kit, show the work."
+  }
+}

@@ -1,7 +1,7 @@
 ---
 /** "Played with" wall: two rows of names in Bebas, scrolling opposite directions, pause on hover. Pure CSS. */
-interface Props { items: string[]; speed?: number; class?: string }
-const { items, speed = 60, class: cls = '' } = Astro.props;
+interface Props { items: string[]; speed?: number; class?: string; keyPrefix?: string }
+const { items, speed = 60, class: cls = '', keyPrefix } = Astro.props;
 const half = Math.ceil(items.length / 2);
 const rows = [items.slice(0, half), items.slice(half)];
 ---
@@ -10,7 +10,7 @@ const rows = [items.slice(0, half), items.slice(half)];
     <div class:list={['marquee__row', { 'marquee__row--reverse': r === 1 }]} style={`--speed:${speed + r * 14}s`}>
       {[0, 1].map((dup) => (
         <ul role="list" class="marquee__track" aria-hidden={dup === 1 ? 'true' : undefined}>
-          {row.map((name) => <li><span class="marquee__name">{name}</span><span class="marquee__dot" aria-hidden="true"></span></li>)}
+          {row.map((name, i) => <li><span class="marquee__name" data-edit={keyPrefix ? `${keyPrefix}.${r * half + i}` : undefined}>{name}</span><span class="marquee__dot" aria-hidden="true"></span></li>)}
         </ul>
       ))}
     </div>

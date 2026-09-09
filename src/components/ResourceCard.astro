@@ -1,4 +1,5 @@
 ---
+import { copy } from '../lib/copy';
 interface Props { slug: string; title: string; description: string; topic: string; cover?: string; featured?: boolean; index?: number }
 const { slug, title, description, topic, cover, featured = false, index = 0 } = Astro.props;
 const href = `/barbershop/resources/${slug}`;
@@ -13,7 +14,7 @@ const href = `/barbershop/resources/${slug}`;
   <div class="rcard__body">
     <h3 class="rcard__title"><a href={href}>{title}</a></h3>
     <p class="rcard__desc">{description}</p>
-    <span class="link rcard__cta">Free PDF <span class="arrow">→</span></span>
+    <span class="link rcard__cta"><span data-edit="resources.card.cta">{copy.resources.card.cta}</span> <span class="arrow">→</span></span>
   </div>
 </article>
 <style>

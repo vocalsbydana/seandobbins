@@ -1,0 +1,21 @@
+{
+  "library": {
+    "num": "The Barbershop",
+    "title": "Free resources",
+    "blurb": "PDFs from Sean's studio. Leave your email once and every download unlocks, on any page, forever.",
+    "all": "All",
+    "empty": "Nothing in that topic yet."
+  },
+  "detail": {
+    "breadcrumb": "The Barbershop · Free resources",
+    "meta": "PDF · Added",
+    "free": "Free",
+    "button": "Download the PDF",
+    "gateNote": "First time? You'll be asked for your email once. After that every resource downloads instantly.",
+    "locked": "Please unlock the library first, then the download will start.",
+    "related": "More from the library"
+  },
+  "card": {
+    "cta": "Free PDF"
+  }
+}

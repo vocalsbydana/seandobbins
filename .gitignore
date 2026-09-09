@@ -8,3 +8,4 @@ dist/
 # Hashed PDF copies are generated at build time from private/resources
 public/files/
 .DS_Store
+.astro/admin-blobs/

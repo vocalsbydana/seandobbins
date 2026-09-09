@@ -1,0 +1,638 @@
+---
+// The site's own editor. Static shell; everything happens client-side against /api/admin/*.
+// Styles here are global on purpose: the panel builds its DOM at runtime (see spec pitfall on scoped styles).
+import Mark from '../components/Mark.astro';
+import '../styles/global.css';
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Edit site · Sean Dobbins</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="build-commit" content={process.env.VERCEL_GIT_COMMIT_SHA || 'local'} />
+    <meta name="build-branch" content={process.env.VERCEL_GIT_COMMIT_REF || 'local'} />
+  </head>
+  <body class="ad">
+    <!-- Login -->
+    <section id="login" class="ad-login dark" hidden>
+      <form class="ad-login__panel" id="login-form" novalidate>
+        <Mark size={56} color="var(--ivory)" spin />
+        <h1 class="display-3">Edit the site</h1>
+        <p class="small muted">Enter the password Dana gave you. Nothing you do here can break the site.</p>
+        <div class="field"><label for="pw">Password</label><input id="pw" name="password" type="password" autocomplete="current-password" required /></div>
+        <button class="btn btn--primary btn--block" type="submit">Log in</button>
+        <p class="form-msg" role="alert"></p>
+        <a class="ad-login__back" href="/">← Back to the site</a>
+      </form>
+    </section>
+
+    <!-- App -->
+    <div id="app" class="ad-app" hidden>
+      <header class="ad-top dark">
+        <div class="ad-top__brand"><Mark size={26} color="var(--ivory)" /><span class="ad-top__title">Edit site</span></div>
+        <span class="ad-top__branch" id="branch-pill" title="Edits are saved to this branch of the site's repository"></span>
+        <div class="ad-top__actions">
+          <a class="ad-top__link" href="/" target="_blank" rel="noopener">View site ↗</a>
+          <button class="ad-top__link" type="button" id="logout">Log out</button>
+        </div>
+      </header>
+      <nav class="ad-nav" aria-label="Sections">
+        <button type="button" data-view="resources" class="is-active">Resources</button>
+        <button type="button" data-view="pages">Page text</button>
+        <button type="button" data-view="testimonials">Testimonials</button>
+        <button type="button" data-view="announcements">Announcements</button>
+        <button type="button" data-view="outreach">Outreach</button>
+      </nav>
+      <main id="view" class="ad-view"></main>
+      <div id="status" class="ad-status" hidden aria-live="polite"></div>
+    </div>
+
+    <style is:global>
+      .ad { background: var(--ivory); min-height: 100dvh; display: block; }
+      .ad [hidden] { display: none !important; }
+      .ad-login { min-height: 100dvh; display: grid; place-items: center; padding: var(--s-3); }
+      .ad-login__panel { width: min(420px, 100%); display: flex; flex-direction: column; gap: 16px; padding: clamp(24px, 4vw, 40px); border-top: 3px solid var(--brass); background: var(--ink); }
+      .ad-login__panel .form-msg { color: var(--brass); font-weight: 600; font-size: 14px; }
+      .ad-login__panel .form-msg:empty { display: none; }
+      .ad-login__back { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--ivory-65); }
+      .ad-app { display: flex; flex-direction: column; min-height: 100dvh; }
+      .ad-top { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; gap: 16px; height: 56px; padding: 0 clamp(12px, 3vw, 28px); }
+      .ad-top__brand { display: flex; align-items: center; gap: 10px; }
+      .ad-top__title { font-family: var(--font-display); font-size: 24px; letter-spacing: .03em; text-transform: uppercase; }
+      .ad-top__branch { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--brass); border: 1px solid rgba(196,154,95,.4); padding: 4px 8px; }
+      .ad-top__branch:empty { display: none; }
+      .ad-top__actions { margin-left: auto; display: flex; gap: 18px; }
+      .ad-top__link { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--ivory-65); }
+      .ad-top__link:hover { color: var(--ivory); }
+      .ad-nav { position: sticky; top: 56px; z-index: 29; display: flex; gap: 4px; padding: 8px clamp(12px, 3vw, 28px) 0; background: var(--ivory); border-bottom: var(--hairline); overflow-x: auto; }
+      .ad-nav button { padding: 10px 14px; font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--walnut); border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; }
+      .ad-nav button.is-active { color: var(--ink); border-bottom-color: var(--royal); }
+      .ad-view { flex: 1; padding: clamp(16px, 3vw, 28px); padding-bottom: 120px; max-width: 1600px; width: 100%; margin-inline: auto; }
+      .ad-h { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 12px 24px; padding-bottom: 12px; border-bottom: var(--hairline); margin-bottom: 20px; }
+      .ad-h h2 { font-size: 34px; }
+      .ad-h p { color: var(--walnut); font-size: 14px; max-width: 60ch; }
+      .ad-list { display: flex; flex-direction: column; }
+      .ad-row { display: grid; grid-template-columns: 1fr auto; gap: 8px 16px; align-items: center; padding: 14px 0; border-top: var(--hairline); text-align: left; width: 100%; }
+      .ad-row:last-child { border-bottom: var(--hairline); }
+      .ad-row:hover .ad-row__title { color: var(--royal); }
+      .ad-row__title { font-weight: 600; font-size: 16px; }
+      .ad-row__sub { font-size: 13px; color: var(--walnut); margin-top: 2px; }
+      .ad-row__tag { font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--royal); border: 1px solid var(--royal); padding: 3px 6px; margin-left: 8px; vertical-align: middle; }
+      .ad-row__edit { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--walnut); }
+      .ad-empty { padding: 24px 0; color: var(--walnut); }
+      .ad-split { display: grid; gap: 24px; }
+      @media (min-width: 960px) { .ad-split { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; } .ad-split--wide { grid-template-columns: minmax(360px, 2fr) minmax(0, 3fr); } .ad-split__side { position: sticky; top: 112px; } }
+      .ad-form { display: flex; flex-direction: column; gap: 16px; }
+      .ad-form .field input[type=file] { padding: 10px; background: var(--paper); }
+      .ad-check { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 600; }
+      .ad-check input { width: 20px; height: 20px; accent-color: var(--royal); }
+      .ad-drop { display: flex; flex-direction: column; gap: 6px; padding: 18px; border: 1.5px dashed var(--ink-25); background: var(--paper); cursor: pointer; transition: border-color var(--dur-fast), background var(--dur-fast); }
+      .ad-drop:hover, .ad-drop.is-over { border-color: var(--royal); background: #fff; }
+      .ad-drop__title { font-weight: 600; }
+      .ad-drop__meta { font-size: 13px; color: var(--walnut); }
+      .ad-drop input { display: none; }
+      .ad-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding-top: 8px; }
+      .ad-danger { color: var(--walnut); font-size: 13px; font-weight: 600; border-bottom: 1.5px solid var(--brass); margin-left: auto; }
+      .ad-note { font-size: 13px; color: var(--walnut); }
+      .ad-error { color: var(--walnut); font-weight: 600; font-size: 14px; }
+      .ad-error:empty { display: none; }
+      .ad-preview-label { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--walnut); margin-bottom: 10px; }
+      /* card preview (mirrors ResourceCard) */
+      .pv-card { max-width: 380px; background: var(--paper); border: 1px solid var(--ink-10); }
+      .pv-card__cover { position: relative; aspect-ratio: 4 / 5; background: radial-gradient(circle at 30% 20%, rgba(45,69,200,.85), var(--stage) 60%); display: grid; place-items: center; overflow: hidden; }
+      .pv-card__cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      .pv-card__initial { font-family: var(--font-display); font-size: 180px; color: var(--ivory); opacity: .18; line-height: 1; }
+      .pv-card__topic { position: absolute; left: 14px; top: 14px; font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--ivory); background: rgba(11,11,20,.7); padding: 6px 8px; }
+      .pv-card__body { padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 8px; }
+      .pv-card__title { font-weight: 700; font-size: 19px; line-height: 1.15; letter-spacing: -.015em; }
+      .pv-card__desc { font-size: 14px; color: var(--walnut); line-height: 1.45; }
+      .pv-card__cta { font-size: 13px; font-weight: 600; color: var(--royal); border-bottom: 1.5px solid var(--brass); align-self: flex-start; }
+      .pv-url { margin-top: 12px; font-size: 13px; color: var(--walnut); word-break: break-all; }
+      /* page editor */
+      .ad-pagebar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 16px; }
+      .ad-pagebar select { padding: 10px 12px; border: 1.5px solid var(--ink-25); background: var(--paper); font-size: 15px; font-weight: 600; }
+      .ad-fields { display: flex; flex-direction: column; gap: 8px; }
+      .ad-group { border: 1px solid var(--ink-10); background: var(--paper); }
+      .ad-group > summary { cursor: pointer; padding: 12px 16px; font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--ink); list-style: none; display: flex; justify-content: space-between; }
+      .ad-group > summary::-webkit-details-marker { display: none; }
+      .ad-group > summary::after { content: '+'; color: var(--walnut); }
+      .ad-group[open] > summary::after { content: '–'; }
+      .ad-group__body { display: flex; flex-direction: column; gap: 14px; padding: 4px 16px 16px; }
+      .ad-field { display: flex; flex-direction: column; gap: 5px; scroll-margin-top: 130px; }
+      .ad-field label { font-size: 12px; font-weight: 600; color: var(--walnut); }
+      .ad-field input, .ad-field textarea { width: 100%; border: 1.5px solid var(--ink-25); background: #fff; padding: 9px 11px; font-size: 15px; border-radius: 0; }
+      .ad-field textarea { min-height: 72px; resize: vertical; line-height: 1.45; }
+      .ad-field input:focus, .ad-field textarea:focus { outline: 2px solid var(--royal); border-color: var(--royal); }
+      .ad-field.is-dirty label::after { content: ' · edited'; color: var(--royal); }
+      .ad-field.is-dirty input, .ad-field.is-dirty textarea { border-color: var(--royal); }
+      .ad-field.is-flash { animation: flash 1.2s ease-out; }
+      @keyframes flash { 0% { background: rgba(45,69,200,.18); } 100% { background: transparent; } }
+      .ad-sub { border-left: 2px solid var(--brass); padding-left: 12px; display: flex; flex-direction: column; gap: 12px; }
+      .ad-sub__title { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--walnut); display: flex; justify-content: space-between; }
+      .ad-list-add, .ad-list-rm { font-size: 12px; font-weight: 600; color: var(--royal); border-bottom: 1.5px solid var(--brass); align-self: flex-start; }
+      .ad-list-rm { color: var(--walnut); }
+      .ad-frame { position: relative; background: var(--ink); border: 1px solid var(--ink-10); height: calc(100dvh - 140px); min-height: 480px; }
+      .ad-frame iframe { width: 100%; height: 100%; border: 0; background: var(--ivory); }
+      .ad-frame__hint { position: absolute; left: 12px; bottom: 12px; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ivory); background: rgba(11,11,20,.75); padding: 6px 10px; pointer-events: none; }
+      @media (max-width: 959px) { .ad-frame { height: 60vh; } }
+      /* save / status bar */
+      .ad-status { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; background: var(--ink); color: var(--ivory); padding: 12px clamp(12px, 3vw, 28px); display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; border-top: 2px solid var(--brass); }
+      .ad-status__text { flex: 1; font-size: 14px; min-width: 240px; }
+      .ad-status__text strong { color: var(--brass); }
+      .ad-status__bar { height: 3px; background: var(--ivory-14); width: 100%; order: 10; }
+      .ad-status__fill { height: 100%; background: var(--brass); transition: width .6s ease; }
+      .ad-status .btn { padding: 10px 16px; }
+      .ad-status__close { color: var(--ivory-65); font-size: 20px; line-height: 1; padding: 0 4px; }
+      .ad-savebar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 39; background: var(--paper); border-top: var(--hairline); padding: 12px clamp(12px, 3vw, 28px); display: flex; align-items: center; gap: 16px; }
+      .ad-savebar[hidden] { display: none; }
+      .ad-savebar__text { flex: 1; font-size: 14px; }
+      .ad-spin { display: inline-block; width: 14px; height: 14px; border: 2px solid var(--ivory-55); border-top-color: var(--brass); border-radius: 50%; animation: spin .8s linear infinite; vertical-align: -2px; margin-right: 8px; }
+      @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+
+    <script>
+      import { PAGES, COLLECTIONS, TOPICS, humanize, slugify, MAX_PDF_BYTES, MAX_IMAGE_BYTES, type Field, type Collection } from '../lib/admin/schema';
+
+      type Json = Record<string, unknown>;
+      interface Session { authed: boolean; configured: boolean; kind: 'github' | 'local' | null; branch: string; repo: string; error?: string }
+
+      const $ = <T extends HTMLElement = HTMLElement>(sel: string, root: ParentNode = document) => root.querySelector(sel) as T;
+      const el = (tag: string, attrs: Record<string, unknown> = {}, ...children: (Node | string | null | undefined)[]) => {
+        const n = document.createElement(tag);
+        for (const [k, v] of Object.entries(attrs)) {
+          if (v === undefined || v === null || v === false) continue;
+          if (k === 'class') n.className = String(v);
+          else if (k.startsWith('on') && typeof v === 'function') n.addEventListener(k.slice(2), v as EventListener);
+          else if (k === 'text') n.textContent = String(v);
+          else n.setAttribute(k, v === true ? '' : String(v));
+        }
+        for (const c of children) if (c != null) n.append(c);
+        return n;
+      };
+      const esc = (s: string) => s.replace(/[&<>"]/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]!));
+      const today = () => new Date().toISOString().slice(0, 10);
+      const fmtBytes = (n: number) => n < 1048576 ? `${Math.round(n / 1024)} KB` : `${(n / 1048576).toFixed(1)} MB`;
+
+      let session: Session | null = null;
+      let dirty = 0;
+      let viewSeq = 0; // bumped on every section change so a slow async render can't paint over a newer view
+      const view = $('#view');
+      const loginEl = $('#login'), appEl = $('#app');
+
+      // ---------- API ----------
+      async function api<T = Json>(path: string, init: RequestInit = {}): Promise<T> {
+        const res = await fetch(`/api/admin/${path}`, { ...init, headers: { ...(init.body instanceof FormData ? {} : { 'content-type': 'application/json' }), ...(init.headers || {}) }, credentials: 'same-origin' });
+        const data = (await res.json().catch(() => ({}))) as T & { error?: string };
+        if (res.status === 401) { showLogin(data.error); throw new Error(data.error || 'Please log in.'); }
+        if (!res.ok) throw new Error(data.error || `Request failed (${res.status}).`);
+        return data;
+      }
+
+      // ---------- Login ----------
+      function showLogin(msg?: string) {
+        appEl.hidden = true; loginEl.hidden = false;
+        const m = $('.form-msg', loginEl); m.textContent = msg && msg !== 'Please log in.' ? msg : '';
+        setTimeout(() => $('#pw').focus(), 50);
+      }
+      $('#login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = $('button', $('#login-form')) as HTMLButtonElement; const msg = $('.form-msg', loginEl);
+        btn.disabled = true; msg.textContent = '';
+        try {
+          await api('login', { method: 'POST', body: JSON.stringify({ password: ($('#pw') as HTMLInputElement).value }) });
+          ($('#pw') as HTMLInputElement).value = '';
+          await boot();
+        } catch (err) { msg.textContent = (err as Error).message; }
+        btn.disabled = false;
+      });
+      $('#logout').addEventListener('click', async () => { if (dirty && !confirm('You have unsaved changes. Log out anyway?')) return; await api('logout', { method: 'POST' }); dirty = 0; showLogin(); });
+
+      async function boot() {
+        session = await api<Session>('session');
+        if (!session.authed) { showLogin(); return; }
+        loginEl.hidden = true; appEl.hidden = false;
+        $('#branch-pill').textContent = session.kind === 'local' ? 'Local files' : `Saving to ${session.branch}`;
+        if (!session.configured) { view.replaceChildren(el('div', { class: 'ad-empty' }, el('p', { class: 'ad-error', text: session.error || 'The editor is not configured.' }))); return; }
+        const hash = location.hash.replace('#', '');
+        go(hash.startsWith('pages') ? 'pages' : hash || 'resources');
+      }
+
+      // ---------- Navigation ----------
+      const navButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('.ad-nav button'));
+      navButtons.forEach((b) => b.addEventListener('click', () => go(b.dataset.view!)));
+      function go(name: string) {
+        if (dirty && !confirm('You have unsaved changes. Leave this section anyway?')) return;
+        dirty = 0; hideSaveBar(); viewSeq++;
+        navButtons.forEach((b) => b.classList.toggle('is-active', b.dataset.view === name));
+        location.hash = name;
+        view.replaceChildren(el('p', { class: 'ad-empty', text: 'Loading…' }));
+        const known = ['resources', 'pages', ...COLLECTIONS.map((c) => c.name)];
+        if (!known.includes(name)) name = 'resources';
+        const fn = ({ resources: renderResources, pages: renderPages } as Record<string, () => Promise<void>>)[name];
+        (fn ? fn() : renderCollection(name)).catch((e) => view.replaceChildren(el('p', { class: 'ad-error', text: (e as Error).message })));
+      }
+      window.addEventListener('beforeunload', (e) => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
+
+      // ---------- Deploy tracking ----------
+      const statusEl = $('#status');
+      let pollTimer: number | undefined;
+      function hideStatus() { statusEl.hidden = true; if (pollTimer) clearInterval(pollTimer); }
+      function setStatus(html: string, pct: number, opts: { spinner?: boolean; closable?: boolean } = {}) {
+        statusEl.hidden = false;
+        statusEl.replaceChildren(el('div', { class: 'ad-status__text' }));
+        if (opts.closable) statusEl.append(el('button', { class: 'ad-status__close', type: 'button', 'aria-label': 'Dismiss', text: '×', onclick: hideStatus }));
+        statusEl.append(el('div', { class: 'ad-status__bar' }, el('div', { class: 'ad-status__fill', style: `width:${pct}%` })));
+        $('.ad-status__text', statusEl).innerHTML = (opts.spinner ? '<span class="ad-spin"></span>' : '') + html;
+      }
+      /** After a commit: committed → building → live, verified by reading the build-commit meta of the live site. */
+      function track(result: { commit: string; branch: string; url?: string }, onLive?: () => void) {
+        if (pollTimer) clearInterval(pollTimer);
+        if (session?.kind === 'local') { setStatus(`<strong>Saved</strong> to your local files. The dev server picks it up on the next reload.`, 100, { closable: true }); onLive?.(); return; }
+        const short = result.commit.slice(0, 7);
+        const started = Date.now();
+        const servedBranch = document.querySelector<HTMLMetaElement>('meta[name=build-branch]')?.content;
+        const branchWarn = servedBranch && servedBranch !== 'local' && servedBranch !== result.branch ? ` <strong>Heads up:</strong> this address is built from “${esc(servedBranch)}” but the edit went to “${esc(result.branch)}”, so it may not show up here.` : '';
+        setStatus(`<strong>Saved</strong> to GitHub (${short} on ${esc(result.branch)}). Vercel is building the site now. This usually takes one to three minutes.${branchWarn}`, 35, { spinner: true });
+        const check = async () => {
+          const mins = Math.round((Date.now() - started) / 60000);
+          try {
+            const html = await (await fetch(`/?_=${Date.now()}`, { cache: 'no-store' })).text();
+            const m = /<meta name="build-commit" content="([^"]+)"/.exec(html);
+            if (m && m[1] === result.commit) {
+              clearInterval(pollTimer);
+              setStatus(`<strong>Live.</strong> Your change is on the site (${short}). <a class="link" href="/" target="_blank" rel="noopener">See it</a>`, 100, { closable: true });
+              onLive?.(); return;
+            }
+            setStatus(`<strong>Saved</strong> (${short}). Building on Vercel… ${mins ? mins + ' min' : 'just started'}. The site currently shows build ${m ? m[1].slice(0, 7) : '?'}.${branchWarn}`, Math.min(90, 35 + mins * 8), { spinner: true });
+          } catch { /* network blip; keep polling */ }
+          if (Date.now() - started > 10 * 60 * 1000) {
+            clearInterval(pollTimer);
+            setStatus(`<strong>Still not live after 10 minutes.</strong> The commit (${short}) is saved safely in GitHub. Two likely causes: the build failed on Vercel, or this address deploys from a different branch than “${esc(result.branch)}”. Ask Dana to check Vercel.`, 90, { closable: true });
+          }
+        };
+        pollTimer = window.setInterval(check, 8000);
+        setTimeout(check, 15000);
+      }
+
+      // ---------- Save bar (page editor) ----------
+      const saveBar = el('div', { class: 'ad-savebar', hidden: true }, el('span', { class: 'ad-savebar__text' }), el('button', { class: 'btn btn--secondary', type: 'button', text: 'Discard' }), el('button', { class: 'btn btn--primary', type: 'button', text: 'Publish changes' }));
+      document.body.append(saveBar);
+      function showSaveBar(count: number, onSave: () => void, onDiscard: () => void) {
+        saveBar.hidden = false;
+        $('.ad-savebar__text', saveBar).textContent = `${count} unsaved change${count === 1 ? '' : 's'}`;
+        const [discard, save] = Array.from(saveBar.querySelectorAll('button'));
+        discard.onclick = onDiscard; save.onclick = onSave;
+      }
+      function hideSaveBar() { saveBar.hidden = true; }
+
+      // ---------- Resources ----------
+      interface Entry { file: string; path: string; sha: string; data: Record<string, string | number | boolean>; body: string }
+
+      async function renderResources() {
+        const my = viewSeq;
+        const { entries } = await api<{ entries: Entry[] }>('collection?name=resources');
+        if (my !== viewSeq) return;
+        entries.sort((a, b) => String(b.data.publishedDate).localeCompare(String(a.data.publishedDate)));
+        const list = el('div', { class: 'ad-list' });
+        for (const e of entries) {
+          list.append(el('button', { class: 'ad-row', type: 'button', onclick: () => renderResourceForm(e) },
+            el('div', {}, el('div', { class: 'ad-row__title' }, String(e.data.title), e.data.featured ? el('span', { class: 'ad-row__tag', text: 'Featured' }) : null), el('div', { class: 'ad-row__sub', text: `${e.data.topic} · ${e.data.publishedDate} · /barbershop/resources/${e.data.slug}` })),
+            el('span', { class: 'ad-row__edit', text: 'Edit →' })));
+        }
+        view.replaceChildren(
+          el('div', { class: 'ad-h' }, el('div', {}, el('h2', { text: 'Resources' }), el('p', { text: 'The free PDFs in The Barbershop library. Add one, or click a row to change or remove it.' })), el('button', { class: 'btn btn--primary', type: 'button', text: '+ Add a resource', onclick: () => renderResourceForm() })),
+          entries.length ? list : el('p', { class: 'ad-empty', text: 'No resources yet. Add the first one.' }),
+        );
+      }
+
+      function renderResourceForm(entry?: Entry) {
+        const d = entry?.data || {};
+        const state = { title: String(d.title || ''), slug: String(d.slug || ''), description: String(d.description || ''), topic: String(d.topic || TOPICS[0]), publishedDate: String(d.publishedDate || today()), featured: !!d.featured, body: entry?.body || '', cover: String(d.cover || '') };
+        let pdfFile: File | null = null, coverFile: File | null = null, removeCover = false, slugTouched = !!entry;
+        const err = el('p', { class: 'ad-error' });
+
+        const input = (name: keyof typeof state, label: string, hint?: string, type: 'text' | 'textarea' | 'date' = 'text') => {
+          const id = `rf-${name}`;
+          const ctrl = type === 'textarea' ? el('textarea', { id, rows: 3 }) : el('input', { id, type });
+          (ctrl as HTMLInputElement).value = String(state[name]);
+          ctrl.addEventListener('input', () => { (state as Record<string, unknown>)[name] = (ctrl as HTMLInputElement).value; if (name === 'title' && !slugTouched) { state.slug = slugify(state.title); ($('#rf-slug') as HTMLInputElement).value = state.slug; } if (name === 'slug') slugTouched = true; paint(); });
+          return el('div', { class: 'field' }, el('label', { for: id, text: label }), ctrl, hint ? el('span', { class: 'hint', text: hint }) : null);
+        };
+        const topic = el('select', { id: 'rf-topic' }, ...TOPICS.map((t) => el('option', { value: t, selected: t === state.topic, text: t })));
+        topic.addEventListener('change', () => { state.topic = (topic as HTMLSelectElement).value; paint(); });
+        const featured = el('input', { type: 'checkbox', id: 'rf-featured', checked: state.featured });
+        featured.addEventListener('change', () => { state.featured = (featured as HTMLInputElement).checked; });
+
+        const drop = (kind: 'pdf' | 'image', title: string, accept: string, current: string, onFile: (f: File) => void) => {
+          const fileInput = el('input', { type: 'file', accept }) as HTMLInputElement;
+          const meta = el('div', { class: 'ad-drop__meta', text: current });
+          const box = el('label', { class: 'ad-drop' }, el('span', { class: 'ad-drop__title', text: title }), meta, fileInput);
+          const take = (f: File | undefined) => { if (!f) return; const max = kind === 'pdf' ? MAX_PDF_BYTES : MAX_IMAGE_BYTES; if (f.size > max) { err.textContent = `${f.name} is ${fmtBytes(f.size)}. The limit is ${fmtBytes(max)}.`; return; } err.textContent = ''; meta.textContent = `${f.name} · ${fmtBytes(f.size)}`; onFile(f); paint(); };
+          fileInput.addEventListener('change', () => take(fileInput.files?.[0]));
+          box.addEventListener('dragover', (e) => { e.preventDefault(); box.classList.add('is-over'); });
+          box.addEventListener('dragleave', () => box.classList.remove('is-over'));
+          box.addEventListener('drop', (e) => { e.preventDefault(); box.classList.remove('is-over'); take(e.dataTransfer?.files?.[0]); });
+          return box;
+        };
+
+        const preview = el('div', {});
+        const paint = () => {
+          const coverUrl = coverFile ? URL.createObjectURL(coverFile) : (!removeCover && state.cover) ? state.cover : '';
+          preview.replaceChildren(
+            el('div', { class: 'ad-preview-label', text: 'How the card will look' }),
+            el('div', { class: 'pv-card' },
+              el('div', { class: 'pv-card__cover' }, coverUrl ? el('img', { src: coverUrl, alt: '' }) : el('span', { class: 'pv-card__initial', text: (state.title || 'R').charAt(0).toUpperCase() }), el('span', { class: 'pv-card__topic', text: state.topic })),
+              el('div', { class: 'pv-card__body' }, el('div', { class: 'pv-card__title', text: state.title || 'Untitled resource' }), el('div', { class: 'pv-card__desc', text: state.description || 'Description goes here.' }), el('span', { class: 'pv-card__cta', text: 'Free PDF →' }))),
+            el('p', { class: 'pv-url', text: `Address: /barbershop/resources/${state.slug || '…'}` }),
+            el('p', { class: 'ad-note', text: pdfFile ? `PDF: ${pdfFile.name}` : entry ? 'PDF: keeping the current file' : 'PDF: none yet' }),
+          );
+        };
+
+        const publish = el('button', { class: 'btn btn--primary', type: 'button', text: entry ? 'Publish changes' : 'Publish resource' }) as HTMLButtonElement;
+        publish.addEventListener('click', async () => {
+          err.textContent = '';
+          if (!state.title.trim() || !state.description.trim() || !state.slug) { err.textContent = 'Title, description and web address are required.'; return; }
+          if (!entry && !pdfFile) { err.textContent = 'Please add the PDF.'; return; }
+          publish.disabled = true;
+          try {
+            let pdf = null, cover = null;
+            if (pdfFile) { setStatus('<strong>Uploading</strong> the PDF…', 10, { spinner: true }); const fd = new FormData(); fd.append('file', pdfFile); fd.append('kind', 'pdf'); pdf = await api<{ sha: string; name: string }>('blob', { method: 'POST', body: fd }); }
+            if (coverFile) { setStatus('<strong>Uploading</strong> the cover image…', 20, { spinner: true }); const fd = new FormData(); fd.append('file', coverFile); fd.append('kind', 'image'); cover = await api<{ sha: string; name: string; type: string }>('blob', { method: 'POST', body: fd }); }
+            setStatus('<strong>Saving</strong> to the site…', 30, { spinner: true });
+            const result = await api<{ commit: string; branch: string; url?: string; slug: string }>('resource', { method: 'POST', body: JSON.stringify({ ...state, pdf, cover, removeCover, existing: !!entry }) });
+            dirty = 0;
+            track(result);
+            renderResources();
+          } catch (e) { err.textContent = (e as Error).message; hideStatus(); }
+          publish.disabled = false;
+        });
+
+        const remove = entry ? el('button', { class: 'ad-danger', type: 'button', text: 'Remove this resource' }) : null;
+        remove?.addEventListener('click', async () => {
+          if (!confirm(`Remove “${state.title}” and its PDF from the site? This can be undone by Dana, but the link will stop working.`)) return;
+          try { setStatus('<strong>Removing</strong>…', 30, { spinner: true }); const r = await api<{ commit: string; branch: string; url?: string }>('resource', { method: 'DELETE', body: JSON.stringify({ slug: state.slug }) }); dirty = 0; track(r); renderResources(); }
+          catch (e) { err.textContent = (e as Error).message; hideStatus(); }
+        });
+
+        const slugField = input('slug', 'Web address', 'Made from the title. Lowercase words with hyphens.');
+        if (entry) { ($('input', slugField) as HTMLInputElement).readOnly = true; ($('.hint', slugField) as HTMLElement).textContent = 'Fixed once published, so links keep working.'; }
+
+        const form = el('div', { class: 'ad-form' },
+          input('title', 'Title', 'Short and specific. Shows on the card.'),
+          slugField,
+          input('description', 'Description', 'One or two sentences: what it is and who it’s for.', 'textarea'),
+          el('div', { class: 'field' }, el('label', { for: 'rf-topic', text: 'Topic' }), topic),
+          drop('pdf', entry ? 'Replace the PDF (optional)' : 'Add the PDF', 'application/pdf', entry ? 'Click or drop a file here. Up to 4 MB.' : 'Click or drop a PDF here. Up to 4 MB.', (f) => { pdfFile = f; }),
+          drop('image', 'Cover image (optional)', 'image/jpeg,image/png,image/webp', state.cover ? `Current: ${state.cover.split('/').pop()}. Drop a new one to replace it.` : 'Portrait works best, about 800 × 1000 px. JPG, PNG or WebP up to 2 MB.', (f) => { coverFile = f; removeCover = false; }),
+          state.cover ? el('button', { class: 'ad-list-rm', type: 'button', text: 'Remove the current cover', onclick: (e: Event) => { removeCover = true; coverFile = null; (e.target as HTMLElement).remove(); paint(); } }) : null,
+          input('publishedDate', 'Date', 'Newest shows first.', 'date'),
+          el('label', { class: 'ad-check' }, featured, 'Feature on the home page'),
+          input('body', 'Notes (optional)', 'Longer notes shown on the resource’s own page.', 'textarea'),
+          err,
+          el('div', { class: 'ad-actions' }, publish, el('button', { class: 'btn btn--secondary', type: 'button', text: 'Cancel', onclick: () => { dirty = 0; renderResources(); } }), remove),
+        );
+        form.addEventListener('input', () => { dirty = 1; });
+        paint();
+        view.replaceChildren(
+          el('div', { class: 'ad-h' }, el('div', {}, el('h2', { text: entry ? 'Edit resource' : 'Add a resource' }), el('p', { text: 'Fill this in, add the PDF, press Publish. The site rebuilds itself in a couple of minutes.' }))),
+          el('div', { class: 'ad-split' }, form, el('div', { class: 'ad-split__side' }, preview)),
+        );
+        $('#rf-title').focus();
+      }
+
+      // ---------- Collections (testimonials, announcements, outreach) ----------
+      async function renderCollection(name: string) {
+        const col = COLLECTIONS.find((c) => c.name === name);
+        if (!col) throw new Error('Unknown section.');
+        const my = viewSeq;
+        const { entries } = await api<{ entries: Entry[] }>(`collection?name=${name}`);
+        if (my !== viewSeq) return;
+        if (col.sortBy) entries.sort((a, b) => { const x = a.data[col.sortBy!], y = b.data[col.sortBy!]; const r = typeof x === 'number' && typeof y === 'number' ? x - y : String(x ?? '').localeCompare(String(y ?? '')); return col.sortDesc ? -r : r; });
+        const list = el('div', { class: 'ad-list' });
+        for (const e of entries) list.append(el('button', { class: 'ad-row', type: 'button', onclick: () => renderEntryForm(col, e) },
+          el('div', {}, el('div', { class: 'ad-row__title', text: String(e.data[col.titleField] || e.file) }), el('div', { class: 'ad-row__sub', text: (col.subtitleFields || []).map((f) => e.data[f]).filter(Boolean).join(' · ') })),
+          el('span', { class: 'ad-row__edit', text: 'Edit →' })));
+        view.replaceChildren(
+          el('div', { class: 'ad-h' }, el('div', {}, el('h2', { text: col.label }), el('p', { text: col.fields[0].hint || '' })), el('button', { class: 'btn btn--primary', type: 'button', text: `+ Add ${col.singular}`, onclick: () => renderEntryForm(col) })),
+          entries.length ? list : el('p', { class: 'ad-empty', text: `Nothing here yet. Add the first ${col.singular}.` }),
+        );
+      }
+
+      function fieldControl(f: Field, value: unknown, onChange: (v: unknown) => void): HTMLElement {
+        const id = `f-${f.name}-${Math.random().toString(36).slice(2, 6)}`;
+        let ctrl: HTMLElement;
+        if (f.type === 'select') { ctrl = el('select', { id }, ...(f.options || []).map((o) => el('option', { value: o, selected: o === value, text: o }))); ctrl.addEventListener('change', () => onChange((ctrl as HTMLSelectElement).value)); }
+        else if (f.type === 'boolean') { const c = el('input', { type: 'checkbox', id, checked: !!value }); c.addEventListener('change', () => onChange((c as HTMLInputElement).checked)); return el('label', { class: 'ad-check' }, c, f.label); }
+        else if (f.type === 'textarea') { ctrl = el('textarea', { id, rows: 4 }); (ctrl as HTMLTextAreaElement).value = String(value ?? ''); ctrl.addEventListener('input', () => onChange((ctrl as HTMLTextAreaElement).value)); }
+        else { ctrl = el('input', { id, type: f.type === 'number' ? 'number' : f.type === 'date' ? 'date' : 'text' }); (ctrl as HTMLInputElement).value = String(value ?? ''); ctrl.addEventListener('input', () => onChange((ctrl as HTMLInputElement).value)); }
+        return el('div', { class: 'field' }, el('label', { for: id, text: f.label + (f.required ? '' : ' (optional)') }), ctrl, f.hint ? el('span', { class: 'hint', text: f.hint }) : null);
+      }
+
+      function renderEntryForm(col: Collection, entry?: Entry) {
+        const data: Record<string, unknown> = { ...(entry?.data || {}) };
+        for (const f of col.fields) if (data[f.name] === undefined && f.default !== undefined) data[f.name] = f.default;
+        if (!entry) for (const f of col.fields) if (f.type === 'date' && !data[f.name]) data[f.name] = today();
+        let body = entry?.body || '';
+        const err = el('p', { class: 'ad-error' });
+        const save = el('button', { class: 'btn btn--primary', type: 'button', text: entry ? 'Publish changes' : `Publish ${col.singular}` }) as HTMLButtonElement;
+        save.addEventListener('click', async () => {
+          err.textContent = '';
+          for (const f of col.fields) if (f.required && (data[f.name] === undefined || data[f.name] === '')) { err.textContent = `${f.label} is required.`; return; }
+          save.disabled = true;
+          try { setStatus('<strong>Saving</strong>…', 30, { spinner: true }); const r = await api<{ commit: string; branch: string; url?: string }>('entry', { method: 'PUT', body: JSON.stringify({ collection: col.name, file: entry?.file, data, body }) }); dirty = 0; track(r); renderCollection(col.name); }
+          catch (e) { err.textContent = (e as Error).message; hideStatus(); }
+          save.disabled = false;
+        });
+        const remove = entry ? el('button', { class: 'ad-danger', type: 'button', text: `Remove this ${col.singular}` }) : null;
+        remove?.addEventListener('click', async () => {
+          if (!confirm(`Remove “${entry!.data[col.titleField]}” from the site?`)) return;
+          try { setStatus('<strong>Removing</strong>…', 30, { spinner: true }); const r = await api<{ commit: string; branch: string; url?: string }>('entry', { method: 'DELETE', body: JSON.stringify({ collection: col.name, file: entry!.file }) }); dirty = 0; track(r); renderCollection(col.name); }
+          catch (e) { err.textContent = (e as Error).message; hideStatus(); }
+        });
+        const form = el('div', { class: 'ad-form' },
+          ...col.fields.map((f) => fieldControl(f, data[f.name], (v) => { data[f.name] = v; dirty = 1; })),
+          col.hasBody ? (() => { const t = el('textarea', { rows: 5 }) as HTMLTextAreaElement; t.value = body; t.addEventListener('input', () => { body = t.value; dirty = 1; }); return el('div', { class: 'field' }, el('label', { text: col.bodyLabel || 'Details' }), t); })() : null,
+          err,
+          el('div', { class: 'ad-actions' }, save, el('button', { class: 'btn btn--secondary', type: 'button', text: 'Cancel', onclick: () => { dirty = 0; renderCollection(col.name); } }), remove),
+        );
+        view.replaceChildren(el('div', { class: 'ad-h' }, el('div', {}, el('h2', { text: entry ? `Edit ${col.singular}` : `Add ${col.singular}` }))), el('div', { class: 'ad-split' }, form));
+        ($('input, textarea, select', form) as HTMLElement)?.focus();
+      }
+
+      // ---------- Page text editor ----------
+      interface PageState { id: string; file: string; path: string; data: Json; baseline: string; values: Map<string, unknown>; fields: Map<string, HTMLElement>; replaced: Set<string> }
+      let page: PageState | null = null;
+      let frame: HTMLIFrameElement | null = null;
+
+      async function renderPages() {
+        const picker = el('select', {}, ...PAGES.map((p) => el('option', { value: p.id, text: p.label })));
+        const fields = el('div', { class: 'ad-fields' });
+        frame = el('iframe', { title: 'Live preview of the page' }) as HTMLIFrameElement;
+        const frameWrap = el('div', { class: 'ad-frame' }, frame, el('span', { class: 'ad-frame__hint', text: 'Click any text in the preview to edit it' }));
+        view.replaceChildren(
+          el('div', { class: 'ad-h' }, el('div', {}, el('h2', { text: 'Page text' }), el('p', { text: 'Pick a page, then change any text on the left or click it in the preview. Type and watch it change. Press Publish when you’re happy.' }))),
+          el('div', { class: 'ad-pagebar' }, el('label', { class: 'label', text: 'Page' }), picker),
+          el('div', { class: 'ad-split ad-split--wide' }, fields, el('div', { class: 'ad-split__side' }, frameWrap)),
+        );
+        picker.addEventListener('change', () => loadPage((picker as HTMLSelectElement).value, fields));
+        const initial = PAGES.find((p) => p.id === location.hash.replace('#pages/', '')) ? location.hash.replace('#pages/', '') : 'home';
+        (picker as HTMLSelectElement).value = initial;
+        await loadPage(initial, fields);
+      }
+
+      async function loadPage(id: string, fieldsRoot: HTMLElement, force = false) {
+        if (page && dirty && !force && !confirm('You have unsaved changes on this page. Switch anyway?')) { ($('.ad-pagebar select') as HTMLSelectElement).value = page.id; return; }
+        const def = PAGES.find((p) => p.id === id)!;
+        dirty = 0; hideSaveBar();
+        location.hash = `pages/${id}`;
+        fieldsRoot.replaceChildren(el('p', { class: 'ad-empty', text: 'Loading…' }));
+        const my = viewSeq;
+        const f = await api<{ data: Json; sha: string }>(`file?path=${encodeURIComponent(def.file)}`);
+        if (my !== viewSeq) return;
+        page = { id, file: def.file, path: def.path, data: f.data, baseline: JSON.stringify(f.data), values: new Map(), fields: new Map(), replaced: new Set() };
+        buildFields(fieldsRoot);
+        if (frame && frame.src !== location.origin + def.path) { frame.src = def.path; } else if (frame) { replayIntoPreview(); }
+      }
+
+      function buildFields(root: HTMLElement) {
+        root.replaceChildren();
+        const p = page!;
+        for (const [section, value] of Object.entries(p.data)) {
+          const body = el('div', { class: 'ad-group__body' });
+          if (value && typeof value === 'object' && !Array.isArray(value)) { for (const [k, v] of Object.entries(value)) renderNode(body, k, v, [section, k]); }
+          else renderNode(body, section, value, [section]);
+          root.append(el('details', { class: 'ad-group', open: true }, el('summary', { text: humanize(section) }), body));
+        }
+        const note = PAGES.find((x) => x.id === p.id)?.note; if (note) root.prepend(el('p', { class: 'ad-note', text: note }));
+      }
+
+      function renderNode(parent: HTMLElement, label: string, value: unknown, path: string[]) {
+        const key = path.join('.');
+        if (typeof value === 'string' || typeof value === 'number') { parent.append(scalarField(label, value, path)); return; }
+        if (typeof value === 'boolean') { const c = el('input', { type: 'checkbox', checked: value }); c.addEventListener('change', () => setValue(path, (c as HTMLInputElement).checked)); parent.append(el('label', { class: 'ad-check' }, c, humanize(label))); return; }
+        if (Array.isArray(value)) {
+          const wrap = el('div', { class: 'ad-sub' });
+          const head = el('div', { class: 'ad-sub__title' }, el('span', { text: humanize(label) }), el('span', { text: `${value.length} item${value.length === 1 ? '' : 's'}` }));
+          wrap.append(head);
+          value.forEach((item, i) => {
+            const itemWrap = el('div', { class: 'ad-sub' });
+            if (typeof item === 'object' && item) { for (const [k, v] of Object.entries(item)) renderNode(itemWrap, k, v, [...path, String(i), k]); }
+            else renderNode(itemWrap, `${humanize(label)} ${i + 1}`, item, [...path, String(i)]);
+            itemWrap.append(el('button', { class: 'ad-list-rm', type: 'button', text: 'Remove', onclick: () => { const arr = getValue(path) as unknown[]; arr.splice(i, 1); page!.replaced.add(path[0]); markDirtyStructure(); rebuild(); } }));
+            wrap.append(itemWrap);
+          });
+          wrap.append(el('button', { class: 'ad-list-add', type: 'button', text: `+ Add ${humanize(label).toLowerCase().replace(/s$/, '')}`, onclick: () => { const arr = getValue(path) as unknown[]; const tmpl = arr[arr.length - 1]; arr.push(typeof tmpl === 'object' && tmpl ? Object.fromEntries(Object.entries(tmpl).map(([k, v]) => [k, typeof v === 'number' ? 0 : ''])) : ''); page!.replaced.add(path[0]); markDirtyStructure(); rebuild(); } }));
+          parent.append(wrap);
+          return;
+        }
+        if (value && typeof value === 'object') {
+          const sub = el('div', { class: 'ad-sub' }, el('div', { class: 'ad-sub__title' }, el('span', { text: humanize(label) })));
+          for (const [k, v] of Object.entries(value)) renderNode(sub, k, v, [...path, k]);
+          parent.append(sub);
+        }
+        void key;
+      }
+
+      function scalarField(label: string, value: string | number, path: string[]): HTMLElement {
+        const key = path.join('.');
+        const long = typeof value === 'string' && (value.length > 70 || value.includes('\n'));
+        const ctrl = long ? el('textarea', { rows: Math.min(8, 2 + Math.ceil(String(value).length / 80)) }) : el('input', { type: typeof value === 'number' ? 'number' : 'text' });
+        (ctrl as HTMLInputElement).value = String(value);
+        const wrap = el('div', { class: 'ad-field', 'data-key': key }, el('label', { text: humanize(label.replace(/\.\d+$/, '')) }), ctrl);
+        ctrl.addEventListener('input', () => {
+          const raw = (ctrl as HTMLInputElement).value;
+          setValue(path, typeof value === 'number' ? Number(raw) : raw);
+          wrap.classList.toggle('is-dirty', JSON.stringify(getValue(path)) !== JSON.stringify(baselineValue(path)));
+        });
+        page!.fields.set(key, wrap);
+        return wrap;
+      }
+
+      function getValue(path: string[]): unknown { let cur: unknown = page!.data; for (const s of path) cur = (cur as Record<string, unknown>)?.[s]; return cur; }
+      function baselineValue(path: string[]): unknown { let cur: unknown = JSON.parse(page!.baseline); for (const s of path) cur = (cur as Record<string, unknown>)?.[s]; return cur; }
+      function setValue(path: string[], v: unknown) {
+        let cur = page!.data as Record<string, unknown>;
+        for (let i = 0; i < path.length - 1; i++) cur = cur[path[i]] as Record<string, unknown>;
+        cur[path[path.length - 1]] = v;
+        pushToPreview(`${page!.id}.${path.join('.')}`, v);
+        refreshDirty();
+      }
+      function markDirtyStructure() { refreshDirty(); }
+      function rebuild() { const root = $('.ad-fields'); if (root) buildFields(root); }
+      function refreshDirty() {
+        const p = page!;
+        const changed = countChanges(JSON.parse(p.baseline), p.data);
+        dirty = changed;
+        if (changed) showSaveBar(changed, savePage, discardPage); else hideSaveBar();
+      }
+      function countChanges(a: unknown, b: unknown): number {
+        if (Array.isArray(a) || Array.isArray(b)) { if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return 1; return a.reduce((n: number, x, i) => n + countChanges(x, b[i]), 0); }
+        if (a && b && typeof a === 'object' && typeof b === 'object') return Object.keys({ ...(a as object), ...(b as object) }).reduce((n, k) => n + countChanges((a as Json)[k], (b as Json)[k]), 0);
+        return JSON.stringify(a) === JSON.stringify(b) ? 0 : 1;
+      }
+      function discardPage() { if (!confirm('Throw away your unsaved changes on this page?')) return; loadPage(page!.id, $('.ad-fields'), true); }
+      async function savePage() {
+        const p = page!;
+        const base = JSON.parse(p.baseline) as Json;
+        const edits: { key: string; value: unknown }[] = [];
+        const replace: Json = {};
+        for (const section of Object.keys(p.data)) {
+          if (p.replaced.has(section) || countChanges(base[section], p.data[section]) && (Array.isArray(p.data[section]))) { replace[section] = p.data[section]; continue; }
+          collectEdits(base[section], p.data[section], [section], edits);
+        }
+        try {
+          setStatus('<strong>Saving</strong> your changes…', 30, { spinner: true });
+          const r = await api<{ commit: string; branch: string; url?: string; data: Json }>('file', { method: 'PUT', body: JSON.stringify({ path: p.file, page: p.id, edits, replace }) });
+          p.data = r.data; p.baseline = JSON.stringify(r.data); p.replaced.clear(); dirty = 0; hideSaveBar();
+          rebuild();
+          track(r, () => { if (frame) frame.src = frame.src; });
+        } catch (e) { setStatus(`<strong>Couldn’t save.</strong> ${esc((e as Error).message)}`, 0, { closable: true }); }
+      }
+      function collectEdits(a: unknown, b: unknown, path: string[], out: { key: string; value: unknown }[]) {
+        if (b && typeof b === 'object' && !Array.isArray(b)) { for (const k of Object.keys(b)) collectEdits((a as Json)?.[k], (b as Json)[k], [...path, k], out); return; }
+        if (JSON.stringify(a) !== JSON.stringify(b)) out.push({ key: path.join('.'), value: b });
+      }
+
+      // --- preview bridge (same-origin iframe: we reach in directly, no postMessage needed) ---
+      function pushToPreview(key: string, v: unknown) {
+        const doc = frame?.contentDocument; if (!doc) return;
+        doc.querySelectorAll<HTMLElement>(`[data-edit="${CSS.escape(key)}"]`).forEach((n) => { n.innerHTML = esc(String(v)).replace(/\n/g, '<br>'); });
+      }
+      function replayIntoPreview() {
+        const p = page; if (!p) return;
+        const base = JSON.parse(p.baseline) as Json; const edits: { key: string; value: unknown }[] = [];
+        for (const s of Object.keys(p.data)) collectEdits(base[s], p.data[s], [s], edits);
+        for (const e of edits) pushToPreview(`${p.id}.${e.key}`, e.value);
+      }
+      function wirePreview() {
+        const doc = frame?.contentDocument; if (!doc || !doc.body) return;
+        if (!doc.getElementById('ad-preview-style')) {
+          const st = doc.createElement('style'); st.id = 'ad-preview-style';
+          st.textContent = `[data-edit]{cursor:text;outline:1px dashed rgba(45,69,200,.35);outline-offset:2px;transition:outline-color .15s}[data-edit]:hover{outline:2px solid #2D45C8;outline-offset:2px}[data-edit].ad-hit{outline:2px solid #C49A5F}[data-reveal]{opacity:1!important;transform:none!important}`;
+          doc.head.append(st);
+        }
+        doc.addEventListener('click', (e) => {
+          const t = e.target as HTMLElement;
+          const hit = t.closest('[data-edit]') as HTMLElement | null;
+          if (t.closest('a, button, form, [data-download], [data-menu-toggle]')) { e.preventDefault(); e.stopPropagation(); }
+          if (!hit) return;
+          e.preventDefault(); e.stopPropagation();
+          const key = hit.getAttribute('data-edit')!;
+          const [pid, ...rest] = key.split('.');
+          const focusField = () => { const f = page?.fields.get(rest.join('.')); if (!f) return; f.closest('details')?.setAttribute('open', ''); f.scrollIntoView({ behavior: 'smooth', block: 'center' }); f.classList.remove('is-flash'); void f.offsetWidth; f.classList.add('is-flash'); ($('input, textarea', f) as HTMLElement)?.focus(); doc.querySelectorAll('.ad-hit').forEach((n) => n.classList.remove('ad-hit')); hit.classList.add('ad-hit'); };
+          if (page && pid !== page.id) { const sel = $('.ad-pagebar select') as HTMLSelectElement; if (!PAGES.some((x) => x.id === pid)) return; sel.value = pid; loadPage(pid, $('.ad-fields')).then(focusField); }
+          else focusField();
+        }, true);
+        doc.addEventListener('submit', (e) => e.preventDefault(), true);
+        replayIntoPreview();
+      }
+      document.addEventListener('load', (e) => { if (e.target === frame) wirePreview(); }, true);
+
+      // ---------- start ----------
+      boot().catch(() => showLogin());
+    </script>
+  </body>
+</html>

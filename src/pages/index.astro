@@ -1,5 +1,5 @@
 ---
-import { getCollection, getEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import AuralisFeed from '../components/AuralisFeed.astro';
@@ -9,12 +9,13 @@ import ResourceCard from '../components/ResourceCard.astro';
 import NewsletterForm from '../components/NewsletterForm.astro';
 import BarbershopBadge from '../components/BarbershopBadge.astro';
 import SectionHead from '../components/SectionHead.astro';
-import playedWith from '../data/played-with.json';
+import T from '../components/T.astro';
 import stageBlue from '../assets/photos/stage-blue.jpg';
 import bwStars from '../assets/photos/bw-stars.jpg';
 import { SITE, fmtDate } from '../lib/site';
+import { copy } from '../lib/copy';
 
-const settings = (await getEntry('settings', 'site'))!.data;
+const c = copy.home;
 const resources = (await getCollection('resources')).sort((a, b) => b.data.publishedDate.getTime() - a.data.publishedDate.getTime());
 const latest = resources.find((r) => r.data.featured) ?? resources[0];
 const announcements = (await getCollection('announcements')).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
@@ -29,8 +30,8 @@ const announcement = announcements[0];
     <div class="hero__shade" aria-hidden="true"></div>
     <div class="hero__inner">
       <div class="hero__top">
-        <span>{settings.heroEyebrow}</span>
-        <span class="hero__top-right">Jacobs School of Music · Indiana University</span>
+        <T k="home.hero.eyebrow" />
+        <T k="home.hero.topRight" class="hero__top-right" />
       </div>
       <div class="hero__lockup">
         <div class="hero__name-row">
@@ -38,13 +39,13 @@ const announcement = announcements[0];
           <h1 class="hero__name"><span>Sean</span><span>Dobbins</span></h1>
         </div>
         <div class="hero__rule" aria-hidden="true"></div>
-        <p class="hero__tagline">{settings.heroTagline}</p>
+        <T k="home.hero.tagline" as="p" class="hero__tagline" />
       </div>
       <div class="hero__bottom">
-        <span class="hero__place">Detroit · Bloomington</span>
+        <T k="home.hero.place" class="hero__place" />
         <div class="hero__actions">
-          <a href="/music" class="btn btn--primary">Listen</a>
-          <a href="/contact" class="btn btn--secondary">Book Sean</a>
+          <a href="/music" class="btn btn--primary" data-edit="home.hero.listen">{c.hero.listen}</a>
+          <a href="/contact" class="btn btn--secondary" data-edit="home.hero.book">{c.hero.book}</a>
         </div>
       </div>
     </div>
@@ -53,15 +54,15 @@ const announcement = announcements[0];
   <!-- Philosophy -->
   <section class="creed stage">
     <div class="container creed__inner">
-      <p class="creed__title display-2" data-reveal>{settings.heroTitle}</p>
-      <p class="voice creed__quote" data-reveal style="--reveal-delay:120ms">“{settings.heroPhilosophy}”<span class="label creed__who">Sean, to a student</span></p>
+      <T k="home.creed.title" as="p" class="creed__title display-2" data-reveal />
+      <p class="voice creed__quote" data-reveal style="--reveal-delay:120ms">“<T k="home.creed.quote" />”<T k="home.creed.who" class="label creed__who" /></p>
     </div>
   </section>
 
   {announcement && (
     <a href={announcement.data.link ?? '/gigs'} class="ticker" aria-label={`Announcement: ${announcement.data.title}`}>
       <div class="container container--wide ticker__inner">
-        <span class="label">Latest</span>
+        <T k="home.ticker.label" class="label" />
         <span class="ticker__title">{announcement.data.title}</span>
         <span class="ticker__date small">{fmtDate(announcement.data.date)}</span>
         <span class="arrow" aria-hidden="true">→</span>
@@ -72,9 +73,9 @@ const announcement = announcements[0];
   <!-- Next gig -->
   <section class="section">
     <div class="container">
-      <SectionHead num="01" title="Next up" blurb="Where to hear the band next. Every date, with add-to-calendar, is on the gigs page." />
+      <SectionHead numKey="home.next.num" titleKey="home.next.title" blurbKey="home.next.blurb" />
       <AuralisFeed limit={3} />
-      <p class="section__more" data-reveal><a href="/gigs" class="link">All dates <span class="arrow">→</span></a></p>
+      <p class="section__more" data-reveal><a href="/gigs" class="link"><T k="home.next.more" /> <span class="arrow">→</span></a></p>
     </div>
   </section>
 
@@ -85,10 +86,10 @@ const announcement = announcements[0];
         <Image src={bwStars} alt="Sean Dobbins at the drums, black and white. Photo: Mark Sheldon." widths={[600, 1000, 1400]} sizes="(min-width: 900px) 46vw, 100vw" />
       </div>
       <div class="bio-teaser__copy" data-reveal>
-        <p class="label">About</p>
-        <h2 class="display-2">Detroit's<br />drum chair</h2>
-        <p class="lede">{settings.shortBio}</p>
-        <a href="/about" class="link">Read the full bio <span class="arrow">→</span></a>
+        <T k="home.bio.label" as="p" class="label" />
+        <T k="home.bio.title" as="h2" class="display-2" />
+        <T k="home.bio.text" as="p" class="lede" />
+        <a href="/about" class="link"><T k="home.bio.more" /> <span class="arrow">→</span></a>
       </div>
     </div>
   </section>
@@ -96,27 +97,27 @@ const announcement = announcements[0];
   <!-- Played with -->
   <section class="section--tight played dark">
     <div class="container container--wide">
-      <p class="label played__label" data-reveal>Performed, toured and recorded with</p>
+      <T k="home.played.label" as="p" class="label played__label" data-reveal />
     </div>
-    <Marquee items={playedWith} />
+    <Marquee items={copy.about.playedWith} keyPrefix="about.playedWith" />
   </section>
 
   <!-- Latest resource / Barbershop -->
   <section class="section">
     <div class="container">
-      <SectionHead num="02" title="From The Barbershop" blurb="Sean's studio at IU, and a library of free PDFs for drummers everywhere. One email unlocks all of them.">
+      <SectionHead numKey="home.barbershop.num" titleKey="home.barbershop.title" blurbKey="home.barbershop.blurb">
         <BarbershopBadge size={96} />
       </SectionHead>
       <div class="latest">
         {latest && <ResourceCard slug={latest.data.slug} title={latest.data.title} description={latest.data.description} topic={latest.data.topic} cover={latest.data.cover || undefined} featured />}
         <div class="latest__aside paper" data-reveal style="--reveal-delay:120ms">
-          <p class="label">Study with Sean</p>
-          <h3 class="display-3">Come sit in.</h3>
-          <p class="small muted">Jazz drumset at the Indiana University Jacobs School of Music. Audition info, what the studio is like, and a form if you want Sean to know you're coming.</p>
-          <a href="/barbershop#study" class="link">Prospective students <span class="arrow">→</span></a>
+          <T k="home.barbershop.asideLabel" as="p" class="label" />
+          <T k="home.barbershop.asideTitle" as="h3" class="display-3" />
+          <T k="home.barbershop.asideText" as="p" class="small muted" />
+          <a href="/barbershop#study" class="link"><T k="home.barbershop.asideLink" /> <span class="arrow">→</span></a>
         </div>
       </div>
-      <p class="section__more" data-reveal><a href="/barbershop/resources" class="link">All free resources <span class="arrow">→</span></a></p>
+      <p class="section__more" data-reveal><a href="/barbershop/resources" class="link"><T k="home.barbershop.more" /> <span class="arrow">→</span></a></p>
     </div>
   </section>
 

@@ -6,12 +6,15 @@ export const SITE = {
   repo: 'vocalsbydana/seandobbins',
 };
 
+import { copy } from './copy';
+
+/** Primary nav. Labels are editable copy (global.nav.*); routes are code. */
 export const NAV = [
-  { href: '/music', label: 'Music' },
-  { href: '/gigs', label: 'Gigs' },
-  { href: '/outreach', label: 'Outreach' },
-  { href: '/about', label: 'About' },
-  { href: '/barbershop', label: 'The Barbershop' },
+  { href: '/music', label: copy.global.nav.music, key: 'global.nav.music' },
+  { href: '/gigs', label: copy.global.nav.gigs, key: 'global.nav.gigs' },
+  { href: '/outreach', label: copy.global.nav.outreach, key: 'global.nav.outreach' },
+  { href: '/about', label: copy.global.nav.about, key: 'global.nav.about' },
+  { href: '/barbershop', label: copy.global.nav.barbershop, key: 'global.nav.barbershop' },
 ];
 
 export function fmtDate(d: Date, opts: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', year: 'numeric' }) {

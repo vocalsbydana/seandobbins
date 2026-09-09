@@ -1,5 +1,6 @@
 ---
 /** Hairline event row per the brand guide: Bebas month in Royal, day in Ink. */
+import { copy } from '../lib/copy';
 interface Props { start: Date | string; title: string; meta: string; cta?: string; href?: string; ics?: string; last?: boolean }
 const { start, title, meta, cta, href, ics, last = false } = Astro.props;
 const d = typeof start === 'string' ? new Date(start) : start;
@@ -13,7 +14,7 @@ const day = new Intl.DateTimeFormat('en-US', { day: '2-digit', timeZone: 'Americ
     <div class="event__meta">{meta}</div>
   </div>
   <div class="event__actions">
-    {ics && <a class="event__cal" href={ics} download title="Add to calendar">+ Cal</a>}
+    {ics && <a class="event__cal" href={ics} download title="Add to calendar" data-edit="global.gigsFeed.calendar">{copy.global.gigsFeed.calendar}</a>}
     {cta && (href ? <a class="link" href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noopener">{cta}</a> : <span class="event__free">{cta}</span>)}
   </div>
 </div>

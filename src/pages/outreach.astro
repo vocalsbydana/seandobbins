@@ -2,8 +2,11 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import SectionHead from '../components/SectionHead.astro';
+import T from '../components/T.astro';
 import { REGIONS } from '../content.config';
+import { copy } from '../lib/copy';
 
+const c = copy.outreach;
 const all = (await getCollection('outreach')).sort((a, b) => b.data.year - a.data.year || a.data.institution.localeCompare(b.data.institution));
 const groups = REGIONS.map((region) => ({ region, items: all.filter((o) => o.data.region === region) })).filter((g) => g.items.length);
 const countries = new Set(all.map((o) => o.data.country));
@@ -15,12 +18,12 @@ const description = 'Clinics, masterclasses, residencies and concerts Sean Dobbi
 <Base title="Outreach" description={description}>
   <section class="section">
     <div class="container">
-      <SectionHead num="Outreach" title="Clinics, masterclasses, residencies" as="h1" blurb="Sean builds teaching into every trip. The list grows as he adds dates in the CMS." />
+      <SectionHead numKey="outreach.page.num" titleKey="outreach.page.title" as="h1" blurbKey="outreach.page.blurb" />
       <ul role="list" class="stats" data-reveal>
-        <li><span class="stats__n" data-count={all.length}>{all.length}</span><span class="label">Engagements</span></li>
-        <li><span class="stats__n" data-count={cities.size}>{cities.size}</span><span class="label">Cities</span></li>
-        <li><span class="stats__n" data-count={countries.size}>{countries.size}</span><span class="label">Countries</span></li>
-        <li><span class="stats__n">{span}</span><span class="label">Years</span></li>
+        <li><span class="stats__n" data-count={all.length}>{all.length}</span><T k="outreach.stats.engagements" class="label" /></li>
+        <li><span class="stats__n" data-count={cities.size}>{cities.size}</span><T k="outreach.stats.cities" class="label" /></li>
+        <li><span class="stats__n" data-count={countries.size}>{countries.size}</span><T k="outreach.stats.countries" class="label" /></li>
+        <li><span class="stats__n">{span}</span><T k="outreach.stats.years" class="label" /></li>
       </ul>
       <nav class="regions" aria-label="Regions" data-reveal>
         {groups.map((g) => <a href={`#${g.region.toLowerCase().replace(/[^a-z]+/g, '-')}`}>{g.region} <span>{g.items.length}</span></a>)}
@@ -44,10 +47,10 @@ const description = 'Clinics, masterclasses, residencies and concerts Sean Dobbi
       ))}
       <div class="cta paper" data-reveal>
         <div>
-          <p class="label">Bring Sean to your school</p>
-          <p>Clinics, masterclasses and residencies for high school, college and community programs. Sean tailors each visit to the room: rhythm section basics, comping, brushes, or a full ensemble workshop.</p>
+          <T k="outreach.cta.label" as="p" class="label" />
+          <T k="outreach.cta.text" as="p" />
         </div>
-        <a href="/contact" class="btn btn--primary">Ask about a clinic</a>
+        <a href="/contact" class="btn btn--primary" data-edit="outreach.cta.button">{c.cta.button}</a>
       </div>
     </div>
   </section>
@@ -75,7 +78,6 @@ const description = 'Clinics, masterclasses, residencies and concerts Sean Dobbi
   .cta p:not(.label) { max-width: 60ch; margin-top: 6px; }
 </style>
 <script>
-  // Count-up on the stats when they scroll in.
   function countUp() {
     const els = document.querySelectorAll<HTMLElement>('[data-count]:not([data-done])');
     if (!els.length || matchMedia('(prefers-reduced-motion: reduce)').matches) return;

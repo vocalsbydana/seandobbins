@@ -1,0 +1,12 @@
+{
+  "page": {
+    "num": "Gigs",
+    "title": "Upcoming dates",
+    "blurb": "Hairline rows, no fuss. Tap + Cal to add a show to your calendar.",
+    "note": "Times are local to the venue. Dates from Sean's calendar via Auralis."
+  },
+  "newsletter": {
+    "heading": "Never miss a date",
+    "blurb": "Get new gigs in your inbox when they're announced. Occasional, never spammy."
+  }
+}

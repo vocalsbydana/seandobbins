@@ -1,201 +1,153 @@
 # Editing seandobbins.com — a guide for Sean
 
-Everything you need to change on the site lives in one place: **https://seandobbins.com/admin/**
-You never need to touch code. You log in with your GitHub account, click, type, upload, and press **Publish**. The site rebuilds itself in two or three minutes.
+Everything you can change on the site lives in one place: **https://seandobbins.com/admin**
+(the "Edit site" link in the footer of every page goes there too). One password, no accounts, nothing to install. Type, upload, press **Publish**. The site rebuilds itself in a couple of minutes and the editor tells you when your change is live.
 
-If anything looks wrong or you get stuck, email Dana. Nothing you do in the editor can break the site.
+If anything looks wrong, email Dana. Nothing you do in the editor can break the site, and every change is saved in the site's history so it can always be undone.
 
 ---
 
 ## 1. Logging in
 
-1. Go to **seandobbins.com/admin/** (the "Edit site" link in the site footer goes there too).
-2. Click **Login**. A GitHub window opens; approve it. You only do this the first time on each device.
+Go to **seandobbins.com/admin** and enter the password Dana gave you. You stay logged in for a month on that device.
 
-![Login screen](docs/handover/01-login.png)
+![Login](docs/handover/01-login.png)
 
-You land on the **Collections** screen. The left sidebar is everything you can edit:
+The tabs across the top are everything you can edit:
 
-![Collections](docs/handover/02-collections.png)
-
-| Section | What it controls |
+| Tab | What it changes |
 |---|---|
 | **Resources** | The free PDFs in The Barbershop library |
-| **Testimonials** | Quotes from students, parents and bandleaders (Barbershop page) |
-| **Outreach** | Clinics, masterclasses, residencies (Outreach page, grouped by region) |
-| **Announcements** | The blue strip on the home page under the video |
-| **Site settings** | Home page headline, philosophy line, featured video, short bio |
+| **Page text** | Any text on any page, with a live preview |
+| **Testimonials** | Quotes from students, parents and bandleaders |
+| **Announcements** | The blue strip on the home page |
+| **Outreach** | Clinics, masterclasses and residencies on the Outreach page |
 
 ---
 
-## 2. Adding a new resource (the main job)
+## 2. Adding a resource (the main job)
 
-1. Click **Resources** in the sidebar, then the dark **+ Resource** button.
-2. Fill in the form:
+Open **Resources** and press **+ Add a resource**.
 
-![New resource form](docs/handover/04-new-resource.png)
+![Resources](docs/handover/02-resources.png)
 
-   - **Title**: short and specific. Shows on the card. Example: *Brushes: The First Week*.
-   - **URL slug**: lowercase words joined with hyphens, e.g. `brushes-first-week`. This becomes the web address. Don't change it once it's published.
-   - **Description**: one or two sentences. What it is, who it's for.
-   - **Topic**: pick one from the list. Visitors filter by it.
-   - **PDF**: click **Choose a file**, then **Upload** (top right of the media window) and pick the PDF from your computer. Give the file a sensible name before uploading (`brushes-first-week.pdf`, not `final_v3 (2).pdf`).
-   - **Cover image** (optional): a portrait-shaped image (taller than wide, about 800 × 1000 pixels). Leave it empty and the site shows a blue placeholder.
-   - **Published date**: today, usually. Newest shows first.
-   - **Featured**: switch on for the one you want at the top of the home page.
-   - **More about this resource** (optional): longer notes shown on the resource's own page.
-3. Press **Publish** (top of the page) → **Publish now**.
-4. Wait two or three minutes, then check **seandobbins.com/barbershop/resources**.
+Fill in the form. The card on the right shows how it will look as you type.
 
-That's it. The email gate, the download link and the MailerLite tagging all happen automatically.
+![Add a resource](docs/handover/03-add-resource.png)
 
-Here is an existing resource open for editing, so you can see what a finished one looks like:
+1. **Title**: short and specific. The web address is made from it automatically.
+2. **Description**: one or two sentences. What it is, who it's for.
+3. **Topic**: pick one. Visitors filter the library by topic.
+4. **Add the PDF**: click the dashed box (or drag a file onto it). Up to 4 MB. If a PDF is bigger, export it again at a smaller size.
+5. **Cover image**: optional. A portrait-shaped photo or graphic, about 800 × 1000 pixels, JPG or PNG. Without one, the card shows a blue tile with the first letter of the title, which looks fine.
+6. **Date**: today, usually. Newest shows first.
+7. **Feature on the home page**: tick this for the one resource you want on the home page.
+8. Press **Publish resource**.
 
-![Editing an existing resource](docs/handover/08-edit-resource.png)
+The bar at the bottom shows what's happening: *Uploading → Saved to GitHub → Building on Vercel → Live*. Building usually takes one to three minutes. You can keep working or close the tab; the change is already saved.
 
-**To edit** a resource: click Resources, click the one you want, change what you need, press Publish.
-**To remove** one: open it and click **Delete entry**.
+**To change a resource**: open Resources, click the row, edit, press Publish changes. You can replace the PDF or cover from the same form.
+**To remove one**: open it and press *Remove this resource* at the bottom.
+
+The email gate, the download link and the MailerLite tagging are automatic.
 
 ---
 
-## 3. Testimonials
+## 3. Changing text on any page
 
-Sidebar → **Testimonials** → **+ Testimonial**.
+Open **Page text**, pick a page from the dropdown. The left column lists every piece of text on that page, grouped by section. The right side is the real page.
 
-![New testimonial](docs/handover/05-new-testimonial.png)
+![Page text](docs/handover/04-page-editor.png)
 
-- **Name** and **Role** ("Jacobs alum, 2019", "Parent, Ann Arbor Summer Jazz Program").
-- **Quote**: two or three sentences in the person's own words.
-- **Photo**: optional square headshot.
-- **Order**: lower numbers show first. Leave at 50 if you don't care.
+- **Type in any box** and the preview changes as you type.
+- **Click any text in the preview** and the editor jumps to that box.
+- Lists (the "played with" names, the discography, links) have **+ Add** and **Remove** buttons. Additions show on the site after publishing rather than in the preview.
+- Edited boxes are marked. Press **Publish changes** in the bar at the bottom, or **Discard** to throw them away.
+- The **Menu, footer & shared** page holds text that appears on every page: menu labels, footer, newsletter wording, the download pop-up.
 
-The site launched with three **placeholder** testimonials. Replace or delete them.
-
----
-
-## 4. Outreach
-
-Sidebar → **Outreach** → **+ Outreach entry**. One entry per visit.
-
-![New outreach entry](docs/handover/06-new-outreach.png)
-
-- **Institution**, **City** (e.g. "Bloomington, IN" or "Paris"), **Country**, **Year**.
-- **Region**: this decides which group it appears under on the page (Midwest, Europe, Asia & Pacific, and so on).
-- **Type**: Clinic, Masterclass, Residency, Concert, Faculty or Festival.
-- **Note**: one line, optional.
-
-Three entries are marked **SAMPLE — Replace me**. Delete them when you have real ones.
+Some things are deliberately not editable here: photos, layout, colours, the video and streaming links behind the Music page buttons (those are on the Music page's list), and the gig dates, which come from Sean's calendar. Ask Dana for those.
 
 ---
 
-## 5. Announcements
+## 4. Testimonials, announcements, outreach
 
-Sidebar → **Announcements** → **+ Announcement**. The newest one (by date) shows in the blue strip on the home page. **Link** is where it goes when clicked (`/gigs`, `/barbershop/resources`, or a full web address).
+Each of these tabs works the same way: a list, a **+ Add** button, and a short form.
 
----
+![Add a testimonial](docs/handover/05-add-testimonial.png)
 
-## 6. Site settings (home page)
-
-Sidebar → **Site settings** → **Home page**.
-
-![Site settings](docs/handover/07-settings.png)
-
-- **Hero tagline**: the italic line under the name on the home page. **Philosophy headline**: a few words for the blue band under the photo.
-- **Featured YouTube video ID**: the part after `v=` in a YouTube link. For `https://www.youtube.com/watch?v=abc123XYZ` the ID is `abc123XYZ`.
-- **Short bio**: two or three sentences for the home page.
-- **Booking email**: fill this in to show it on the contact page.
+- **Testimonials**: name, role ("Jacobs alum, 2019"), the quote, an optional headshot, and an order number (lower shows first). The three placeholder ones on the site should be replaced.
+- **Announcements**: title, date and a link. The newest one by date appears in the blue strip under the home page video.
+- **Outreach**: institution, city, country, region, year, type, one-line note. The region decides which group it appears under. The three entries marked *SAMPLE* should be deleted once real ones are in.
 
 ---
 
 ## Good to know
 
 - **Publish is the only button that matters.** Until you press it, nothing changes on the live site.
-- **Wait a few minutes** after publishing. If it still looks old, refresh the page.
-- **Images**: JPG or PNG, under 2 MB. Portrait for resource covers, square for headshots.
-- **PDFs**: anything up to about 20 MB is fine.
-- **Don't rename or delete files in the Media tab** unless you know nothing uses them.
-- Everything you publish is saved forever in the site's history, so mistakes can always be undone by Dana.
+- **Wait for "Live"** in the bottom bar, then refresh the site. If it says it's still building after ten minutes, tell Dana.
+- **Images**: JPG, PNG or WebP under 2 MB. **PDFs** under 4 MB.
+- **Apostrophes, ampersands and accents** are fine to type; they come out exactly as written.
+- Everything you publish is kept in the site's history forever, so mistakes can always be undone by Dana.
 
 ---
 ---
 
-# For Dana — setup and wiring
+# For Dana — setup and internals
+
+## How it works
+
+The editor follows the "repository is the database" pattern: there is no CMS server. Every Publish is a git commit made through the GitHub API to the branch the deployment was built from; Vercel rebuilds; the editor polls the live site's `<meta name="build-commit">` (baked in at build from `VERCEL_GIT_COMMIT_SHA`) and reports *committed → building → live* only when the served build carries the new commit. Ten minutes without a match produces a diagnosis (failed build, or a URL that deploys from a different branch). If the deployment's branch differs from the branch being written to, the bar says so.
+
+Pieces:
+
+- `src/pages/admin.astro`: the editor. Static page, client-side app, global styles on purpose.
+- `src/pages/api/admin/*`: `login`, `logout`, `session`, `file` (page copy read/apply-by-key), `collection` (list), `entry` (create/update/delete markdown entries), `blob` (stage an uploaded file as a git blob), `resource` (one commit with markdown + PDF + cover, or delete all three).
+- `src/lib/admin/auth.ts`: constant-time password check, HttpOnly SameSite=Lax session cookie derived from an HMAC of the password, origin check on mutating requests, failed-attempt rate limit.
+- `src/lib/admin/store.ts`: `GitHubStore` (Git Data API: blobs → tree → commit → ref) and `LocalStore` (working tree, dev only).
+- `src/lib/admin/schema.ts`: the editable surface. Pages map to `src/content/copy/*.json`; collections and the resource form are declared here. Adding a field to a collection means adding it here and to `src/content.config.ts`.
+- Page copy: every visible string is in `src/content/copy/<page>.json`, rendered through `<T k="page.section.key">` or an element with `data-edit="page.section.key"`. The live preview is the real page in a same-origin iframe; the editor updates matching `data-edit` elements as you type and listens for clicks to focus fields. Same-origin means no postMessage bridge and no scripts injected into public pages.
 
 ## One-time setup on Vercel
 
-1. Import the GitHub repo `vocalsbydana/seandobbins` into Vercel. Framework preset: **Astro**. Build command `npm run build`, output handled by the adapter. Node 22.
-2. **Environment variables** (Project → Settings → Environment Variables). Copy from `.env.example`:
-   - `SITE_URL` — the final domain, e.g. `https://seandobbins.com`.
-   - `DOWNLOAD_SECRET` — any long random string. Signs the unlock cookie and hashes PDF paths. Rotating it logs every visitor out of the library.
-   - `MAILERLITE_API_KEY`, `MAILERLITE_GROUP_DRUMMERS`, `MAILERLITE_GROUP_PROSPECTIVE`.
-   - `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL` (contact form; see below).
-   - `OAUTH_GITHUB_CLIENT_ID`, `OAUTH_GITHUB_CLIENT_SECRET` (CMS login; see below).
-3. Point the domain at Vercel. Update `base_url`, `site_url` and `display_url` in `public/admin/config.yml` and `Sitemap:` in `public/robots.txt` if the domain is not `seandobbins.com`.
+Environment variables (Project → Settings → Environment Variables), see `.env.example`:
 
-## CMS login (GitHub OAuth app)
+- `ADMIN_PASSWORD`: the shared password. Change it here to log everyone out.
+- `GITHUB_TOKEN`: see below.
+- `GITHUB_REPO`: `vocalsbydana/seandobbins`.
+- `DOWNLOAD_SECRET`: long random string (also used for the editor session).
+- Leave "Automatically expose System Environment Variables" on; the editor relies on `VERCEL_GIT_COMMIT_SHA` and `VERCEL_GIT_COMMIT_REF`.
+- Optional `CONTENT_BRANCH` if you ever want edits pinned to a branch other than the one deployed.
 
-Decap logs Sean in with GitHub. It needs an OAuth app, ideally registered under **Sean's** GitHub account (or a shared org) so it doesn't depend on yours.
+**GitHub token** (under your account for now; move it to Sean's once he has GitHub):
+GitHub → Settings → Developer settings → Personal access tokens → **Fine-grained tokens** → Generate. Repository access: *Only select repositories* → this repo. Permissions: **Contents: Read and write**. Nothing else. Set an expiry you're comfortable with (a year is fine; put a reminder in your calendar, because when it expires Publish will fail with a GitHub 401 in the bottom bar). Paste it into `GITHUB_TOKEN` on Vercel and redeploy.
 
-1. GitHub → Settings → Developer settings → OAuth Apps → **New OAuth App**.
-   - Homepage URL: `https://seandobbins.com`
-   - Authorization callback URL: `https://seandobbins.com/api/callback`
-2. Copy the Client ID and generate a Client Secret → Vercel env vars above.
-3. Sean's GitHub account must have **write** access to the repo (Settings → Collaborators).
-4. Test at `/admin/`. The flow is `/api/auth` → GitHub → `/api/callback` → token handed to the CMS window.
+## Notes and limits
 
-Saves commit straight to `main` (simple workflow). If you'd rather review Sean's edits as pull requests first, set `publish_mode: editorial_workflow` in `config.yml`; he then gets a Drafts → In review → Ready board.
-
-## MailerLite
-
-1. Integrations → Developer API → generate a token → `MAILERLITE_API_KEY`.
-2. Create two groups: **drummers** and **prospective-students**. Open each; the numeric ID in the URL is the group ID.
-3. Create custom subscriber fields (Subscribers → Fields): `name` exists already; add `source`, `first_resource`, `last_resource`, `program`, `entry_year`, `city`, `note`. Names must match exactly (lowercase).
-4. Turn on **double opt-in** if you want MailerLite to send the confirmation email (Settings → Subscribe settings). The site never sends mail itself.
-5. Free tier: 1,000 subscribers. Beyond that MailerLite is paid regardless of the site.
-
-Without the API key the gate still unlocks downloads (so the site never breaks) but records nobody; the function logs a warning.
-
-## Contact form (Resend)
-
-`/api/contact` sends via Resend's free tier (3,000 emails/month, 100/day). Create an account, verify the sending domain, create an API key, set `RESEND_API_KEY`, `CONTACT_TO_EMAIL` (Sean's inbox) and `CONTACT_FROM_EMAIL` (an address on the verified domain). Until set, the form shows "not set up yet". Alternatives with the same shape: Web3Forms, Formspree. Swap the fetch call in `src/pages/api/contact.ts`.
-
-## Auralis (gigs)
-
-`src/components/AuralisFeed.astro` is the placeholder. It reads `src/data/gigs.sample.json` and renders hairline event rows with an add-to-calendar `.ics` link each. Replace the data source with the Auralis embed or API; keep the `{ id, title, venue, city, start, end?, url?, cta? }` shape and everything else (home page "Next up", gigs page, calendar links) keeps working. Sample dates are fake.
-
-## Placeholders to replace
-
-- `src/content/settings/site.json` → `featuredYoutubeId` (currently a dummy ID).
-- `src/data/music.json` → video IDs, streaming links, discography.
-- `src/data/social.json` → profile URLs. Spotify is linked; the rest show dimmed with a "coming soon" tooltip until filled in. Set `showUnlinked` to false before launch to hide any still-empty icons. Logos are Simple Icons (CC0) in `src/data/social-icons.json`.
-- `src/data/jacobs.json` → verify the official IU links.
-- `src/pages/barbershop/index.astro` → the "How Sean teaches" draft copy (marked DRAFT COPY on the page).
-- `src/pages/about.astro` → one `[TODO]` in the bio: the "Southeastern Michigan …" organization name was cut off in the source.
-- Testimonials (3 placeholders) and Outreach (3 SAMPLE entries) → Sean, via the CMS.
-- The sixth photo (square profile with the Regal Tip stick) never made it into the repo; drop it into `src/assets/photos/` when you have it.
-- Spelling normalised from the source bio: Rodney Whitaker, Cyrus Chestnut, Johnnie Bassett. Change back if Sean prefers the originals.
-
-## How the email gate works (for debugging)
-
-1. Card/detail button has `data-download="<slug>"`. If the `barbershop_unlocked` cookie exists, the browser goes straight to `/api/download?slug=…`. Otherwise the modal opens.
-2. Modal → `POST /api/subscribe` (honeypot `hp`, in-memory rate limit per IP). On success the response sets the signed cookie (2 years) and the browser navigates to `/api/download`.
-3. `/api/download` verifies the HMAC, then 302s to `/files/<sha256(slug:DOWNLOAD_SECRET)[0:32]>.pdf`.
-4. `scripts/hash-pdfs.mjs` (runs as `prebuild`) copies `private/resources/*.pdf` to `public/files/<hash>.pdf`. `public/files` is git-ignored; it's regenerated on every build. Cards never contain the real path.
-
-A forged cookie bounces to the resource page with `?locked=1`, which reopens the modal.
+- **Uploads are capped at 4 MB per PDF and 2 MB per image** because Vercel functions cap request bodies at 4.5 MB. Bigger files would need an external store (Cloudflare R2 has a free 10 GB tier); not needed now.
+- **The first programmatic save of a file** may reformat it slightly (JSON re-indented, frontmatter quoted). Harmless; the diff looks bigger than the edit once.
+- **Rate limit and login attempts** are in-memory per function instance: good enough against casual abuse, not a security boundary. The password and the SameSite cookie are.
+- **Concurrent edits**: page-copy saves re-fetch the file and apply changes by key, so two people editing different fields don't clobber each other. If nothing can be applied, the editor asks to reload.
+- **Vercel Hobby limits**: each Publish is one build (a few minutes). Heavy editing days could approach the 100 builds/day soft limit; unlikely for this site.
 
 ## Local development
 
 ```
-cp .env.example .env      # fill in what you have; the site runs without any of it
-npm install
-npm run dev               # http://localhost:4321
-npx decap-server          # optional: CMS at /admin/ against the local files, no GitHub login
+cp .env.example .env
+# in .env: ADMIN_STORE=local  ADMIN_PASSWORD=anything  DOWNLOAD_SECRET=anything
+npm install && npm run dev      # http://localhost:4321/admin edits the working tree, no GitHub needed
 npm run build && npm run check
 ```
 
-## Ongoing-cost / dependence flags
+Note: in `astro dev`, writing a content file triggers a full page reload in the editor (Vite HMR). Production has no such reload.
 
-- Vercel Hobby: fine for this traffic. Serverless functions and build minutes are well within limits. Decap loads from unpkg (free CDN).
-- The GitHub OAuth app and Vercel project are the two things tied to an account. Put the OAuth app under Sean's GitHub; Vercel stays with you unless you transfer it.
-- Rotating `DOWNLOAD_SECRET` or MailerLite keys is the one maintenance task Sean cannot do alone.
+## Auralis (gigs)
+
+`src/components/AuralisFeed.astro` is the placeholder. It reads `src/data/gigs.sample.json` and renders hairline event rows with an add-to-calendar `.ics` link each. Replace the data source with the Auralis embed or API; keep the `{ id, title, venue, city, start, end?, url?, cta? }` shape.
+
+## Still placeholder
+
+- Discography rows (edit on the Music page in the editor).
+- Apple Music, Bandcamp and Instagram links (`src/data/social.json`; unlinked icons show dimmed until `showUnlinked` is set to false).
+- Three placeholder testimonials and three SAMPLE outreach entries (Sean, via the editor).
+- The sixth photo (square profile with the Regal Tip stick) is not in the repo yet.
+- MailerLite and Resend keys (see `.env.example`); without them the gate unlocks but records nobody and the contact form says it isn't set up.

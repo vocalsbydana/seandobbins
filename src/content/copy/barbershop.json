@@ -1,0 +1,59 @@
+{
+  "hero": {
+    "label": "Sub-brand · Education",
+    "title": "A weekly hang,\nnot a class.",
+    "lede": "The Barbershop is where Sean's students at IU meet, listen, argue, and play. Here it houses his teaching: the philosophy, the studio, the outreach, and a library of free resources for any drummer who wants them.",
+    "resources": "Free resources",
+    "study": "Study with Sean"
+  },
+  "philosophy": {
+    "num": "01",
+    "title": "How Sean teaches",
+    "lede": "Two rules. Serve the music. Keep the joy.",
+    "paragraphs": [
+      "Everything else in the studio hangs off those two. Time, touch, reading, vocabulary: they matter because they let you take care of the band. A drummer who makes the bass player comfortable, who hears the pianist's left hand and stays out of its way, who knows the melody of the tune they're playing, is a drummer who gets called back. That is the whole job, and it is a joyful one.",
+      "Lessons are built around the bandstand, not the practice room. Students transcribe, they play with records, they play with each other, and they play in public as early as Sean can get them there. Mistakes are information. Ego is noise.",
+      "The Barbershop itself is the weekly hang: the whole studio in one room, listening to something, arguing about it, and then playing it. Nobody is graded. Everybody plays."
+    ],
+    "quote": "You've got to make the band feel good before you make yourself sound good.",
+    "who": "Sean, to a student"
+  },
+  "testimonials": {
+    "num": "02",
+    "title": "From the studio",
+    "blurb": "Students, parents, and bandleaders."
+  },
+  "resources": {
+    "num": "03",
+    "title": "Free resources",
+    "blurb": "PDFs from the studio. Leave your email once and everything unlocks, forever.",
+    "more": "Browse the whole library"
+  },
+  "study": {
+    "num": "04",
+    "title": "Study with Sean at Jacobs",
+    "blurb": "Jazz drumset, Indiana University Jacobs School of Music, Bloomington.",
+    "text": "The Jacobs School offers Bachelor of Music, Master of Music, and Doctor of Music degrees in Jazz Studies, and drummers in the program study with Sean. Applications go through Jacobs, not through this site; the links below are the official ones.",
+    "links": [
+      { "label": "Jazz Studies at Jacobs", "url": "https://music.indiana.edu/departments/academic/jazz-studies/" },
+      { "label": "Audition requirements and dates", "url": "https://music.indiana.edu/admissions/auditions/" },
+      { "label": "How to apply", "url": "https://music.indiana.edu/admissions/how-to-apply/" },
+      { "label": "Sean's faculty page", "url": "https://music.indiana.edu/faculty/current/dobbins-sean.html" }
+    ]
+  },
+  "form": {
+    "label": "Interested? Tell Sean you're coming.",
+    "intro": "Not an application. It just lets Sean know who's out there, so he can say hello before audition day.",
+    "name": "Name",
+    "email": "Email",
+    "program": "Program",
+    "programs": ["Undergraduate (BM)", "Master's (MM)", "Doctoral (DM)", "Not sure yet"],
+    "year": "Hoping to start",
+    "yearPlaceholder": "Fall 2027",
+    "city": "Where are you now?",
+    "cityPlaceholder": "City, State",
+    "note": "Anything Sean should know?",
+    "button": "Send",
+    "success": "Got it. Sean will be in touch. Check your inbox to confirm your email."
+  }
+}

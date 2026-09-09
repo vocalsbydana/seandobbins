@@ -4,6 +4,7 @@ import Base from '../../../layouts/Base.astro';
 import ResourceCard from '../../../components/ResourceCard.astro';
 import SectionHead from '../../../components/SectionHead.astro';
 import Pole from '../../../components/Pole.astro';
+import T from '../../../components/T.astro';
 import { TOPICS } from '../../../content.config';
 
 const resources = (await getCollection('resources')).sort((a, b) => b.data.publishedDate.getTime() - a.data.publishedDate.getTime());
@@ -13,15 +14,15 @@ const description = 'Free PDF resources for jazz drummers from Sean Dobbins: tim
 <Base title="Free Resources" description={description}>
   <section class="section">
     <div class="container">
-      <SectionHead num="The Barbershop" title="Free resources" as="h1" blurb="PDFs from Sean's studio. Leave your email once and every download unlocks, on any page, forever." />
+      <SectionHead numKey="resources.library.num" titleKey="resources.library.title" as="h1" blurbKey="resources.library.blurb" />
       <div class="filters" role="group" aria-label="Filter by topic" data-reveal>
-        <button type="button" class="chip is-active" data-filter="all" aria-pressed="true">All <span class="chip__n">{resources.length}</span></button>
+        <button type="button" class="chip is-active" data-filter="all" aria-pressed="true"><T k="resources.library.all" /> <span class="chip__n">{resources.length}</span></button>
         {topics.map((t) => <button type="button" class="chip" data-filter={t} aria-pressed="false">{t} <span class="chip__n">{resources.filter((r) => r.data.topic === t).length}</span></button>)}
       </div>
       <div class="grid grid-3 rgrid" data-resource-grid>
         {resources.map((r, i) => <ResourceCard slug={r.data.slug} title={r.data.title} description={r.data.description} topic={r.data.topic} cover={r.data.cover || undefined} index={i} />)}
       </div>
-      <p class="rgrid__empty muted" hidden data-empty>Nothing in that topic yet.</p>
+      <T k="resources.library.empty" as="p" class="rgrid__empty muted" hidden data-empty />
       <div class="pole-row" aria-hidden="true"><Pole height={160} /></div>
     </div>
   </section>

@@ -2,6 +2,9 @@
 import Wordmark from './Wordmark.astro';
 import SocialIcons from './SocialIcons.astro';
 import { NAV } from '../lib/site';
+import T from './T.astro';
+import { copy } from '../lib/copy';
+const f = copy.global.footer;
 const year = new Date().getFullYear();
 ---
 <footer class="site-footer dark">
@@ -9,28 +12,28 @@ const year = new Date().getFullYear();
     <div class="site-footer__top">
       <div class="site-footer__brand">
         <Wordmark size={34} />
-        <p class="small muted">Drummer. Bandleader. Professor of Jazz Drumset at the Jacobs School of Music.<br />Detroit · Bloomington</p>
+        <p class="small muted"><T k="global.footer.tagline" /><br /><T k="global.footer.place" /></p>
       </div>
       <nav aria-label="Footer">
         <ul role="list" class="site-footer__nav">
-          {NAV.map((i) => <li><a href={i.href}>{i.label}</a></li>)}
-          <li><a href="/barbershop/resources">Free Resources</a></li>
-          <li><a href="/contact">Contact</a></li>
+          {NAV.map((i) => <li><a href={i.href} data-edit={i.key}>{i.label}</a></li>)}
+          <li><a href="/barbershop/resources" data-edit="global.footer.freeResources">{f.freeResources}</a></li>
+          <li><a href="/contact" data-edit="global.nav.contact">{copy.global.nav.contact}</a></li>
         </ul>
       </nav>
       <div class="site-footer__social">
-        <div class="label">Follow</div>
+        <T k="global.footer.follow" as="div" class="label" />
         <SocialIcons />
         <a href="/barbershop" class="site-footer__bs" aria-label="The Barbershop">
           <span class="bs-ring"><span></span></span>
-          <span class="bs-text">The Barbershop</span>
+          <T k="global.footer.barbershop" as="span" class="bs-text" />
         </a>
       </div>
     </div>
     <div class="site-footer__bottom">
-      <span>© {year} Sean Dobbins. All rights reserved.</span>
-      <span class="site-footer__credit">Photos: Jeff Dunn Jazz Photography, Mark Sheldon.</span>
-      <a href="/admin/" class="site-footer__admin" rel="nofollow">Edit site</a>
+      <span>© {year} Sean Dobbins. <T k="global.footer.rights" /></span>
+      <T k="global.footer.photoCredit" as="span" class="site-footer__credit" />
+      <a href="/admin" class="site-footer__admin" rel="nofollow" data-edit="global.footer.edit">{f.edit}</a>
     </div>
   </div>
 </footer>

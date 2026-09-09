@@ -1,0 +1,27 @@
+{
+  "page": {
+    "num": "Contact",
+    "title": "Book Sean",
+    "blurb": "Gigs, clinics, masterclasses, residencies, press. Short message, real details, and Sean will get back to you."
+  },
+  "facts": {
+    "basedLabel": "Based",
+    "based": "Bloomington, IN · Detroit, MI",
+    "bookingLabel": "Booking",
+    "bookingEmail": "",
+    "bookingFallback": "Use the form",
+    "studentsLabel": "Students",
+    "studentsLink": "Study with Sean at Jacobs"
+  },
+  "form": {
+    "name": "Name",
+    "email": "Email",
+    "emailPlaceholder": "you@venue.com",
+    "subject": "What's it about?",
+    "subjects": ["Booking a gig", "Clinic or masterclass", "Residency", "Press", "Something else"],
+    "message": "Message",
+    "messagePlaceholder": "Dates, venue, band size, budget if you have one.",
+    "button": "Send message",
+    "success": "Sent. Sean will be in touch."
+  }
+}

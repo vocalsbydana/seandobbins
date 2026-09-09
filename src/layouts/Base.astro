@@ -19,6 +19,9 @@ const canonical = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', Astro.si
 const ogPath = ogImage ?? `/og${Astro.url.pathname.replace(/\/$/, '') || '/home'}.png`;
 const og = new URL(ogPath, Astro.site);
 const fullTitle = title === SITE.name ? `${SITE.name} — Jazz Drummer` : `${title} · ${SITE.name}`;
+// Baked in at build so the /admin editor can verify which commit is live (see src/lib/admin).
+const buildCommit = process.env.VERCEL_GIT_COMMIT_SHA || import.meta.env.VERCEL_GIT_COMMIT_SHA || 'local';
+const buildBranch = process.env.VERCEL_GIT_COMMIT_REF || import.meta.env.VERCEL_GIT_COMMIT_REF || 'local';
 ---
 <!doctype html>
 <html lang="en">
@@ -33,6 +36,8 @@ const fullTitle = title === SITE.name ? `${SITE.name} — Jazz Drummer` : `${tit
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <meta name="theme-color" content="#0B0B14" />
+    <meta name="build-commit" content={buildCommit} />
+    <meta name="build-branch" content={buildBranch} />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={SITE.name} />
     <meta property="og:title" content={fullTitle} />

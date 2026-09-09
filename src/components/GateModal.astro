@@ -1,24 +1,27 @@
 ---
 /** One-time email gate for resources. Mounted once per page that has [data-download] buttons. */
+import T from './T.astro';
+import { copy } from '../lib/copy';
+const g = copy.global.gate;
 ---
 <div class="gate" id="gate" hidden>
   <div class="gate__backdrop" data-gate-close></div>
   <div class="gate__panel dark" role="dialog" aria-modal="true" aria-labelledby="gate-title" aria-describedby="gate-desc">
     <button type="button" class="gate__close" aria-label="Close" data-gate-close>×</button>
-    <div class="label">The Barbershop · Free resources</div>
-    <h2 id="gate-title" class="display-3">Once, and you're in.</h2>
-    <p id="gate-desc" class="gate__desc">Leave your email once and every PDF in the library unlocks, now and later. You'll get an occasional note from Sean; no spam, unsubscribe anytime.</p>
-    <form class="gate__form" novalidate>
+    <T k="global.gate.eyebrow" as="div" class="label" />
+    <T k="global.gate.title" as="h2" id="gate-title" class="display-3" />
+    <T k="global.gate.description" as="p" id="gate-desc" class="gate__desc" />
+    <form class="gate__form" novalidate data-unlocking={g.unlocking} data-downloading={g.downloading}>
       <div class="field">
-        <label for="gate-name">Name <span class="muted">(optional)</span></label>
+        <label for="gate-name"><T k="global.gate.nameLabel" /> <T k="global.gate.optional" class="muted" /></label>
         <input id="gate-name" type="text" name="name" autocomplete="name" />
       </div>
       <div class="field">
-        <label for="gate-email">Email</label>
+        <label for="gate-email" data-edit="global.gate.emailLabel">{g.emailLabel}</label>
         <input id="gate-email" type="email" name="email" autocomplete="email" required placeholder="you@venue.com" />
       </div>
       <label class="hp" aria-hidden="true">Leave this empty <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
-      <button class="btn btn--primary btn--block" type="submit">Unlock &amp; download</button>
+      <button class="btn btn--primary btn--block" type="submit" data-edit="global.gate.button">{g.button}</button>
       <p class="form-msg" role="alert"></p>
     </form>
   </div>
@@ -78,16 +81,17 @@
       const hp = (form.elements.namedItem('website') as HTMLInputElement).value;
       msg.textContent = '';
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { msg.textContent = 'Please enter a valid email.'; return; }
-      submit.disabled = true; submit.textContent = 'Unlocking…';
+      const label = submit.textContent || 'Unlock & download';
+      submit.disabled = true; submit.textContent = form.dataset.unlocking || 'Unlocking…';
       try {
         const res = await fetch('/api/subscribe', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email, name, hp, slug: currentSlug, source: 'resource' }) });
         const data = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(data.error || 'Something went wrong.');
-        submit.textContent = 'Downloading…';
-        setTimeout(() => { close(); go(currentSlug); submit.disabled = false; submit.textContent = 'Unlock & download'; }, 350);
+        submit.textContent = form.dataset.downloading || 'Downloading…';
+        setTimeout(() => { close(); go(currentSlug); submit.disabled = false; submit.textContent = label; }, 350);
       } catch (err) {
         msg.textContent = (err as Error).message || 'Something went wrong. Try again in a minute.';
-        submit.disabled = false; submit.textContent = 'Unlock & download';
+        submit.disabled = false; submit.textContent = label;
       }
     });
   }
