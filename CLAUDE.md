@@ -36,7 +36,7 @@ Type, three voices:
 
 Components: square corners, hairline rules, **one royal button per screen**. 8px grid. Radius 0 everywhere except the mark. Primary button Royal on light / Ivory on dark, hover to Stage. Secondary is an outline. Links weight 600 with 1.5px brass underline, hover 2px. Event listings are hairline rows, Bebas month in Royal, day in Ink, no cards. Focus ring 2px Royal.
 
-Marks: the ride-and-stick mark (`Mark.astro`), ring takes the type color, stick always brass, never below 24px. The Barbershop badge (`BarbershopBadge.astro`) is a section marker for Barbershop-only material; stripes only inside the ring or on the pole. The pole (`Pole.astro`) sits lower in Barbershop sections, apart from the badge, never in the header, home hero, or near booking.
+Marks: the ride-and-stick mark (`Mark.astro`), ring takes the type color, the stick is a brass drumstick (tapered shaft + bead tip, guide v1.1), never below 24px. The mark is drawn in four places: `Mark.astro`, `public/favicon.svg` (+ apple-touch-icon.png), and `src/lib/og.ts`; change all four together. The Barbershop badge (`BarbershopBadge.astro`) is a section marker for Barbershop-only material; stripes only inside the ring or on the pole. The pole (`Pole.astro`) sits lower in Barbershop sections, apart from the badge, never in the header, home hero, or near booking.
 
 Voice: plain-spoken, warm, quick; sure of the craft, light on the ego. Not a press release, not a résumé. To students: invitational ("come sit in" beats "apply now").
 

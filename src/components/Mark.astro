@@ -1,5 +1,5 @@
 ---
-/** The ride-and-stick mark. Ring takes the type color; the stick is always brass. `spin` animates the stick once on load. */
+/** The ride-and-stick mark. Ring takes the type color; the drumstick is always brass: a tapered shaft ending in a bead (Brand Guidelines v1.1). `spin` animates the stick once on load. */
 interface Props { size?: number; color?: string; class?: string; spin?: boolean; title?: string }
 const { size = 32, color = 'currentColor', class: cls = '', spin = false, title } = Astro.props;
 const stroke = Math.max(2, size * 0.083);
@@ -9,13 +9,16 @@ const dot = Math.max(2.5, size * 0.1);
 <span class:list={['mark', cls, { 'mark--spin': spin }]} style={`--mark-size:${size}px;--mark-color:${color};--mark-stroke:${stroke}px;--mark-stick:${stick}px;--mark-dot:${dot}px`} role={title ? 'img' : undefined} aria-label={title} aria-hidden={title ? undefined : 'true'}>
   <span class="mark__ring"></span>
   <span class="mark__dot"></span>
-  <span class="mark__stick"></span>
+  <span class="mark__stick"><span class="mark__shaft"></span><span class="mark__tip"></span></span>
 </span>
 <style>
   .mark { position: relative; display: inline-block; width: var(--mark-size); height: var(--mark-size); flex: none; }
   .mark__ring { position: absolute; inset: 0; border-radius: 50%; border: var(--mark-stroke) solid var(--mark-color); }
   .mark__dot { position: absolute; top: 50%; left: 50%; width: var(--mark-dot); height: var(--mark-dot); transform: translate(-50%, -50%); border-radius: 50%; background: var(--mark-color); }
-  .mark__stick { position: absolute; top: 50%; left: calc(var(--mark-size) * -0.16); right: calc(var(--mark-size) * -0.16); height: var(--mark-stick); margin-top: calc(var(--mark-stick) / -2); background: var(--brass); border-radius: 3px; transform: rotate(-32deg); transform-origin: center; }
+  .mark__stick { position: absolute; top: 50%; left: calc(var(--mark-size) * -0.16); right: calc(var(--mark-size) * -0.16); height: var(--mark-stick); margin-top: calc(var(--mark-stick) / -2); transform: rotate(-32deg); transform-origin: center; }
+  /* Shaft tapers toward the tip; the tip is a bead 1.6× the shaft thickness long. */
+  .mark__shaft { position: absolute; left: 0; top: 0; right: calc(var(--mark-stick) * 1.6); height: 100%; background: var(--brass); border-radius: var(--mark-stick); clip-path: polygon(0 0, 84% 14%, 100% 26%, 100% 74%, 84% 86%, 0 100%); }
+  .mark__tip { position: absolute; right: 0; top: 50%; width: calc(var(--mark-stick) * 1.6); height: calc(var(--mark-stick) * 1.143); transform: translateY(-50%); background: var(--brass); border-radius: 50%; }
   @media (prefers-reduced-motion: no-preference) {
     .mark--spin .mark__stick { animation: stick-in 1.1s var(--ease-out) both; }
     .mark--spin .mark__ring { animation: ring-in .9s var(--ease-out) both; }

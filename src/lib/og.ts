@@ -58,7 +58,11 @@ export async function renderOg(spec: OgSpec): Promise<Uint8Array> {
                   { type: 'div', props: { style: { position: 'relative', width: 44, height: 44, display: 'flex' }, children: [
                     { type: 'div', props: { style: { position: 'absolute', left: 0, top: 0, width: 44, height: 44, borderRadius: 22, border: '4px solid #F3EEE5' } } },
                     { type: 'div', props: { style: { position: 'absolute', left: 20, top: 20, width: 4, height: 4, borderRadius: 2, background: '#F3EEE5' } } },
-                    { type: 'div', props: { style: { position: 'absolute', left: -7, top: 20.5, width: 58, height: 3, background: '#C49A5F', transform: 'rotate(-32deg)' } } },
+                    // Drumstick: tapered shaft + bead tip, always brass.
+                    { type: 'div', props: { style: { position: 'absolute', left: -7, top: 20.5, width: 58, height: 3, transform: 'rotate(-32deg)', display: 'flex' }, children: [
+                      { type: 'div', props: { style: { position: 'absolute', left: 0, top: 0, width: 53.2, height: 3, background: '#C49A5F', borderRadius: 3 } } },
+                      { type: 'div', props: { style: { position: 'absolute', right: 0, top: -0.2, width: 4.8, height: 3.4, background: '#C49A5F', borderRadius: 3 } } },
+                    ] } },
                   ] } },
                   { type: 'div', props: { style: { fontFamily: 'Bebas Neue', fontSize: 40, letterSpacing: 1.2, lineHeight: 1 }, children: 'SEAN DOBBINS' } },
                 ] } },
