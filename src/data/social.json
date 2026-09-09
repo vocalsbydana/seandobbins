@@ -2,14 +2,45 @@
   "_note": "Profile URLs, edited in code by Dana. Empty url = icon shows dimmed with a 'coming soon' tooltip while showUnlinked is true; set showUnlinked to false before launch to hide unlinked icons. Icon keys must match src/data/social-icons.json.",
   "showUnlinked": true,
   "links": [
-    { "icon": "spotify", "url": "https://open.spotify.com/artist/1kfBt5p0LoMyDz7AZd6eos" },
-    { "icon": "applemusic", "url": "" },
-    { "icon": "youtube", "url": "" },
-    { "icon": "bandcamp", "url": "" },
-    { "icon": "instagram", "url": "" },
-    { "icon": "facebook", "url": "https://www.facebook.com/sean.dobbins.7" },
-    { "icon": "tiktok", "url": "" },
-    { "icon": "threads", "url": "" },
-    { "icon": "x", "url": "" }
+    {
+      "icon": "spotify",
+      "url": "https://open.spotify.com/artist/1kfBt5p0LoMyDz7AZd6eos"
+    },
+    {
+      "icon": "applemusic",
+      "url": ""
+    },
+    {
+      "icon": "youtube",
+      "url": ""
+    },
+    {
+      "icon": "bandcamp",
+      "url": ""
+    },
+    {
+      "icon": "instagram",
+      "url": ""
+    },
+    {
+      "icon": "facebook",
+      "url": "https://www.facebook.com/sean.dobbins.7"
+    },
+    {
+      "icon": "linkedin",
+      "url": "https://www.linkedin.com/in/sean-dobbins-7042957b/"
+    },
+    {
+      "icon": "tiktok",
+      "url": ""
+    },
+    {
+      "icon": "threads",
+      "url": ""
+    },
+    {
+      "icon": "x",
+      "url": ""
+    }
   ]
 }
