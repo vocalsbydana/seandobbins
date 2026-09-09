@@ -2,7 +2,7 @@
   "hero": {
     "eyebrow": "Drummer · Bandleader · Educator",
     "topRight": "Jacobs School of Music · Indiana University",
-    "tagline": "Drummer. Bandleader. Professor of Jazz Drumset at the Jacobs School of Music.",
+    "tagline": "Drummer. Bandleader. \nProfessor of Jazz Drumset at the Jacobs School of Music.",
     "place": "Detroit · Bloomington",
     "listen": "Listen",
     "book": "Book Sean"
@@ -10,7 +10,7 @@
   "creed": {
     "title": "Serve the music. Keep the joy.",
     "quote": "You've got to make the band feel good before you make yourself sound good.",
-    "who": "Sean, to a student"
+    "who": "Sean Dobbins"
   },
   "ticker": {
     "label": "Latest"
@@ -33,7 +33,7 @@
   "barbershop": {
     "num": "02",
     "title": "From The Barbershop",
-    "blurb": "Sean's studio at IU, and a library of free PDFs for drummers everywhere. One email unlocks all of them.",
+    "blurb": "Sean's studio at IU, and a library of free PDFs for drummers everywhere. ",
     "asideLabel": "Study with Sean",
     "asideTitle": "Come sit in.",
     "asideText": "Jazz drumset at the Indiana University Jacobs School of Music. Audition info, what the studio is like, and a form if you want Sean to know you're coming.",
