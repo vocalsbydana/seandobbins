@@ -17,13 +17,13 @@ const description = 'Watch and listen: Sean Dobbins live, on record, and on the 
       <SectionHead num="Music" title="Watch & listen" as="h1" blurb="Let the playing brag. Videos first, then where to stream, then the records." />
       <div class="videos">
         <div class="videos__lead" data-reveal="scale">
-          <YouTube id={lead.id} title={lead.title} />
+          <YouTube id={lead.id} title={lead.title || 'Sean Dobbins, featured video'} />
           {lead.title && <p class="small muted vcap">{lead.title}</p>}
         </div>
         <div class="videos__rest">
           {rest.map((v, i) => (
             <div data-reveal style={`--reveal-delay:${(i + 1) * 90}ms`}>
-              <YouTube id={v.id} title={v.title} poster="hq" />
+              <YouTube id={v.id} title={v.title || `Sean Dobbins, video ${i + 2}`} poster="hq" />
               {v.title && <p class="small muted vcap">{v.title}</p>}
             </div>
           ))}
