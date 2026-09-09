@@ -147,7 +147,7 @@ Note: in `astro dev`, writing a content file triggers a full page reload in the 
 ## Still placeholder
 
 - Discography rows (edit on the Music page in the editor).
-- Apple Music, Bandcamp and Instagram links (`src/data/social.json`; unlinked icons show dimmed until `showUnlinked` is set to false).
+- Instagram link (`src/data/social.json`; unlinked icons show dimmed until `showUnlinked` is set to false).
 - Three placeholder testimonials and three SAMPLE outreach entries (Sean, via the editor).
 - The sixth photo (square profile with the Regal Tip stick) is not in the repo yet.
 - MailerLite and Resend keys (see `.env.example`); without them the gate unlocks but records nobody and the contact form says it isn't set up.
