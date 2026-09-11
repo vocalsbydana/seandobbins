@@ -19,6 +19,7 @@ The tabs across the top are everything you can edit:
 |---|---|
 | **Resources** | The free PDFs in The Barbershop library |
 | **Page text** | Any text on any page, with a live preview |
+| **Videos** | The six YouTube videos on the Music page |
 | **Testimonials** | Quotes from students, parents and bandleaders |
 | **Announcements** | The blue strip on the home page |
 | **Outreach** | Clinics, masterclasses and residencies on the Outreach page |
@@ -69,7 +70,20 @@ Some things are deliberately not editable here: photos, layout, colours, the vid
 
 ---
 
-## 4. Testimonials, announcements, outreach
+## 4. Swapping a video
+
+Open **Videos**. Each of the six slots on the Music page has a card, named by where it sits: *Large horizontal*, *Top small horizontal*, *Bottom small horizontal*, *Vertical left*, *middle* and *right*.
+
+![Videos](docs/handover/06-videos.png)
+
+1. Copy the video's link from YouTube (the address bar, or Share → Copy link). Shorts links work too.
+2. Paste it into **Replace with** on the slot you want to change. The editor checks with YouTube and shows the video's title and thumbnail next to the current one.
+3. Press **Use this video**. The card turns blue and the old video stays on the site until you publish. *Keep the current one* backs out.
+4. Press **Publish changes** in the bottom bar.
+
+You can't leave a slot empty, and a link that YouTube doesn't recognise (mistyped, deleted, or private) can't be used, so there's never a dead video on the page.
+
+## 5. Testimonials, announcements, outreach
 
 Each of these tabs works the same way: a list, a **+ Add** button, and a short form.
 

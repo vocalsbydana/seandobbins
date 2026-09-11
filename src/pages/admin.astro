@@ -42,6 +42,7 @@ import '../styles/global.css';
       <nav class="ad-nav" aria-label="Sections">
         <button type="button" data-view="resources" class="is-active">Resources</button>
         <button type="button" data-view="pages">Page text</button>
+        <button type="button" data-view="videos">Videos</button>
         <button type="button" data-view="testimonials">Testimonials</button>
         <button type="button" data-view="announcements">Announcements</button>
         <button type="button" data-view="outreach">Outreach</button>
@@ -113,6 +114,27 @@ import '../styles/global.css';
       .pv-card__desc { font-size: 14px; color: var(--walnut); line-height: 1.45; }
       .pv-card__cta { font-size: 13px; font-weight: 600; color: var(--royal); border-bottom: 1.5px solid var(--brass); align-self: flex-start; }
       .pv-url { margin-top: 12px; font-size: 13px; color: var(--walnut); word-break: break-all; }
+      /* videos */
+      .vs-grid { display: grid; gap: 16px; }
+      @media (min-width: 900px) { .vs-grid { grid-template-columns: 1fr 1fr; } }
+      .vs { display: flex; flex-direction: column; gap: 12px; padding: 18px; background: var(--paper); border: 1px solid var(--ink-10); }
+      .vs.is-pending { border-color: var(--royal); }
+      .vs__head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+      .vs__label { font-family: var(--font-display); font-size: 24px; letter-spacing: .03em; text-transform: uppercase; }
+      .vs__where { font-size: 12px; color: var(--walnut); }
+      .vs__pair { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: center; }
+      .vs__arrow { font-size: 22px; color: var(--brass); }
+      .vs__thumb { position: relative; aspect-ratio: 16 / 9; background: var(--stage); overflow: hidden; border: 1px solid var(--ink-10); }
+      .vs__thumb--v { aspect-ratio: 9 / 16; max-height: 220px; margin-inline: auto; }
+      .vs__thumb img { width: 100%; height: 100%; object-fit: cover; }
+      .vs__thumb--empty { display: grid; place-items: center; color: var(--ivory-55); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; background: repeating-linear-gradient(135deg, var(--paper) 0 8px, #efe9de 8px 16px); color: var(--walnut); }
+      .vs__cap { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--walnut); margin-bottom: 6px; }
+      .vs__title { font-size: 13px; font-weight: 600; line-height: 1.3; margin-top: 6px; }
+      .vs__url { font-size: 12px; color: var(--walnut); word-break: break-all; margin-top: 2px; }
+      .vs__check { font-size: 13px; font-weight: 600; }
+      .vs__check.is-ok { color: var(--royal); }
+      .vs__check.is-bad { color: var(--walnut); }
+      .vs__actions { display: flex; gap: 12px; align-items: center; }
       /* page editor */
       .ad-pagebar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 16px; }
       .ad-pagebar select { padding: 10px 12px; border: 1.5px solid var(--ink-25); background: var(--paper); font-size: 15px; font-weight: 600; }
@@ -158,7 +180,7 @@ import '../styles/global.css';
     </style>
 
     <script>
-      import { PAGES, COLLECTIONS, TOPICS, humanize, slugify, MAX_PDF_BYTES, MAX_IMAGE_BYTES, type Field, type Collection } from '../lib/admin/schema';
+      import { PAGES, COLLECTIONS, TOPICS, VIDEO_SLOTS, humanize, slugify, youtubeId, MAX_PDF_BYTES, MAX_IMAGE_BYTES, type Field, type Collection } from '../lib/admin/schema';
 
       type Json = Record<string, unknown>;
       interface Session { authed: boolean; configured: boolean; kind: 'github' | 'local' | null; branch: string; repo: string; error?: string }
@@ -233,9 +255,9 @@ import '../styles/global.css';
         navButtons.forEach((b) => b.classList.toggle('is-active', b.dataset.view === name));
         location.hash = name;
         view.replaceChildren(el('p', { class: 'ad-empty', text: 'Loading…' }));
-        const known = ['resources', 'pages', ...COLLECTIONS.map((c) => c.name)];
+        const known = ['resources', 'pages', 'videos', ...COLLECTIONS.map((c) => c.name)];
         if (!known.includes(name)) name = 'resources';
-        const fn = ({ resources: renderResources, pages: renderPages } as Record<string, () => Promise<void>>)[name];
+        const fn = ({ resources: renderResources, pages: renderPages, videos: renderVideos } as Record<string, () => Promise<void>>)[name];
         (fn ? fn() : renderCollection(name)).catch((e) => view.replaceChildren(el('p', { class: 'ad-error', text: (e as Error).message })));
       }
       window.addEventListener('beforeunload', (e) => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
@@ -466,6 +488,102 @@ import '../styles/global.css';
         ($('input, textarea, select', form) as HTMLElement)?.focus();
       }
 
+      // ---------- Videos (Music page slots) ----------
+      async function renderVideos() {
+        const my = viewSeq;
+        const def = PAGES.find((p) => p.id === 'music')!;
+        const f = await api<{ data: Json; sha: string }>(`file?path=${encodeURIComponent(def.file)}`);
+        if (my !== viewSeq) return;
+        const data = f.data;
+        const getId = (key: string) => String(key.split('.').reduce((cur: unknown, seg) => (cur as Record<string, unknown>)?.[seg], data) ?? '');
+        const pending = new Map<string, { id: string; title: string }>();
+        const grid = el('div', { class: 'vs-grid' });
+
+        const thumb = (id: string, vertical: boolean, cap: string, title?: string) => {
+          const box = el('div', {});
+          box.append(el('div', { class: 'vs__cap', text: cap }));
+          if (!id) { box.append(el('div', { class: `vs__thumb vs__thumb--empty ${vertical ? 'vs__thumb--v' : ''}`, text: 'Paste a link' })); return box; }
+          const img = el('img', { src: vertical ? `https://i.ytimg.com/vi/${id}/oar2.jpg` : `https://i.ytimg.com/vi/${id}/hqdefault.jpg`, alt: '' });
+          img.addEventListener('error', () => { (img as HTMLImageElement).src = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`; }, { once: true });
+          box.append(el('div', { class: `vs__thumb ${vertical ? 'vs__thumb--v' : ''}` }, img));
+          if (title) box.append(el('div', { class: 'vs__title', text: title }));
+          box.append(el('div', { class: 'vs__url', text: `youtube.com/watch?v=${id}` }));
+          return box;
+        };
+
+        const refreshBar = () => { if (pending.size) showSaveBar(pending.size, publishVideos, () => { pending.clear(); renderVideos(); }); else hideSaveBar(); dirty = pending.size; };
+
+        for (const slot of VIDEO_SLOTS) {
+          const current = getId(slot.key);
+          const card = el('div', { class: 'vs' });
+          const pair = el('div', { class: 'vs__pair' });
+          const currentBox = thumb(current, slot.vertical, 'Now on the site');
+          const newBox = thumb('', slot.vertical, 'New video');
+          pair.append(currentBox, el('span', { class: 'vs__arrow', text: '→' }), newBox);
+          const input = el('input', { type: 'url', placeholder: 'Paste a YouTube link here', autocomplete: 'off' }) as HTMLInputElement;
+          const check = el('div', { class: 'vs__check' });
+          const use = el('button', { class: 'btn btn--primary', type: 'button', text: 'Use this video', disabled: true }) as HTMLButtonElement;
+          const undo = el('button', { class: 'ad-list-rm', type: 'button', text: 'Keep the current one', hidden: true }) as HTMLButtonElement;
+          let found: { id: string; title: string } | null = null;
+          let seq = 0;
+          input.addEventListener('input', async () => {
+            const n = ++seq; found = null; use.disabled = true; check.className = 'vs__check';
+            const raw = input.value.trim();
+            if (!raw) { check.textContent = ''; pair.replaceChild(thumb('', slot.vertical, 'New video'), pair.lastElementChild!); return; }
+            const id = youtubeId(raw);
+            if (!id) { check.textContent = 'That doesn’t look like a YouTube link.'; check.classList.add('is-bad'); return; }
+            if (id === current) { check.textContent = 'That’s the video already in this slot.'; check.classList.add('is-bad'); return; }
+            check.textContent = 'Checking with YouTube…';
+            try {
+              const r = await api<{ ok: boolean; id: string; title: string; error?: string }>(`video?url=${encodeURIComponent(raw)}`);
+              if (n !== seq) return;
+              if (!r.ok) { check.textContent = r.error || 'YouTube couldn’t find that video.'; check.classList.add('is-bad'); return; }
+              found = { id: r.id, title: r.title };
+              pair.replaceChild(thumb(r.id, slot.vertical, 'New video', r.title), pair.lastElementChild!);
+              check.textContent = `Found it: “${r.title}”. Press “Use this video” to line it up; nothing changes until you publish.`; check.classList.add('is-ok');
+              use.disabled = false;
+            } catch (e) { if (n === seq) { check.textContent = (e as Error).message; check.classList.add('is-bad'); } }
+          });
+          use.addEventListener('click', () => {
+            if (!found) return;
+            pending.set(slot.key, found);
+            card.classList.add('is-pending'); use.hidden = true; undo.hidden = false; input.disabled = true;
+            check.textContent = `Lined up: “${found.title}” will replace the current video when you publish.`; check.className = 'vs__check is-ok';
+            refreshBar();
+          });
+          undo.addEventListener('click', () => {
+            pending.delete(slot.key); found = null;
+            card.classList.remove('is-pending'); use.hidden = false; use.disabled = true; undo.hidden = true; input.disabled = false; input.value = ''; check.textContent = '';
+            pair.replaceChild(thumb('', slot.vertical, 'New video'), pair.lastElementChild!);
+            refreshBar();
+          });
+          card.append(
+            el('div', { class: 'vs__head' }, el('span', { class: 'vs__label', text: slot.label }), el('span', { class: 'vs__where', text: slot.where })),
+            pair,
+            el('div', { class: 'field' }, el('label', { text: 'Replace with' }), input),
+            check,
+            el('div', { class: 'vs__actions' }, use, undo),
+          );
+          grid.append(card);
+        }
+
+        async function publishVideos() {
+          const edits = Array.from(pending.entries()).map(([key, v]) => ({ key, value: v.id }));
+          try {
+            setStatus('<strong>Saving</strong> the new videos…', 30, { spinner: true });
+            const r = await api<{ commit: string; branch: string; url?: string }>('file', { method: 'PUT', body: JSON.stringify({ path: def.file, page: 'music', edits }) });
+            pending.clear(); dirty = 0; hideSaveBar();
+            track(r);
+            renderVideos();
+          } catch (e) { setStatus(`<strong>Couldn’t save.</strong> ${esc((e as Error).message)}`, 0, { closable: true }); }
+        }
+
+        view.replaceChildren(
+          el('div', { class: 'ad-h' }, el('div', {}, el('h2', { text: 'Videos' }), el('p', { text: 'The six videos on the Music page. Paste a YouTube link next to the one you want to swap. The editor checks the video exists first, and the old one stays on the site until you publish, so there’s never a blank spot.' }))),
+          grid,
+        );
+      }
+
       // ---------- Page text editor ----------
       interface PageState { id: string; file: string; path: string; data: Json; baseline: string; values: Map<string, unknown>; fields: Map<string, HTMLElement>; replaced: Set<string> }
       let page: PageState | null = null;
@@ -504,13 +622,16 @@ import '../styles/global.css';
       function buildFields(root: HTMLElement) {
         root.replaceChildren();
         const p = page!;
+        const hidden = PAGES.find((x) => x.id === p.id)?.hidden || [];
         for (const [section, value] of Object.entries(p.data)) {
+          if (hidden.includes(section)) continue;
           const body = el('div', { class: 'ad-group__body' });
           if (value && typeof value === 'object' && !Array.isArray(value)) { for (const [k, v] of Object.entries(value)) renderNode(body, k, v, [section, k]); }
           else renderNode(body, section, value, [section]);
           root.append(el('details', { class: 'ad-group', open: true }, el('summary', { text: humanize(section) }), body));
         }
         const note = PAGES.find((x) => x.id === p.id)?.note; if (note) root.prepend(el('p', { class: 'ad-note', text: note }));
+        if (hidden.length) root.append(el('p', { class: 'ad-note', text: 'The videos on this page are changed in the Videos tab.' }));
       }
 
       function renderNode(parent: HTMLElement, label: string, value: unknown, path: string[]) {

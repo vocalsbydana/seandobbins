@@ -74,13 +74,13 @@ export const COLLECTIONS: Collection[] = [
   },
 ];
 
-export interface PageDef { id: string; label: string; path: string; file: string; note?: string }
+export interface PageDef { id: string; label: string; path: string; file: string; note?: string; /** top-level keys managed by a dedicated editor tab, hidden from Page text */ hidden?: string[] }
 
 /** Pages whose copy lives in src/content/copy/<id>.json. `path` is what the live preview loads. */
 export const PAGES: PageDef[] = [
   { id: 'home', label: 'Home', path: '/', file: 'src/content/copy/home.json' },
   { id: 'about', label: 'About', path: '/about', file: 'src/content/copy/about.json' },
-  { id: 'music', label: 'Music', path: '/music', file: 'src/content/copy/music.json' },
+  { id: 'music', label: 'Music', path: '/music', file: 'src/content/copy/music.json', hidden: ['featuredVideoId', 'videos', 'shorts'] },
   { id: 'gigs', label: 'Gigs', path: '/gigs', file: 'src/content/copy/gigs.json' },
   { id: 'outreach', label: 'Outreach', path: '/outreach', file: 'src/content/copy/outreach.json' },
   { id: 'barbershop', label: 'The Barbershop', path: '/barbershop', file: 'src/content/copy/barbershop.json' },
@@ -105,3 +105,31 @@ export function humanize(key: string): string {
   const s = key.replace(/([a-z0-9])([A-Z])/g, '$1 $2').replace(/[_-]+/g, ' ').trim();
   return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
 }
+
+/** The six video slots on the Music page, in the order they appear. Keys are paths inside src/content/copy/music.json. */
+export interface VideoSlot { key: string; label: string; where: string; vertical: boolean }
+export const VIDEO_SLOTS: VideoSlot[] = [
+  { key: 'featuredVideoId', label: 'Large horizontal', where: 'Top of the Music page, the big one', vertical: false },
+  { key: 'videos.0.id', label: 'Top small horizontal', where: 'Right of the big one, upper', vertical: false },
+  { key: 'videos.1.id', label: 'Bottom small horizontal', where: 'Right of the big one, lower', vertical: false },
+  { key: 'shorts.0.id', label: 'Vertical left', where: 'Quick hits row, left', vertical: true },
+  { key: 'shorts.1.id', label: 'Vertical middle', where: 'Quick hits row, middle', vertical: true },
+  { key: 'shorts.2.id', label: 'Vertical right', where: 'Quick hits row, right', vertical: true },
+];
+
+/** Pull an 11-character YouTube video ID out of any YouTube link (watch, youtu.be, shorts, embed, live) or a bare ID. */
+export function youtubeId(input: string): string | null {
+  const s = input.trim();
+  if (/^[A-Za-z0-9_-]{11}$/.test(s)) return s;
+  try {
+    const u = new URL(s.startsWith('http') ? s : `https://${s}`);
+    const host = u.hostname.replace(/^(www|m|music)\./, '');
+    if (host === 'youtu.be') return valid(u.pathname.slice(1).split('/')[0]);
+    if (host === 'youtube.com' || host === 'youtube-nocookie.com') {
+      const v = u.searchParams.get('v'); if (v) return valid(v);
+      const m = /^\/(shorts|embed|live|v)\/([A-Za-z0-9_-]{11})/.exec(u.pathname); if (m) return m[2];
+    }
+  } catch { /* not a URL */ }
+  return null;
+}
+function valid(id: string): string | null { return /^[A-Za-z0-9_-]{11}$/.test(id) ? id : null; }
