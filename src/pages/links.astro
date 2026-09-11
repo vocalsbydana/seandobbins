@@ -1,0 +1,116 @@
+---
+// Link-in-bio page for Instagram. Not linked from anywhere on the site, not in the sitemap, noindex.
+import { Image } from 'astro:assets';
+import Mark from '../components/Mark.astro';
+import social from '../data/social.json';
+import icons from '../data/social-icons.json';
+import { copy } from '../lib/copy';
+import '../styles/global.css';
+import stageBlue from '../assets/photos/stage-blue.jpg';
+import laugh from '../assets/photos/laugh-warm.jpg';
+
+type IconKey = keyof typeof icons;
+const link = (icon: IconKey) => social.links.find((l) => l.icon === icon)?.url || '';
+const site = 'https://seandobbins.com';
+
+const primary = [
+  { href: '/barbershop', label: 'The Barbershop', sub: 'Free drum resources · study with Sean', badge: true },
+  { href: link('spotify') || '/music', label: 'Listen on Spotify', sub: 'Sean Dobbins on Spotify', icon: 'spotify' as IconKey },
+  { href: link('applemusic') || '/music', label: 'Apple Music', sub: 'Albums and singles', icon: 'applemusic' as IconKey },
+  { href: link('youtube') || '/music', label: 'Watch on YouTube', sub: 'Live sets and shorts', icon: 'youtube' as IconKey },
+  { href: '/gigs', label: 'Upcoming gigs', sub: 'Dates, venues, add to calendar' },
+  { href: '/contact', label: 'Book Sean', sub: 'Gigs, clinics, masterclasses' },
+].map((l) => ({ ...l, href: l.href.startsWith('/') ? site + l.href : l.href }));
+
+const socials = (['instagram', 'facebook', 'linkedin'] as IconKey[]).map((k) => ({ k, url: link(k), ...icons[k] })).filter((s) => s.url);
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Sean Dobbins · Links</title>
+    <meta name="description" content="Sean Dobbins: jazz drummer, bandleader, Professor of Jazz Drumset at IU Jacobs. Music, gigs, The Barbershop, booking." />
+    <meta property="og:title" content="Sean Dobbins · Links" />
+    <meta property="og:image" content={`${site}/og/home.png`} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#2D45C8" />
+  </head>
+  <body class="lk">
+    <div class="lk__photo" aria-hidden="true">
+      <Image src={stageBlue} alt="" widths={[600, 1000, 1600]} sizes="100vw" loading="eager" fetchpriority="high" />
+    </div>
+    <main class="lk__inner">
+      <header class="lk__head">
+        <div class="lk__avatar">
+          <Image src={laugh} alt="Sean Dobbins laughing at the drums" widths={[240, 480]} sizes="120px" loading="eager" />
+        </div>
+        <h1 class="lk__name"><span>Sean</span><span>Dobbins</span></h1>
+        <p class="lk__tag">{copy.home.hero.tagline}</p>
+        <p class="lk__place"><span class="lk__rule"></span>{copy.home.hero.place}</p>
+      </header>
+
+      <nav class="lk__links" aria-label="Links">
+        {primary.map((l, i) => (
+          <a href={l.href} class:list={['lk__btn', { 'lk__btn--bs': l.badge }]} style={`--i:${i}`} target={l.href.startsWith(site) ? undefined : '_blank'} rel="noopener">
+            {l.badge ? <span class="lk__ring" aria-hidden="true"><span></span></span> : l.icon ? <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d={icons[l.icon].path} fill="currentColor" /></svg> : <Mark size={22} />}
+            <span class="lk__btn-text"><span class="lk__btn-label">{l.label}</span><span class="lk__btn-sub">{l.sub}</span></span>
+            <span class="lk__btn-arrow" aria-hidden="true">→</span>
+          </a>
+        ))}
+      </nav>
+
+      {socials.length > 0 && (
+        <div class="lk__social" style={`--i:${primary.length}`}>
+          {socials.map((s) => <a href={s.url} target="_blank" rel="me noopener" aria-label={`Sean Dobbins on ${s.label}`} title={s.label}><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d={s.path} fill="currentColor" /></svg></a>)}
+        </div>
+      )}
+      <a class="lk__site" href={site} style={`--i:${primary.length + 1}`}>seandobbins.com</a>
+    </main>
+
+    <style is:global>
+      body.lk { background: var(--royal); color: var(--ivory); min-height: 100dvh; display: block; position: relative; overflow-x: hidden; }
+      .lk__photo { position: absolute; inset: 0 0 auto 0; height: min(78vh, 720px); overflow: hidden; }
+      .lk__photo img { width: 100%; height: 100%; object-fit: cover; object-position: 70% 20%; }
+      @media (max-width: 600px) { .lk__photo img { object-position: 92% 12%; } }
+      .lk__photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(45,69,200,.15) 0%, rgba(45,69,200,.35) 45%, var(--royal) 100%); }
+      .lk__inner { position: relative; max-width: 520px; margin-inline: auto; padding: clamp(28px, 8vh, 72px) 20px 48px; display: flex; flex-direction: column; gap: 28px; }
+      .lk__head { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; }
+      .lk__avatar { width: 120px; height: 120px; border-radius: 50%; overflow: hidden; border: 4px solid var(--ivory); box-shadow: 0 0 0 3px var(--brass); background: var(--ink); }
+      .lk__avatar img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+      .lk__name { display: flex; flex-direction: column; font-size: clamp(64px, 18vw, 96px); line-height: .84; text-shadow: 0 2px 24px rgba(11,11,20,.35); }
+      .lk__tag { font-family: var(--font-voice); font-style: italic; font-size: 18px; line-height: 1.3; max-width: 30ch; color: var(--ivory); }
+      .lk__place { display: flex; align-items: center; gap: 10px; font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--brass); }
+      .lk__rule { width: 28px; height: 2px; background: var(--brass); }
+      .lk__links { display: flex; flex-direction: column; gap: 12px; }
+      .lk__btn { display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 14px; padding: 16px 18px; background: var(--ivory); color: var(--ink); border: 2px solid var(--ivory); transition: transform var(--dur-fast) var(--ease-out), background var(--dur-fast), color var(--dur-fast); }
+      .lk__btn:hover { transform: translateY(-2px); background: var(--ink); color: var(--ivory); border-color: var(--ink); }
+      .lk__btn:active { transform: translateY(1px); }
+      .lk__btn-text { display: flex; flex-direction: column; gap: 2px; }
+      .lk__btn-label { font-family: var(--font-display); font-size: 26px; letter-spacing: .03em; line-height: 1; text-transform: uppercase; }
+      .lk__btn-sub { font-size: 12.5px; letter-spacing: .04em; opacity: .7; }
+      .lk__btn-arrow { font-size: 20px; color: var(--brass); transition: transform var(--dur-fast) var(--ease-out); }
+      .lk__btn:hover .lk__btn-arrow { transform: translateX(4px); }
+      .lk__btn--bs { background: var(--ink); color: var(--ivory); border-color: var(--brass); }
+      .lk__btn--bs:hover { background: var(--stage); border-color: var(--ivory); }
+      .lk__ring { width: 28px; height: 28px; border-radius: 50%; padding: 3px; background: repeating-linear-gradient(135deg, var(--royal) 0 4px, var(--ivory) 4px 8px, var(--brass) 8px 12px); display: block; }
+      .lk__ring span { display: block; width: 100%; height: 100%; border-radius: 50%; background: var(--ink); }
+      .lk__social { display: flex; justify-content: center; gap: 10px; }
+      .lk__social a { display: grid; place-items: center; width: 48px; height: 48px; color: var(--ivory); border: 1.5px solid rgba(243,238,229,.45); transition: background var(--dur-fast), color var(--dur-fast), transform var(--dur-fast) var(--ease-out); }
+      .lk__social a:hover { background: var(--ivory); color: var(--royal); transform: translateY(-2px); }
+      .lk__site { align-self: center; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--ivory); border-bottom: 1.5px solid var(--brass); padding-bottom: 2px; }
+      .lk__site:hover { color: var(--brass); }
+      @media (prefers-reduced-motion: no-preference) {
+        .lk__avatar { animation: lk-pop .8s var(--ease-out) both; }
+        .lk__name span { animation: lk-up .9s var(--ease-out) both; } .lk__name span:nth-child(2) { animation-delay: .1s; }
+        .lk__tag, .lk__place { animation: lk-up .8s var(--ease-out) .25s both; }
+        .lk__btn, .lk__social, .lk__site { animation: lk-up .7s var(--ease-out) both; animation-delay: calc(.35s + var(--i) * 70ms); }
+        .lk__photo img { animation: lk-zoom 3s var(--ease-out) both; }
+      }
+      @keyframes lk-up { from { opacity: 0; transform: translateY(14px); } }
+      @keyframes lk-pop { from { opacity: 0; transform: scale(.7); } }
+      @keyframes lk-zoom { from { transform: scale(1.08); } }
+    </style>
+  </body>
+</html>

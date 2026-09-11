@@ -15,7 +15,7 @@ export default defineConfig({
   }),
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/admin') && !page.includes('/api/') && !page.includes('/og/'),
+      filter: (page) => !page.includes('/admin') && !page.includes('/api/') && !page.includes('/og/') && !page.endsWith('/links'),
     }),
   ],
   image: {
