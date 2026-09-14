@@ -1,6 +1,6 @@
 {
   "_note": "Profile URLs, edited in code by Dana. Empty url = icon shows dimmed with a 'coming soon' tooltip while showUnlinked is true; set showUnlinked to false before launch to hide unlinked icons. Icon keys must match src/data/social-icons.json.",
-  "showUnlinked": true,
+  "showUnlinked": false,
   "links": [
     {
       "icon": "spotify",
@@ -16,11 +16,11 @@
     },
     {
       "icon": "instagram",
-      "url": ""
+      "url": "https://www.instagram.com/seandobbinsmusic/"
     },
     {
       "icon": "facebook",
-      "url": "https://www.facebook.com/sean.dobbins.7"
+      "url": "https://www.facebook.com/seandobbinsmusic"
     },
     {
       "icon": "linkedin",
