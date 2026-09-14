@@ -1,48 +1,73 @@
 ---
 /**
- * ┌──────────────────────────────────────────────────────────────────────┐
- * │  AURALIS PLACEHOLDER                                                 │
- * │  Upcoming gigs come from Dana's app Auralis. This component reads    │
- * │  sample data from src/data/gigs.sample.json until the embed / API    │
- * │  details are supplied. Swap `gigs` below for the real source; keep   │
- * │  the shape { id, title, venue, city, start, end?, url?, cta? }.      │
- * └──────────────────────────────────────────────────────────────────────┘
+ * Upcoming gigs from Auralis (Dana's app). The embed script renders into #mygigs on load.
+ * - `full` (gigs page): the whole widget.
+ * - preview (home page): the same widget, trimmed to the first `limit` dates once it renders; if the
+ *   widget's list can't be recognised, a height clamp with a fade keeps the section tidy instead.
+ * The script is (re)injected on every Astro page load so it still renders after client-side navigation.
  */
-import EventRow from './EventRow.astro';
-import sample from '../data/gigs.sample.json';
 import T from './T.astro';
-
-interface Props { limit?: number; showEmpty?: boolean; heading?: boolean }
-const { limit = 50, showEmpty = true } = Astro.props;
-
-const now = Date.now();
-const gigs = sample.gigs
-  .map((g) => ({ ...g, startDate: new Date(g.start) }))
-  .filter((g) => g.startDate.getTime() > now - 6 * 3600 * 1000)
-  .sort((a, b) => a.startDate.getTime() - b.startDate.getTime())
-  .slice(0, limit);
-
-function icsHref(g: typeof gigs[number]) {
-  const fmt = (d: Date) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
-  const end = g.end ? new Date(g.end) : new Date(g.startDate.getTime() + 2 * 3600 * 1000);
-  const lines = [
-    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Sean Dobbins//Gigs//EN', 'BEGIN:VEVENT',
-    `UID:${g.id}@seandobbins`, `DTSTAMP:${fmt(new Date())}`, `DTSTART:${fmt(g.startDate)}`, `DTEND:${fmt(end)}`,
-    `SUMMARY:${g.title}`, `LOCATION:${g.venue}, ${g.city}`, g.url && g.url !== '#' ? `URL:${g.url}` : '',
-    'END:VEVENT', 'END:VCALENDAR',
-  ].filter(Boolean);
-  return `data:text/calendar;charset=utf-8,${encodeURIComponent(lines.join('\r\n'))}`;
-}
+interface Props { limit?: number; full?: boolean }
+const { limit = 3, full = false } = Astro.props;
 ---
-<div class="auralis" data-auralis-placeholder>
-  {gigs.length ? gigs.map((g, i) => (
-    <EventRow start={g.startDate} title={g.title} meta={`${g.venue} · ${g.city} · ${new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' }).format(g.startDate)}`} cta={g.cta} href={g.url && g.url !== '#' ? g.url : undefined} ics={icsHref(g)} last={i === gigs.length - 1} />
-  )) : showEmpty && (
-    <p class="auralis__empty muted"><T k="global.gigsFeed.empty" /> <a class="link" href="/contact" data-edit="global.gigsFeed.emptyLink"><T k="global.gigsFeed.emptyLink" /></a> <T k="global.gigsFeed.emptyTail" /></p>
-  )}
-  {import.meta.env.DEV && <p class="auralis__dev">DEV NOTE: sample gigs from src/data/gigs.sample.json. Wire up Auralis in src/components/AuralisFeed.astro.</p>}
+<div class:list={['auralis', { 'auralis--preview': !full }]} data-auralis data-limit={full ? 0 : limit}>
+  <div id="mygigs" data-artist="sean-dobbins-ensembles"></div>
+  <p class="auralis__loading small muted" data-auralis-loading><T k="global.gigsFeed.loading" /></p>
 </div>
 <style>
-  .auralis__empty { padding: var(--s-3) 0; border-top: var(--hairline); border-bottom: var(--hairline); }
-  .auralis__dev { margin-top: 12px; font-size: 12px; color: var(--brass); }
+  .auralis { position: relative; }
+  .auralis__loading { padding: var(--s-3) 0; border-top: var(--hairline); border-bottom: var(--hairline); }
+  .auralis__loading[hidden] { display: none; }
+  .auralis--preview.is-clamped #mygigs { max-height: 360px; overflow: hidden; }
+  .auralis--preview.is-clamped::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 96px; background: linear-gradient(to bottom, transparent, var(--ivory)); pointer-events: none; }
+  .stage .auralis--preview.is-clamped::after, .dark .auralis--preview.is-clamped::after { background: linear-gradient(to bottom, transparent, var(--ink)); }
 </style>
+<script>
+  const SRC = 'https://www.auralismusicgroup.com/embed.js';
+
+  let lastInject = 0;
+  function inject() {
+    const mount = document.getElementById('mygigs');
+    if (!mount) return;
+    if (Date.now() - lastInject < 1500) return; // initial load fires both paths below; inject once
+    lastInject = Date.now();
+    document.querySelectorAll('script[data-auralis-script]').forEach((s) => s.remove());
+    const s = document.createElement('script');
+    s.src = SRC; s.async = true; s.dataset.auralisScript = '1';
+    s.onerror = () => { const l = document.querySelector<HTMLElement>('[data-auralis-loading]'); if (l) l.textContent = 'Dates are taking a moment to load. Refresh the page, or check back soon.'; };
+    document.body.append(s);
+    watch(mount);
+  }
+
+  /** Once the widget has rendered, hide the loading note and, on previews, keep only the first N dates. */
+  function watch(mount: HTMLElement) {
+    const wrap = mount.closest<HTMLElement>('[data-auralis]')!;
+    const limit = Number(wrap.dataset.limit || 0);
+    const done = () => {
+      document.querySelector<HTMLElement>('[data-auralis-loading]')?.setAttribute('hidden', '');
+      if (limit > 0) trim(mount, limit, wrap);
+    };
+    if (mount.children.length) { done(); return; }
+    const mo = new MutationObserver(() => { if (mount.children.length) { mo.disconnect(); setTimeout(done, 50); } });
+    mo.observe(mount, { childList: true, subtree: true });
+    setTimeout(() => mo.disconnect(), 30000);
+  }
+
+  /** Find the widget's list of dates (the largest group of same-shaped siblings) and hide everything after `limit`. */
+  function trim(mount: HTMLElement, limit: number, wrap: HTMLElement) {
+    let best: HTMLElement[] = [];
+    mount.querySelectorAll<HTMLElement>('*').forEach((el) => {
+      const kids = Array.from(el.children) as HTMLElement[];
+      if (kids.length < 2) return;
+      const sig = (k: HTMLElement) => `${k.tagName}.${k.className}`;
+      const groups = new Map<string, HTMLElement[]>();
+      kids.forEach((k) => { const g = groups.get(sig(k)) || []; g.push(k); groups.set(sig(k), g); });
+      for (const g of groups.values()) if (g.length > best.length && g.length >= 2 && g[0].textContent!.trim().length > 8) best = g;
+    });
+    if (best.length > limit) best.slice(limit).forEach((k) => { k.style.display = 'none'; k.setAttribute('aria-hidden', 'true'); });
+    else if (!best.length) wrap.classList.add('is-clamped');
+  }
+
+  inject();
+  document.addEventListener('astro:page-load', inject);
+</script>

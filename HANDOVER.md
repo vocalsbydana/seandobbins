@@ -156,7 +156,7 @@ Note: in `astro dev`, writing a content file triggers a full page reload in the 
 
 ## Auralis (gigs)
 
-`src/components/AuralisFeed.astro` is the placeholder. It reads `src/data/gigs.sample.json` and renders hairline event rows with an add-to-calendar `.ics` link each. Replace the data source with the Auralis embed or API; keep the `{ id, title, venue, city, start, end?, url?, cta? }` shape.
+`src/components/AuralisFeed.astro` mounts the Auralis embed (`<div id="mygigs" data-artist="sean-dobbins-ensembles">` plus `embed.js`). The gigs page shows the full widget; the home page trims it to the first three dates once it renders (falling back to a height clamp if the list can't be detected). The script is re-injected on every Astro page load so it survives client-side navigation. Gig data lives in Auralis, not here.
 
 ## Still placeholder
 

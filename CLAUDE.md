@@ -21,7 +21,7 @@ Owner/developer: Dana (dana@vocalsbydana.com). Sean is **not technical** and onl
 3. **Brand is fixed.** Use `src/styles/tokens.css` and the rules below. Do not invent colors, fonts, radii or shadows.
 4. **Photos are Sean working**: stage-lit, mid-laugh, mid-swing. No stock, no studio portraits. B&W for bio/press; grayscale + Stage blue wash only for text-over-photo.
 5. **Bios are Sean's voice.** Edit for web, don't rewrite. The combined bio lives in `src/pages/about.astro`.
-6. **Gigs come from Auralis.** `src/components/AuralisFeed.astro` is a clearly marked placeholder reading `src/data/gigs.sample.json`. Keep the boundary so the real feed drops in.
+6. **Gigs come from Auralis.** `src/components/AuralisFeed.astro` mounts the Auralis embed (`#mygigs`, artist `sean-dobbins-ensembles`, script from auralismusicgroup.com). The gigs page shows it in full; the home page trims it to three dates client-side. Gig data never lives in this repo.
 7. Mobile-first, fast, accessible: semantic HTML, focus states, `prefers-reduced-motion` respected on every animation, click-to-load YouTube.
 
 ## Brand rules (from the Brand Guidelines v1, Sept 2026)
@@ -56,7 +56,7 @@ src/pages/                routes (admin.astro = the editor)    src/pages/api/   
 src/pages/api/admin/      editor API: login, logout, session, file, collection, entry, blob, resource
 src/lib/admin/            auth, store (GitHub + local), schema (what is editable), frontmatter
 src/lib/copy.ts + components/T.astro   copy lookup and the data-edit tag
-src/data/                 code-owned data (socials, icons, sample gigs)   src/pages/og/   build-time OG images
+src/data/                 code-owned data (socials, icons)   src/pages/og/   build-time OG images
 private/resources/        PDFs (uploaded via the editor)       public/uploads/          images (uploaded via the editor)
 scripts/hash-pdfs.mjs     stages hashed PDF copies at build
 ```

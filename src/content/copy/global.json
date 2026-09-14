@@ -40,9 +40,6 @@
     "downloading": "Downloading…"
   },
   "gigsFeed": {
-    "empty": "No public dates on the calendar right now.",
-    "emptyLink": "Book Sean",
-    "emptyTail": "or check back soon.",
-    "calendar": "+ Cal"
+    "loading": "Loading upcoming dates…"
   }
 }
