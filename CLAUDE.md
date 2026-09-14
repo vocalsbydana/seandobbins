@@ -1,4 +1,4 @@
-# seandobbins.com — project rules
+# seandobbinsmusic.com — project rules
 
 Website for Sean Dobbins: jazz drummer, bandleader, Professor of Music (Jazz Studies) at the IU Jacobs School of Music. Two jobs: present Sean the artist and educator, and house **The Barbershop** (his teaching brand + a free, email-gated resource library that feeds MailerLite).
 

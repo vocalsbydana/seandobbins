@@ -31,7 +31,7 @@ export const POST: APIRoute = async ({ request }) => {
       from: `Sean Dobbins website <${from}>`,
       to: [to],
       reply_to: email,
-      subject: `[seandobbins.com] ${subject}`,
+      subject: `[seandobbinsmusic.com] ${subject}`,
       text: `From: ${name} <${email}>\n\n${message}`,
     }),
   });
