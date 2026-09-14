@@ -13,7 +13,9 @@ export const POST: APIRoute = async ({ request }) => {
   const email = (body.email || '').trim().slice(0, 200);
   const subject = (body.subject || 'Website contact').trim().slice(0, 140);
   const message = (body.message || '').trim().slice(0, 5000);
-  if (!name || !EMAIL_RE.test(email) || message.length < 10) return json({ error: 'Please fill in your name, a valid email, and a message.' }, { status: 422 });
+  if (!name) return json({ error: 'Please add your name.' }, { status: 422 });
+  if (!EMAIL_RE.test(email)) return json({ error: 'That email address doesn’t look right.' }, { status: 422 });
+  if (!message) return json({ error: 'Please write a message.' }, { status: 422 });
   if (rateLimited(`contact:${clientIp(request)}`, 4)) return json({ error: 'Too many messages. Try again in a few minutes.' }, { status: 429 });
 
   const key = process.env.RESEND_API_KEY || import.meta.env.RESEND_API_KEY;

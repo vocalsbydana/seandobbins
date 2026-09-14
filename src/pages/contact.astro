@@ -17,7 +17,7 @@ const description = 'Book Sean Dobbins for a gig, a clinic, a masterclass or a r
           <div><T k="contact.facts.studentsLabel" as="dt" class="label" /><dd><a class="link" href="/barbershop#study" data-edit="contact.facts.studentsLink">{c.facts.studentsLink}</a></dd></div>
         </dl>
       </div>
-      <form class="contact__form paper" data-contact data-success={c.form.success} novalidate data-reveal style="--reveal-delay:120ms">
+      <form class="contact__form paper" data-contact data-success={c.form.success} data-err-name={c.form.errorName} data-err-email={c.form.errorEmail} data-err-message={c.form.errorMessage} data-err-send={c.form.errorSend} novalidate data-reveal style="--reveal-delay:120ms">
         <div class="field"><label for="c-name" data-edit="contact.form.name">{c.form.name}</label><input id="c-name" name="name" type="text" autocomplete="name" required /></div>
         <div class="field"><label for="c-email" data-edit="contact.form.email">{c.form.email}</label><input id="c-email" name="email" type="email" autocomplete="email" required placeholder={c.form.emailPlaceholder} /></div>
         <div class="field"><label for="c-subject" data-edit="contact.form.subject">{c.form.subject}</label>
@@ -55,13 +55,15 @@ const description = 'Book Sean Dobbins for a gig, a clinic, a masterclass or a r
       const fd = new FormData(form); const payload: Record<string, string> = {};
       fd.forEach((v, k) => { payload[k === 'website' ? 'hp' : k] = String(v); });
       msg.className = 'form-msg';
-      if (!payload.name || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(payload.email) || (payload.message || '').trim().length < 10) { msg.textContent = 'Please add your name, a valid email, and a message.'; msg.classList.add('is-error'); return; }
+      const d = form.dataset;
+      const problem = !(payload.name || '').trim() ? d.errName : !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(payload.email) ? d.errEmail : !(payload.message || '').trim() ? d.errMessage : '';
+      if (problem) { msg.textContent = problem; msg.classList.add('is-error'); return; }
       const label = btn.textContent || 'Send message';
       btn.disabled = true; btn.textContent = 'Sending…';
       try {
         const res = await fetch('/api/contact', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
         const data = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error(data.error || 'Something went wrong.');
+        if (!res.ok) throw new Error(data.error || d.errSend || 'Something went wrong.');
         form.reset();
         form.classList.add('is-sent');
         btn.disabled = false; btn.textContent = label;

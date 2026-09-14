@@ -18,10 +18,20 @@
     "email": "Email",
     "emailPlaceholder": "you@venue.com",
     "subject": "What's it about?",
-    "subjects": ["Booking a gig", "Clinic or masterclass", "Residency", "Press", "Something else"],
+    "subjects": [
+      "Booking a gig",
+      "Clinic or masterclass",
+      "Residency",
+      "Press",
+      "Something else"
+    ],
     "message": "Message",
     "messagePlaceholder": "Dates, venue, band size, budget if you have one.",
     "button": "Send message",
-    "success": "Sent. Sean will be in touch."
+    "success": "Sent. Sean will be in touch.",
+    "errorName": "Please add your name.",
+    "errorEmail": "That email address doesn’t look right.",
+    "errorMessage": "Please write a message.",
+    "errorSend": "Could not send right now. Please try again in a minute."
   }
 }
