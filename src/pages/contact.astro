@@ -25,7 +25,7 @@ const description = 'Book Sean Dobbins for a gig, a clinic, a masterclass or a r
         <div class="field"><label for="c-message" data-edit="contact.form.message">{c.form.message}</label><textarea id="c-message" name="message" rows="6" required placeholder={c.form.messagePlaceholder}></textarea></div>
         <label class="hp" aria-hidden="true">Leave this empty <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
         <button class="btn btn--primary" type="submit" data-edit="contact.form.button">{c.form.button}</button>
-        <p class="form-msg" role="status" aria-live="polite"></p>
+        <p class="form-msg" role="status" aria-live="polite" tabindex="-1"></p>
       </form>
     </div>
   </section>
@@ -40,6 +40,9 @@ const description = 'Book Sean Dobbins for a gig, a clinic, a masterclass or a r
   .form-msg:empty { display: none; }
   .form-msg { font-weight: 600; font-size: 14px; }
   .form-msg.is-error { color: var(--walnut); }
+  .contact__form.is-sent .field, .contact__form.is-sent .btn { display: none; }
+  .contact__form.is-sent .form-msg { font-family: var(--font-voice); font-style: italic; font-weight: 400; font-size: 20px; line-height: 1.35; }
+  .form-msg:focus { outline: none; }
 </style>
 <script>
   function bind() {
@@ -59,8 +62,11 @@ const description = 'Book Sean Dobbins for a gig, a clinic, a masterclass or a r
         const res = await fetch('/api/contact', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
         const data = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(data.error || 'Something went wrong.');
-        form.querySelectorAll('.field, button').forEach((el) => el.setAttribute('hidden', ''));
+        form.reset();
+        form.classList.add('is-sent');
+        btn.disabled = false; btn.textContent = label;
         msg.textContent = form.dataset.success || 'Sent.';
+        msg.focus();
       } catch (err) { msg.textContent = (err as Error).message; msg.classList.add('is-error'); btn.disabled = false; btn.textContent = label; }
     });
   }
