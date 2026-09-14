@@ -1,4 +1,4 @@
-# seandobbins.com
+# seandobbinsmusic.com
 
 Website for jazz drummer and educator Sean Dobbins, home of The Barbershop. Astro 7 on Vercel, with a built-in password-protected editor at `/admin` that commits to this repository through the GitHub API. MailerLite powers the resource library's email gate.
 

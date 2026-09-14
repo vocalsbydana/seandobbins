@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin
 Disallow: /api/
-Sitemap: https://seandobbins.com/sitemap-index.xml
+Sitemap: https://seandobbinsmusic.com/sitemap-index.xml

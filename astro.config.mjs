@@ -3,7 +3,7 @@ import { defineConfig } from 'astro/config';
 import vercel from '@astrojs/vercel';
 import sitemap from '@astrojs/sitemap';
 
-const site = process.env.SITE_URL || 'https://seandobbins.com';
+const site = process.env.SITE_URL || 'https://seandobbinsmusic.com';
 
 export default defineConfig({
   site,

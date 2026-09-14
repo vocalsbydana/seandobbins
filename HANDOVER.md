@@ -1,6 +1,6 @@
-# Editing seandobbins.com — a guide for Sean
+# Editing seandobbinsmusic.com — a guide for Sean
 
-Everything you can change on the site lives in one place: **https://seandobbins.com/admin**
+Everything you can change on the site lives in one place: **https://seandobbinsmusic.com/admin**
 (the "Edit site" link in the footer of every page goes there too). One password, no accounts, nothing to install. Type, upload, press **Publish**. The site rebuilds itself in a couple of minutes and the editor tells you when your change is live.
 
 If anything looks wrong, email Dana. Nothing you do in the editor can break the site, and every change is saved in the site's history so it can always be undone.
@@ -9,7 +9,7 @@ If anything looks wrong, email Dana. Nothing you do in the editor can break the 
 
 ## 1. Logging in
 
-Go to **seandobbins.com/admin** and enter the password Dana gave you. You stay logged in for a month on that device.
+Go to **seandobbinsmusic.com/admin** and enter the password Dana gave you. You stay logged in for a month on that device.
 
 ![Login](docs/handover/01-login.png)
 

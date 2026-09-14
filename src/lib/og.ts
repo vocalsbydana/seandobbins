@@ -74,7 +74,7 @@ export async function renderOg(spec: OgSpec): Promise<Uint8Array> {
                 ].filter(Boolean) } },
                 { type: 'div', props: { style: { display: 'flex', alignItems: 'center', gap: 14, fontSize: 18, letterSpacing: 4, color: 'rgba(243,238,229,0.6)' }, children: [
                   { type: 'div', props: { style: { width: 36, height: 2, background: '#C49A5F' } } },
-                  { type: 'div', props: { children: 'SEANDOBBINS.COM' } },
+                  { type: 'div', props: { children: 'SEANDOBBINSMUSIC.COM' } },
                 ] } },
               ],
             },
