@@ -30,7 +30,7 @@ export interface Collection {
 
 export const TOPICS = ['Time & Feel', 'Comping', 'Brushes', 'Reading', 'Practice', 'On the Bandstand'] as const;
 export const REGIONS = ['Midwest', 'Northeast', 'South', 'West', 'Canada', 'Europe', 'Asia & Pacific', 'Africa', 'Latin America'] as const;
-export const OUTREACH_TYPES = ['Clinic', 'Masterclass', 'Residency', 'Concert', 'Faculty', 'Festival'] as const;
+export const OUTREACH_TYPES = ['Clinic', 'Masterclass', 'Residency', 'Concert', 'Faculty', 'Festival', 'Presentation'] as const;
 
 export const RESOURCE_FIELDS: Field[] = [
   { name: 'title', label: 'Title', type: 'text', required: true, hint: 'Short and specific. Shows on the card.' },
@@ -67,7 +67,9 @@ export const COLLECTIONS: Collection[] = [
       { name: 'city', label: 'City', type: 'text', required: true, hint: 'e.g. Bloomington, IN or Paris' },
       { name: 'country', label: 'Country', type: 'text', required: true, default: 'United States' },
       { name: 'region', label: 'Region', type: 'select', options: REGIONS, required: true, default: 'Midwest', hint: 'Which group it appears under on the Outreach page.' },
-      { name: 'year', label: 'Year', type: 'number', required: true },
+      { name: 'year', label: 'Year', type: 'number', hint: 'Leave blank if unknown.' },
+      { name: 'yearEnd', label: 'Last year', type: 'number', hint: 'Only for something that ran for several years, e.g. 2006 to 2013.' },
+      { name: 'ongoing', label: 'Still going', type: 'boolean', default: false },
       { name: 'type', label: 'Type', type: 'select', options: OUTREACH_TYPES, required: true, default: 'Clinic' },
       { name: 'note', label: 'Note', type: 'text', hint: 'One line, optional.' },
     ],

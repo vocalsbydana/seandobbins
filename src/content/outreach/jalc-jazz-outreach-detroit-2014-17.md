@@ -1,9 +1,9 @@
 ---
-institution: "Wayne State University"
+institution: "Jazz at Lincoln Center Jazz Outreach"
 city: "Detroit, MI"
 country: "United States"
 region: "Midwest"
 year: 2014
-type: "Faculty"
-note: "Jazz faculty."
+yearEnd: 2017
+type: "Clinic"
 ---

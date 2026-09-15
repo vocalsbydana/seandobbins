@@ -23,14 +23,247 @@
     "title": "From the studio",
     "blurb": "Students, parents, and bandleaders."
   },
-  "resources": {
+  "alumni": {
     "num": "03",
+    "title": "Where the students went",
+    "blurb": "Former students, playing and teaching now.",
+    "groups": [
+      {
+        "title": "Drummers",
+        "people": [
+          {
+            "name": "David Alvarez",
+            "role": "Drummer, Clayton Brothers Quintet",
+            "place": "Metro Detroit"
+          },
+          {
+            "name": "Ari Axelrod",
+            "role": "Drummer and vocalist; founder of Bridging the Gap; actor, The Encore Musical Theatre Company",
+            "place": "New York"
+          },
+          {
+            "name": "Stephen Boegehold",
+            "role": "Drummer",
+            "place": "New York"
+          },
+          {
+            "name": "Nicholas Bracewell",
+            "role": "Drummer; plays with Randy Napoleon, Jodi Proznick, The Shuffle Demons, Diego Rivera and Michael Dease",
+            "place": "Vancouver, BC"
+          },
+          {
+            "name": "Sean Catanese",
+            "role": "Drummer",
+            "place": "Metro Detroit"
+          },
+          {
+            "name": "Tariq Gardner",
+            "role": "Drummer, Marion Hayden Ensemble",
+            "place": "Vancouver, BC"
+          },
+          {
+            "name": "Kayvon Gordon",
+            "role": "Drummer, Sullivan Fortner Trio; plays with Robert Hurst and JD Allen",
+            "place": "Vancouver, BC"
+          },
+          {
+            "name": "Louis Jones III",
+            "role": "Drummer",
+            "place": "Metro Detroit"
+          },
+          {
+            "name": "Jesse Kramer",
+            "role": "Drummer",
+            "place": "Metro Detroit"
+          },
+          {
+            "name": "Peyton Miller",
+            "role": "Percussionist",
+            "place": "Metro Detroit"
+          },
+          {
+            "name": "Sean Perlmutter",
+            "role": "Drummer",
+            "place": "Metro Detroit"
+          },
+          {
+            "name": "Eliza Salem",
+            "role": "Drummer",
+            "place": "New York"
+          },
+          {
+            "name": "Jonathan Taylor",
+            "role": "Drummer",
+            "place": "Metro Detroit"
+          },
+          {
+            "name": "David Ward",
+            "role": "Drummer, Earth Radio, Harmolodics Trio and the Brian Ward Organ Trio",
+            "place": "New York"
+          },
+          {
+            "name": "Jordan Young",
+            "role": "Drummer, Brian Charette Trio",
+            "place": "New York"
+          }
+        ]
+      },
+      {
+        "title": "Band members",
+        "people": [
+          {
+            "name": "Joise Ala",
+            "role": "Trumpet",
+            "place": "Metro Detroit"
+          },
+          {
+            "name": "Austin Aldridge",
+            "role": "Bass",
+            "place": "New York"
+          },
+          {
+            "name": "Michael Baker",
+            "role": "Trumpet",
+            "place": "Georgia"
+          },
+          {
+            "name": "Isaac Beaumont",
+            "role": "Bass",
+            "place": "Chicago"
+          },
+          {
+            "name": "Jon Beshay",
+            "role": "Saxophone",
+            "place": "New York"
+          },
+          {
+            "name": "Rob Brinkley",
+            "role": "Bass",
+            "place": "Metro Detroit"
+          },
+          {
+            "name": "Brendon Davis",
+            "role": "Piano",
+            "place": "Metro Detroit"
+          },
+          {
+            "name": "Torino Lowe",
+            "role": "Trumpet",
+            "place": "New York"
+          },
+          {
+            "name": "Tim Kohn",
+            "role": "Saxophone",
+            "place": "Metro Detroit"
+          },
+          {
+            "name": "Nick Masters",
+            "role": "Piano",
+            "place": "New York"
+          },
+          {
+            "name": "Ethan Moleski",
+            "role": "Saxophone",
+            "place": "Metro Detroit"
+          },
+          {
+            "name": "Jonathan Muir-Cotton",
+            "role": "Bass",
+            "place": "Metro Detroit"
+          },
+          {
+            "name": "Endea Owens",
+            "role": "Bass, The Late Show with Stephen Colbert",
+            "place": "New York"
+          },
+          {
+            "name": "Christopher Tabacznski",
+            "role": "Saxophone",
+            "place": "Metro Detroit"
+          },
+          {
+            "name": "Jeffrey Trent",
+            "role": "Saxophone",
+            "place": "Metro Detroit"
+          }
+        ]
+      },
+      {
+        "title": "Educators",
+        "people": [
+          {
+            "name": "Amy Blevins",
+            "role": "Vocalist and vocal arts director, Marian High School",
+            "place": "Bloomfield Hills, MI"
+          },
+          {
+            "name": "Sarah Cracknell",
+            "role": "Trumpeter and teacher, Port Huron Music Center",
+            "place": "Port Huron, MI"
+          },
+          {
+            "name": "Gina Dlugosielski",
+            "role": "Saxophonist and teacher, St. Mary’s Preparatory School",
+            "place": "Orchard Lake, MI"
+          },
+          {
+            "name": "Don Gozzard",
+            "role": "Drummer; associate band director, Manor New Tech Middle School",
+            "place": "Austin, TX"
+          },
+          {
+            "name": "McKenna Greene",
+            "role": "Woodwinds and piano, Oak Arbor Montessori School; owner, Red Piano Music Studio",
+            "place": "Rochester Hills, MI"
+          },
+          {
+            "name": "Renee Kuczeski",
+            "role": "Percussionist; middle school band and orchestra director, Wayne-Westland Community Schools",
+            "place": "Westland, MI"
+          },
+          {
+            "name": "Claire Lovins",
+            "role": "Brass; middle school band director, Wayne-Westland Community Schools",
+            "place": "Westland, MI"
+          },
+          {
+            "name": "Matt McCarary",
+            "role": "Drummer; professor, University of New South Wales",
+            "place": "Sydney, Australia"
+          },
+          {
+            "name": "Justin Powless",
+            "role": "Drummer, School of Rock Franklin-Cool Springs",
+            "place": "Franklin, TN"
+          },
+          {
+            "name": "Michael J. Reed",
+            "role": "Drummer; adjunct professor, Saginaw Valley University",
+            "place": "East Lansing, MI"
+          }
+        ]
+      }
+    ],
+    "ensemblesTitle": "Ensembles",
+    "ensembles": [
+      {
+        "name": "Spartan Youth Jazz Big Band",
+        "note": "Winner, Regional Essentially Ellington Jazz Festival, Michigan State University, 2018 and 2019"
+      },
+      {
+        "name": "Louis Smith Jazz Orchestra",
+        "note": "Top four, Regional Essentially Ellington Jazz Festival, Michigan State University, 2014, 2015 and 2016; first place, University of Michigan High School Jazz Festival, 2014"
+      }
+    ]
+  },
+  "resources": {
+    "num": "04",
     "title": "Free resources",
     "blurb": "PDFs from the studio. Leave your email once and everything unlocks, forever.",
     "more": "Browse the whole library"
   },
   "study": {
-    "num": "04",
+    "num": "05",
     "title": "Study with Sean at Jacobs",
     "blurb": "Jazz drumset, Indiana University Jacobs School of Music, Bloomington.",
     "text": "The Jacobs School offers Bachelor of Music, Master of Music, and Doctor of Music degrees in Jazz Studies, and drummers in the program study with Sean. Applications go through Jacobs, not through this site; the links below are the official ones.",
@@ -51,7 +284,8 @@
         "label": "Sean's faculty page",
         "url": "https://music.indiana.edu/faculty/current/dobbins-sean.html"
       }
-    ]
+    ],
+    "also": "Not headed to Jacobs? Sean has run the Sean Dobbins Virtual Drum Set Intensive online since 2019, open to drummers anywhere."
   },
   "form": {
     "label": "Interested? Tell Sean you're coming.",

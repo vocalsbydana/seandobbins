@@ -46,8 +46,10 @@ const outreach = defineCollection({
     city: z.string(),
     country: z.string(),
     region: z.enum(REGIONS),
-    year: z.number().int().min(1990).max(2100),
-    type: z.enum(['Clinic', 'Masterclass', 'Residency', 'Concert', 'Faculty', 'Festival']).default('Clinic'),
+    year: z.number().int().min(1990).max(2100).optional(),
+    yearEnd: z.number().int().min(1990).max(2100).optional(),
+    ongoing: z.boolean().default(false),
+    type: z.enum(['Clinic', 'Masterclass', 'Residency', 'Concert', 'Faculty', 'Festival', 'Presentation']).default('Clinic'),
     note: z.string().optional(),
   }),
 });

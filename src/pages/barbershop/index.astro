@@ -67,6 +67,35 @@ const description = "The Barbershop is Sean Dobbins' jazz drumset studio at the 
     </div>
   </section>
 
+  <section class="section alumni">
+    <div class="container">
+      <SectionHead numKey="barbershop.alumni.num" titleKey="barbershop.alumni.title" blurbKey="barbershop.alumni.blurb" />
+      <div class="alumni__groups">
+        {c.alumni.groups.map((g, gi) => (
+          <div class="alumni__group" data-reveal style={`--reveal-delay:${gi * 80}ms`}>
+            <T k={`barbershop.alumni.groups.${gi}.title`} as="h3" class="display-4 alumni__title" />
+            <ul role="list" class="alumni__list">
+              {g.people.map((p, pi) => (
+                <li>
+                  <strong data-edit={`barbershop.alumni.groups.${gi}.people.${pi}.name`}>{p.name}</strong>
+                  <span class="small muted"><span data-edit={`barbershop.alumni.groups.${gi}.people.${pi}.role`}>{p.role}</span> · <span data-edit={`barbershop.alumni.groups.${gi}.people.${pi}.place`}>{p.place}</span></span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+        <div class="alumni__group" data-reveal style="--reveal-delay:240ms">
+          <T k="barbershop.alumni.ensemblesTitle" as="h3" class="display-4 alumni__title" />
+          <ul role="list" class="alumni__list">
+            {c.alumni.ensembles.map((e, ei) => (
+              <li><strong data-edit={`barbershop.alumni.ensembles.${ei}.name`}>{e.name}</strong><span class="small muted" data-edit={`barbershop.alumni.ensembles.${ei}.note`}>{e.note}</span></li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="section">
     <div class="container">
       <SectionHead numKey="barbershop.resources.num" titleKey="barbershop.resources.title" blurbKey="barbershop.resources.blurb" />
@@ -86,6 +115,7 @@ const description = "The Barbershop is Sean Dobbins' jazz drumset studio at the 
           <ul>
             {c.study.links.map((l, i) => <li><a href={l.url} target="_blank" rel="noopener" data-edit={`barbershop.study.links.${i}.label`}>{l.label}</a></li>)}
           </ul>
+          <T k="barbershop.study.also" as="p" />
         </div>
         <Pole height={200} class="study__pole" />
       </div>
@@ -108,6 +138,12 @@ const description = "The Barbershop is Sean Dobbins' jazz drumset studio at the 
 </Base>
 
 <style>
+  .alumni__groups { display: grid; gap: var(--s-5); margin-top: var(--s-5); }
+  @media (min-width: 800px) { .alumni__groups { grid-template-columns: 1fr 1fr; gap: var(--s-5) var(--s-6); } }
+  .alumni__title { margin-bottom: 8px; color: var(--royal); }
+  .alumni__list li { display: flex; flex-direction: column; gap: 2px; padding: 10px 0; border-top: var(--hairline); }
+  .alumni__list li:last-child { border-bottom: var(--hairline); }
+  .alumni__list strong { font-size: 15px; }
   .bs-hero { padding-block: clamp(48px, 8vw, 112px); }
   .bs-hero__inner { display: grid; gap: var(--s-5); align-items: center; }
   @media (min-width: 800px) { .bs-hero__inner { grid-template-columns: auto 1fr; gap: clamp(32px, 6vw, 80px); } }

@@ -8,7 +8,7 @@ export const prerender = false;
 function coerce(field: Field, raw: unknown): Scalar | undefined {
   if (raw === undefined || raw === null) return field.type === 'boolean' ? false : field.default !== undefined ? field.default : undefined;
   switch (field.type) {
-    case 'number': { const n = Number(raw); return Number.isFinite(n) ? n : (field.default as number | undefined); }
+    case 'number': { if (raw === '' || raw == null) return field.default as number | undefined; const n = Number(raw); return Number.isFinite(n) ? n : (field.default as number | undefined); }
     case 'boolean': return raw === true || raw === 'true';
     case 'date': return String(raw).slice(0, 10);
     case 'select': return field.options?.includes(String(raw)) ? String(raw) : String(field.default ?? field.options?.[0] ?? '');

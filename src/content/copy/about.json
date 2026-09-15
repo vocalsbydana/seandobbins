@@ -11,7 +11,9 @@
     "fromLabel": "From",
     "from": "Ann Arbor · Detroit, Michigan",
     "awardsLabel": "Awards",
-    "influencesLabel": "Influences"
+    "influencesLabel": "Influences",
+    "taughtLabel": "Taught in",
+    "taught": "United States · Japan · Thailand · Italy"
   },
   "awards": [
     "Woody Herman Jazz Award",
@@ -75,8 +77,81 @@
     "Kurt Krahnke",
     "Johnnie Bassett"
   ],
-  "photos": {
+  "press": {
     "num": "02",
+    "title": "In the media",
+    "blurb": "Interviews, podcasts, panels and press.",
+    "items": [
+      {
+        "title": "Panel discussion: Drums and Percussion",
+        "outlet": "City of ArtZ Virtual Music Symposium",
+        "year": 2021,
+        "url": "https://www.youtube.com/live/itFvYi94TGc"
+      },
+      {
+        "title": "Life Lessons from Jazz",
+        "outlet": "The List",
+        "year": 2021,
+        "url": "https://youtu.be/yqDoWVU78ks"
+      },
+      {
+        "title": "Episode 7: Sean Dobbins",
+        "outlet": "mDetroit Podcast",
+        "year": 2021,
+        "url": "https://www.youtube.com/watch?v=qLl0bg6ttWc"
+      },
+      {
+        "title": "Homegrown Hip",
+        "outlet": "B’Town Jazz",
+        "year": 2020,
+        "url": "https://youtu.be/azRR3CZ8hdE"
+      },
+      {
+        "title": "Quarantine Interviews",
+        "outlet": "Doctor Thunder Podcast",
+        "year": 2020,
+        "url": "https://www.youtube.com/watch?v=G2IhPoGs0Qo"
+      },
+      {
+        "title": "“Take Five” interview with Dirty Dog’s Carl Williams",
+        "outlet": "DownBeat",
+        "year": 2019,
+        "url": "https://youtu.be/sP-cJehkiHc"
+      },
+      {
+        "title": "The Drummer",
+        "outlet": "Detroit Performs",
+        "year": 2013,
+        "url": ""
+      },
+      {
+        "title": "Sean Dobbins & the Modern Jazz Messengers: Lessons Learned",
+        "outlet": "Ann Arbor Observer",
+        "year": 2011,
+        "url": "https://annarborobserver.com/sean-dobbins-the-modern-jazz/"
+      },
+      {
+        "title": "Music for Art’s Sake",
+        "outlet": "Metro Times",
+        "year": 2010,
+        "url": "https://www.metrotimes.com/music/music-for-arts-sake-2150977"
+      },
+      {
+        "title": "Drummer sharpens skills at ‘Claude and Clifford’ U",
+        "outlet": "The Blade",
+        "year": 2007,
+        "url": "https://www.toledoblade.com/Music-Theater-Dance/2007/06/07/Drummer-sharpens-skills-at-Claude-and-Clifford-U.html"
+      },
+      {
+        "title": "Detroit JazzStage featuring Urban Transport",
+        "outlet": "Jazz Stage Productions",
+        "year": 2006,
+        "url": "https://archive.org/details/podcast_detroit-jazzstage-world-clas_detroit-jazzstage-featuring-ur_1000110793399"
+      }
+    ]
+  },
+  "photos": {
+    "num": "03",
     "title": "Photos",
     "blurb": "Stage photos, free to use for print, press and posters. Please credit the photographer.",
     "view": "View",

@@ -7,12 +7,14 @@ import { REGIONS } from '../content.config';
 import { copy } from '../lib/copy';
 
 const c = copy.outreach;
-const all = (await getCollection('outreach')).sort((a, b) => b.data.year - a.data.year || a.data.institution.localeCompare(b.data.institution));
+const sortKey = (d: { year?: number; yearEnd?: number; ongoing: boolean }) => (d.ongoing ? 9999 : d.yearEnd ?? d.year ?? -1);
+const all = (await getCollection('outreach')).sort((a, b) => sortKey(b.data) - sortKey(a.data) || a.data.institution.localeCompare(b.data.institution));
+const when = (d: { year?: number; yearEnd?: number; ongoing: boolean }) => !d.year ? '' : d.ongoing ? `${d.year}–` : d.yearEnd && d.yearEnd !== d.year ? `${d.year}–${String(d.yearEnd).slice(2)}` : String(d.year);
 const groups = REGIONS.map((region) => ({ region, items: all.filter((o) => o.data.region === region) })).filter((g) => g.items.length);
 const countries = new Set(all.map((o) => o.data.country));
 const cities = new Set(all.map((o) => o.data.city));
-const years = all.map((o) => o.data.year);
-const span = years.length ? `${Math.min(...years)}–${Math.max(...years)}` : '';
+const years = all.flatMap((o) => [o.data.year, o.data.yearEnd]).filter((y): y is number => typeof y === 'number');
+const span = years.length ? `${Math.min(...years)}–${all.some((o) => o.data.ongoing) ? new Date().getFullYear() : Math.max(...years)}` : '';
 const description = 'Clinics, masterclasses, residencies and concerts Sean Dobbins has given for students across the United States and around the world.';
 ---
 <Base title="Outreach" description={description}>
@@ -34,7 +36,7 @@ const description = 'Clinics, masterclasses, residencies and concerts Sean Dobbi
           <ol role="list" class="rows">
             {g.items.map((o, i) => (
               <li class="row" data-reveal style={`--reveal-delay:${Math.min(i, 6) * 50}ms`}>
-                <span class="row__year">{o.data.year}</span>
+                <span class="row__year">{when(o.data)}</span>
                 <div class="row__main">
                   <div class="row__inst">{o.data.institution}</div>
                   <div class="row__place small muted">{o.data.city}, {o.data.country}{o.data.note ? ` · ${o.data.note}` : ''}</div>
@@ -66,14 +68,14 @@ const description = 'Clinics, masterclasses, residencies and concerts Sean Dobbi
   .region { margin-bottom: var(--s-8); scroll-margin-top: 80px; }
   .region__title { display: flex; align-items: center; gap: 12px; font-size: clamp(28px, 3.4vw, 40px); margin-bottom: var(--s-2); }
   .region__dot { width: 10px; height: 10px; background: var(--brass); border-radius: 50%; }
-  .row { display: grid; grid-template-columns: 64px 1fr auto; gap: var(--s-2); align-items: center; padding: 14px 0; border-top: var(--hairline); position: relative; }
+  .row { display: grid; grid-template-columns: 96px 1fr auto; gap: var(--s-2); align-items: center; padding: 14px 0; border-top: var(--hairline); position: relative; }
   .rows li:last-child { border-bottom: var(--hairline); }
   .row::before { content: ''; position: absolute; left: 0; top: -1px; height: 1px; width: 0; background: var(--brass); transition: width var(--dur-slow) var(--ease-out); }
   .row:hover::before { width: 100%; }
   .row__year { font-family: var(--font-display); font-size: 28px; color: var(--royal); line-height: 1; }
   .row__inst { font-weight: 600; font-size: 16px; line-height: 1.2; }
   .row__type { font-size: 11px; }
-  @media (max-width: 520px) { .row { grid-template-columns: 56px 1fr; } .row__type { grid-column: 2; } }
+  @media (max-width: 520px) { .row { grid-template-columns: 84px 1fr; } .row__type { grid-column: 2; } }
   .cta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s-3); padding: clamp(24px, 4vw, 40px); }
   .cta p:not(.label) { max-width: 60ch; margin-top: 6px; }
 </style>
