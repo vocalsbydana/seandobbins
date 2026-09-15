@@ -5,10 +5,11 @@ import Marquee from '../components/Marquee.astro';
 import SectionHead from '../components/SectionHead.astro';
 import T from '../components/T.astro';
 import { copy } from '../lib/copy';
-import bwStars from '../assets/photos/bw-stars.jpg';
 import profile from '../assets/photos/profile-brushes.jpg';
 import laugh from '../assets/photos/laugh-warm.jpg';
+import laughVest from '../assets/photos/laugh-vest.jpg';
 import kit from '../assets/photos/stage-kit.jpg';
+import PhotoGallery from '../components/PhotoGallery.astro';
 
 const c = copy.about;
 const description = 'Sean Dobbins, jazz drummer: Detroit sideman, bandleader, Woody Herman Jazz Award recipient, and Professor of Music (Jazz Studies) at the Indiana University Jacobs School of Music.';
@@ -16,7 +17,7 @@ const description = 'Sean Dobbins, jazz drummer: Detroit sideman, bandleader, Wo
 <Base title="About" description={description}>
   <section class="about-hero dark">
     <div class="photo photo--bw about-hero__photo" aria-hidden="true">
-      <Image src={bwStars} alt="" widths={[800, 1400, 2000]} sizes="100vw" loading="eager" />
+      <Image src={laugh} alt="" widths={[800, 1400, 2000]} sizes="100vw" loading="eager" />
     </div>
     <div class="container container--wide about-hero__inner">
       <T k="about.hero.label" as="p" class="label" style="color:var(--brass)" />
@@ -29,7 +30,7 @@ const description = 'Sean Dobbins, jazz drummer: Detroit sideman, bandleader, Wo
     <div class="container bio">
       <aside class="bio__side" data-reveal="left">
         <div class="photo bio__portrait">
-          <Image src={profile} alt="Sean Dobbins with brushes, in profile." widths={[500, 900, 1300]} sizes="(min-width: 900px) 34vw, 100vw" />
+          <Image src={profile} alt="Sean Dobbins in a blue suit, spinning a drumstick." widths={[500, 900, 1300]} sizes="(min-width: 900px) 34vw, 100vw" />
         </div>
         <div class="bio__facts">
           <div class="fact"><T k="about.facts.nowLabel" class="label" /><T k="about.facts.now" /></div>
@@ -70,21 +71,23 @@ const description = 'Sean Dobbins, jazz drummer: Detroit sideman, bandleader, Wo
   <section class="section--tight strip">
     <div class="container container--wide strip__grid">
       <figure class="photo strip__a" data-reveal="scale">
-        <Image src={laugh} alt="Sean laughing at the kit under warm light. Photo: Jeff Dunn Jazz Photography." widths={[600, 1000, 1400]} sizes="(min-width: 900px) 58vw, 100vw" />
+        <Image src={laughVest} alt="Sean mid-laugh at the kit in a waistcoat, sticks up. Photo: Jeff Dunn Jazz Photography." widths={[600, 800]} sizes="(min-width: 900px) 40vw, 100vw" />
         <T k="about.strip.captionA" as="figcaption" class="small muted" />
       </figure>
       <figure class="photo strip__b" data-reveal="scale" style="--reveal-delay:120ms">
-        <Image src={kit} alt="Sean behind a Yamaha kit against blue curtains." widths={[500, 900, 1200]} sizes="(min-width: 900px) 40vw, 100vw" />
+        <Image src={kit} alt="Sean behind a Yamaha kit against blue curtains." widths={[600, 1000, 1400]} sizes="(min-width: 900px) 58vw, 100vw" />
         <T k="about.strip.captionB" as="figcaption" class="small muted" />
       </figure>
     </div>
   </section>
+
+  <PhotoGallery />
 </Base>
 
 <style>
   .about-hero { position: relative; overflow: hidden; min-height: clamp(420px, 60vh, 680px); display: flex; align-items: flex-end; }
   .about-hero__photo { position: absolute; inset: 0; }
-  .about-hero__photo img { object-position: 60% 25%; }
+  .about-hero__photo img { object-position: 55% 30%; }
   .about-hero__photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, var(--ink) 8%, rgba(11,11,20,.35) 55%, rgba(11,11,20,.15)); }
   .about-hero__inner { position: relative; padding-block: var(--s-6) var(--s-6); display: flex; flex-direction: column; gap: var(--s-2); }
   .about-hero__title { display: flex; flex-direction: column; font-size: clamp(72px, 14vw, 190px); line-height: .82; }
@@ -111,7 +114,7 @@ const description = 'Sean Dobbins, jazz drummer: Detroit sideman, bandleader, Wo
   .names li { padding: 6px 0; border-top: var(--hairline-dark); }
 
   .strip__grid { display: grid; gap: var(--s-3); }
-  @media (min-width: 900px) { .strip__grid { grid-template-columns: 1.45fr 1fr; align-items: end; } }
+  @media (min-width: 900px) { .strip__grid { grid-template-columns: 1fr 1.45fr; align-items: end; } }
   .strip figure { background: none; display: flex; flex-direction: column; }
   .strip figure :global(img) { width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; }
   .strip__b :global(img) { aspect-ratio: 4 / 5; }

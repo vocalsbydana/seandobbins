@@ -56,7 +56,8 @@ src/pages/                routes (admin.astro = the editor)    src/pages/api/   
 src/pages/api/admin/      editor API: login, logout, session, file, collection, entry, blob, resource
 src/lib/admin/            auth, store (GitHub + local), schema (what is editable), frontmatter
 src/lib/copy.ts + components/T.astro   copy lookup and the data-edit tag
-src/data/                 code-owned data (socials, icons)   src/pages/og/   build-time OG images
+src/data/                 code-owned data (socials, icons, photos.json = the About-page photo wall + downloads)   src/pages/og/   build-time OG images
+public/photos/            full-size originals served by the photo wall's download links (sean-dobbins-<name>)
 private/resources/        PDFs (uploaded via the editor)       public/uploads/          images (uploaded via the editor)
 scripts/hash-pdfs.mjs     stages hashed PDF copies at build
 ```

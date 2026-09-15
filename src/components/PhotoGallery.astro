@@ -1,0 +1,100 @@
+---
+/** Photo wall with full-size downloads. Every photo on the site appears here; data lives in src/data/photos.json (code-owned). */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import SectionHead from './SectionHead.astro';
+import T from './T.astro';
+import photos from '../data/photos.json';
+import { copy } from '../lib/copy';
+
+const mods = import.meta.glob<{ default: ImageMetadata }>('../assets/photos/*.{jpg,png}', { eager: true });
+const items = photos.map((p) => {
+  const mod = Object.entries(mods).find(([k]) => k.endsWith('/' + p.file));
+  if (!mod) throw new Error(`photos.json: no file src/assets/photos/${p.file}`);
+  return { ...p, img: mod[1].default, href: `/photos/sean-dobbins-${p.file}` };
+});
+const c = copy.about.photos;
+---
+<section class="section gallery" id="photos">
+  <div class="container container--wide">
+    <SectionHead numKey="about.photos.num" titleKey="about.photos.title" blurbKey="about.photos.blurb" />
+    <ul role="list" class="gallery__grid">
+      {items.map((p, i) => (
+        <li class="gallery__item" data-reveal="scale" style={`--reveal-delay:${(i % 3) * 70}ms`}>
+          <button type="button" class="gallery__open photo" data-lightbox={i} data-src={p.href} data-alt={p.alt} data-credit={p.credit} data-size={`${p.img.width} × ${p.img.height}`} aria-label={`${c.view}: ${p.alt}`}>
+            <Image src={p.img} alt={p.alt} widths={[420, 840]} sizes="(min-width: 900px) 30vw, (min-width: 600px) 46vw, 100vw" />
+          </button>
+          <div class="gallery__meta small">
+            <span class="muted">{p.credit ? `Photo: ${p.credit}` : ''}</span>
+            <a class="link gallery__dl" href={p.href} download><T k="about.photos.download" /></a>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <dialog class="lightbox dark" aria-label={c.title}>
+    <button type="button" class="lightbox__close" data-lb-close aria-label={c.close}>×</button>
+    <button type="button" class="lightbox__nav lightbox__nav--prev" data-lb-step="-1" aria-label={c.prev}>←</button>
+    <figure class="lightbox__fig">
+      <img class="lightbox__img" alt="" />
+      <figcaption class="lightbox__cap small">
+        <span class="lightbox__credit muted"></span>
+        <a class="link lightbox__dl" href="#" download><T k="about.photos.download" /> <span class="lightbox__size muted"></span></a>
+      </figcaption>
+    </figure>
+    <button type="button" class="lightbox__nav lightbox__nav--next" data-lb-step="1" aria-label={c.next}>→</button>
+  </dialog>
+</section>
+
+<style>
+  .gallery__grid { display: grid; gap: var(--s-4) var(--s-3); margin-top: var(--s-5); grid-template-columns: 1fr; }
+  @media (min-width: 600px) { .gallery__grid { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 900px) { .gallery__grid { grid-template-columns: 1fr 1fr 1fr; } }
+  .gallery__open { display: block; width: 100%; aspect-ratio: 3 / 2; padding: 0; border: 0; cursor: zoom-in; background: var(--ink); }
+  .gallery__open :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-slow) var(--ease-out); }
+  @media (prefers-reduced-motion: no-preference) { .gallery__open:hover :global(img) { transform: scale(1.03); } }
+  .gallery__open:focus-visible { outline: 2px solid var(--royal); outline-offset: 2px; }
+  .gallery__meta { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding-top: 10px; border-top: var(--hairline); margin-top: 10px; }
+  .gallery__dl { white-space: nowrap; }
+
+  .lightbox { border: 0; padding: 0; margin: 0; width: 100vw; height: 100dvh; max-width: none; max-height: none; background: var(--ink); color: var(--ivory); }
+  .lightbox::backdrop { background: rgba(11, 11, 20, .96); }
+  .lightbox[open] { display: grid; grid-template-columns: 56px 1fr 56px; align-items: center; }
+  .lightbox__fig { display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 0; min-width: 0; max-height: 100dvh; padding: 56px 0 24px; }
+  .lightbox__img { max-width: 100%; max-height: calc(100dvh - 140px); width: auto; height: auto; object-fit: contain; }
+  .lightbox__cap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: center; text-align: center; padding-inline: 16px; }
+  .lightbox__close, .lightbox__nav { background: none; border: 0; color: var(--ivory); font: inherit; font-size: 28px; line-height: 1; cursor: pointer; padding: 12px; }
+  .lightbox__close { position: absolute; top: 8px; right: 8px; font-size: 34px; }
+  .lightbox__nav { justify-self: center; }
+  .lightbox__close:hover, .lightbox__nav:hover { color: var(--brass); }
+  .lightbox__close:focus-visible, .lightbox__nav:focus-visible { outline: 2px solid var(--royal); }
+  @media (max-width: 599px) { .lightbox[open] { grid-template-columns: 40px 1fr 40px; } .lightbox__nav { font-size: 22px; padding: 8px; } }
+</style>
+
+<script>
+  function bind() {
+    const dlg = document.querySelector<HTMLDialogElement>('.lightbox:not([data-bound])');
+    if (!dlg) return; dlg.dataset.bound = '1';
+    const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('.gallery__open[data-lightbox]'));
+    const img = dlg.querySelector<HTMLImageElement>('.lightbox__img')!;
+    const credit = dlg.querySelector<HTMLElement>('.lightbox__credit')!;
+    const dl = dlg.querySelector<HTMLAnchorElement>('.lightbox__dl')!;
+    const size = dlg.querySelector<HTMLElement>('.lightbox__size')!;
+    let index = 0;
+    const show = (i: number) => {
+      index = (i + buttons.length) % buttons.length;
+      const b = buttons[index].dataset;
+      img.src = b.src!; img.alt = b.alt || '';
+      credit.textContent = b.credit ? `Photo: ${b.credit}` : '';
+      dl.href = b.src!; size.textContent = b.size || '';
+    };
+    buttons.forEach((b, i) => b.addEventListener('click', () => { show(i); dlg.showModal(); }));
+    dlg.querySelectorAll<HTMLButtonElement>('[data-lb-step]').forEach((b) => b.addEventListener('click', () => show(index + Number(b.dataset.lbStep))));
+    dlg.querySelector('[data-lb-close]')!.addEventListener('click', () => dlg.close());
+    dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+    dlg.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') show(index + 1); if (e.key === 'ArrowLeft') show(index - 1); });
+  }
+  bind();
+  document.addEventListener('astro:page-load', bind);
+</script>

@@ -13,8 +13,19 @@
     "awardsLabel": "Awards",
     "influencesLabel": "Influences"
   },
-  "awards": ["Woody Herman Jazz Award", "Louis Armstrong Scholarship"],
-  "influences": ["Art Blakey", "Elvin Jones", "Jeff Hamilton", "Jeff \"Tain\" Watts", "Ed Thigpen", "Sonny Payne", "Gerald Cleaver"],
+  "awards": [
+    "Woody Herman Jazz Award",
+    "Louis Armstrong Scholarship"
+  ],
+  "influences": [
+    "Art Blakey",
+    "Elvin Jones",
+    "Jeff Hamilton",
+    "Jeff \"Tain\" Watts",
+    "Ed Thigpen",
+    "Sonny Payne",
+    "Gerald Cleaver"
+  ],
   "bio": {
     "lede": "Drummer Sean Dobbins is Professor of Music (Jazz Studies) at the Indiana University Jacobs School of Music, where he leads the jazz drumset studio.",
     "paragraphs": [
@@ -38,13 +49,44 @@
     "blurb": "Performed, toured, or recorded with. A partial list, growing."
   },
   "playedWith": [
-    "Benny Golson", "Dr. Lonnie Smith", "Barry Harris", "Mose Allison", "Frank Morgan", "Joey DeFrancesco",
-    "George Cables", "Jon Hendricks", "Cyrus Chestnut", "James \"Blood\" Ulmer", "Marcus Belgrave", "Larry Willis",
-    "Rodney Whitaker", "David \"Fathead\" Newman", "David Baker", "Louis Smith", "Johnny O'Neal", "Claude Black",
-    "Donald Walden", "Marion Hayden", "Randy Johnston", "Paul Keller", "Tad Weed", "Kurt Krahnke", "Johnnie Bassett"
+    "Benny Golson",
+    "Dr. Lonnie Smith",
+    "Barry Harris",
+    "Mose Allison",
+    "Frank Morgan",
+    "Joey DeFrancesco",
+    "George Cables",
+    "Jon Hendricks",
+    "Cyrus Chestnut",
+    "James \"Blood\" Ulmer",
+    "Marcus Belgrave",
+    "Larry Willis",
+    "Rodney Whitaker",
+    "David \"Fathead\" Newman",
+    "David Baker",
+    "Louis Smith",
+    "Johnny O'Neal",
+    "Claude Black",
+    "Donald Walden",
+    "Marion Hayden",
+    "Randy Johnston",
+    "Paul Keller",
+    "Tad Weed",
+    "Kurt Krahnke",
+    "Johnnie Bassett"
   ],
   "strip": {
     "captionA": "Keep the joy. The laugh is the brand.",
     "captionB": "Show the kit, show the work."
+  },
+  "photos": {
+    "num": "02",
+    "title": "Photos",
+    "blurb": "Stage photos, free to use for print, press and posters. Please credit the photographer.",
+    "view": "View",
+    "download": "Download full size",
+    "close": "Close",
+    "prev": "Previous photo",
+    "next": "Next photo"
   }
 }

@@ -11,7 +11,9 @@
     "bookingEmail": "",
     "bookingFallback": "Use the form",
     "studentsLabel": "Students",
-    "studentsLink": "Study with Sean at Jacobs"
+    "studentsLink": "Study with Sean at Jacobs",
+    "photosLabel": "Photos",
+    "photosLink": "Download stage photos"
   },
   "form": {
     "name": "Name",

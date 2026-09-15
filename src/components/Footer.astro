@@ -18,6 +18,7 @@ const year = new Date().getFullYear();
         <ul role="list" class="site-footer__nav">
           {NAV.map((i) => <li><a href={i.href} data-edit={i.key}>{i.label}</a></li>)}
           <li><a href="/barbershop/resources" data-edit="global.footer.freeResources">{f.freeResources}</a></li>
+          <li><a href="/about#photos" data-edit="global.footer.photos">{f.photos}</a></li>
           <li><a href="/contact" data-edit="global.nav.contact">{copy.global.nav.contact}</a></li>
         </ul>
       </nav>

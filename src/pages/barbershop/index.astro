@@ -8,7 +8,7 @@ import ResourceCard from '../../components/ResourceCard.astro';
 import SectionHead from '../../components/SectionHead.astro';
 import T from '../../components/T.astro';
 import { copy } from '../../lib/copy';
-import kit from '../../assets/photos/stage-kit.jpg';
+import stand from '../../assets/photos/stand-cream.jpg';
 
 const c = copy.barbershop;
 const testimonials = (await getCollection('testimonials')).sort((a, b) => a.data.order - b.data.order);
@@ -44,7 +44,7 @@ const description = "The Barbershop is Sean Dobbins' jazz drumset studio at the 
           <T k="barbershop.philosophy.who" as="footer" class="label" />
         </blockquote>
         <div class="photo philosophy__photo" data-reveal="scale" style="--reveal-delay:220ms">
-          <Image src={kit} alt="Sean at a Yamaha kit against blue curtains, mid-phrase." widths={[500, 900]} sizes="(min-width: 900px) 34vw, 100vw" />
+          <Image src={stand} alt="Sean behind the mic and music stand, listening to the band. Photo: Jeff Dunn Jazz Photography." widths={[500, 800]} sizes="(min-width: 900px) 34vw, 100vw" />
         </div>
       </div>
     </div>

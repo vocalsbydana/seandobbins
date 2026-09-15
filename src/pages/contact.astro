@@ -15,6 +15,7 @@ const description = 'Book Sean Dobbins for a gig, a clinic, a masterclass or a r
           <div><T k="contact.facts.basedLabel" as="dt" class="label" /><T k="contact.facts.based" as="dd" /></div>
           <div><T k="contact.facts.bookingLabel" as="dt" class="label" /><dd>{c.facts.bookingEmail ? <a class="link" href={`mailto:${c.facts.bookingEmail}`} data-edit="contact.facts.bookingEmail">{c.facts.bookingEmail}</a> : <T k="contact.facts.bookingFallback" />}</dd></div>
           <div><T k="contact.facts.studentsLabel" as="dt" class="label" /><dd><a class="link" href="/barbershop#study" data-edit="contact.facts.studentsLink">{c.facts.studentsLink}</a></dd></div>
+          <div><T k="contact.facts.photosLabel" as="dt" class="label" /><dd><a class="link" href="/about#photos" data-edit="contact.facts.photosLink">{c.facts.photosLink}</a></dd></div>
         </dl>
       </div>
       <form class="contact__form paper" data-contact data-success={c.form.success} data-err-name={c.form.errorName} data-err-email={c.form.errorEmail} data-err-message={c.form.errorMessage} data-err-send={c.form.errorSend} novalidate data-reveal style="--reveal-delay:120ms">
