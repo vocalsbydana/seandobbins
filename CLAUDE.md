@@ -58,6 +58,7 @@ src/lib/admin/            auth, store (GitHub + local), schema (what is editable
 src/lib/copy.ts + components/T.astro   copy lookup and the data-edit tag
 src/data/                 code-owned data (socials, icons, photos.json = the About-page photo wall + downloads)   src/pages/og/   build-time OG images
 public/photos/            full-size originals served by the photo wall's download links (sean-dobbins-<name>)
+src/data/played-with.json + src/assets/people/   hover/tap photo cards on the About 'Played with' list (name → file + photographer credit; real, licensed photos only)
 private/resources/        PDFs (uploaded via the editor)       public/uploads/          images (uploaded via the editor)
 scripts/hash-pdfs.mjs     stages hashed PDF copies at build
 ```

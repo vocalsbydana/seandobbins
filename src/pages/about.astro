@@ -8,6 +8,18 @@ import { copy } from '../lib/copy';
 import profile from '../assets/photos/profile-brushes.jpg';
 import laugh from '../assets/photos/laugh-warm.jpg';
 import PhotoGallery from '../components/PhotoGallery.astro';
+import type { ImageMetadata } from 'astro';
+import people from '../data/played-with.json';
+
+// Played-with photos: src/data/played-with.json maps a name to a file in src/assets/people/ (+ photographer credit).
+// Names without an entry render as plain text. Matching is by name, so renaming a person in the editor unlinks the photo.
+const peopleMods = import.meta.glob<{ default: ImageMetadata }>('../assets/people/*.{jpg,jpeg,png,webp}', { eager: true });
+const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+const photoFor = (name: string) => {
+  const p = people.find((x) => slug(x.name) === slug(name));
+  const mod = p && Object.entries(peopleMods).find(([k]) => k.endsWith('/' + p.file));
+  return p && mod ? { ...p, img: mod[1].default } : null;
+};
 
 const c = copy.about;
 const description = 'Sean Dobbins, jazz drummer: Detroit sideman, bandleader, Woody Herman Jazz Award recipient, and Professor of Music (Jazz Studies) at the Indiana University Jacobs School of Music.';
@@ -61,13 +73,40 @@ const description = 'Sean Dobbins, jazz drummer: Detroit sideman, bandleader, Wo
     <Marquee items={c.playedWith} speed={70} keyPrefix="about.playedWith" />
     <div class="container container--wide">
       <ul role="list" class="names" aria-label="Full list">
-        {c.playedWith.map((n, i) => <li data-reveal style={`--reveal-delay:${(i % 8) * 40}ms`} data-edit={`about.playedWith.${i}`}>{n}</li>)}
+        {c.playedWith.map((n, i) => { const p = photoFor(n); return p ? (
+          <li class="names__item has-peek" data-reveal style={`--reveal-delay:${(i % 8) * 40}ms`}>
+            <button type="button" class="names__btn" aria-expanded="false" aria-controls={`peek-${i}`} data-peek data-edit={`about.playedWith.${i}`}>{n}</button>
+            <div class="peek paper" id={`peek-${i}`} role="group" aria-label={n}>
+              <div class="peek__photo"><Image src={p.img} alt={n} widths={[240, 480]} sizes="240px" loading="lazy" /></div>
+              <div class="peek__meta"><strong class="peek__name">{n}</strong>{p.credit && <span class="small muted">Photo: {p.credit}</span>}</div>
+            </div>
+          </li>
+        ) : (
+          <li class="names__item" data-reveal style={`--reveal-delay:${(i % 8) * 40}ms`} data-edit={`about.playedWith.${i}`}>{n}</li>
+        ); })}
       </ul>
     </div>
   </section>
 
   <PhotoGallery />
 </Base>
+
+<script>
+  // Tap (or click) toggles a person's photo card; tapping elsewhere or Escape closes it. Hover is handled in CSS on pointer devices.
+  function bind() {
+    const list = document.querySelector<HTMLElement>('.names:not([data-bound])');
+    if (!list) return; list.dataset.bound = '1';
+    const closeAll = () => list.querySelectorAll('.has-peek.is-open').forEach((li) => { li.classList.remove('is-open'); li.querySelector('[data-peek]')?.setAttribute('aria-expanded', 'false'); });
+    list.querySelectorAll<HTMLButtonElement>('[data-peek]').forEach((btn) => btn.addEventListener('click', () => {
+      const li = btn.closest('li')!; const open = li.classList.contains('is-open'); closeAll();
+      if (!open) { li.classList.add('is-open'); btn.setAttribute('aria-expanded', 'true'); }
+    }));
+    document.addEventListener('click', (e) => { if (!(e.target as Element).closest('.has-peek')) closeAll(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAll(); });
+  }
+  bind();
+  document.addEventListener('astro:page-load', bind);
+</script>
 
 <style>
   .about-hero { position: relative; overflow: hidden; min-height: clamp(420px, 60vh, 680px); display: flex; align-items: flex-end; }
@@ -96,6 +135,23 @@ const description = 'Sean Dobbins, jazz drummer: Detroit sideman, bandleader, Wo
 
   .played { padding-block: clamp(48px, 8vw, 96px) var(--s-8); }
   .names { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px 24px; margin-top: var(--s-6); font-size: 14px; color: var(--ivory-80); }
-  .names li { padding: 6px 0; border-top: var(--hairline-dark); }
+  .names li { padding: 6px 0; border-top: var(--hairline-dark); position: relative; }
+  .names__btn { all: unset; cursor: pointer; color: inherit; display: block; width: 100%; padding: 0; border-bottom: 1.5px dotted var(--brass); width: max-content; max-width: 100%; }
+  .names__btn:hover, .names__btn:focus-visible, .has-peek.is-open .names__btn { color: var(--ivory); border-bottom-style: solid; }
+  .names__btn:focus-visible { outline: 2px solid var(--royal); outline-offset: 3px; }
+  .peek { display: none; z-index: 5; width: 240px; color: var(--ink); padding: 8px; box-shadow: 0 12px 32px rgba(11, 11, 20, .45); }
+  .peek__photo { aspect-ratio: 1; background: var(--ink); overflow: hidden; }
+  .peek__photo :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .peek__meta { display: flex; flex-direction: column; gap: 2px; padding: 10px 4px 4px; }
+  .peek__name { font-size: 15px; }
+  .has-peek.is-open .peek { display: block; }
+  @media (hover: hover) and (pointer: fine) {
+    .peek { position: absolute; left: 0; bottom: calc(100% + 6px); }
+    .has-peek:hover .peek, .has-peek:focus-within .peek { display: block; }
+    .names__item:nth-child(-n + 4) .peek { bottom: auto; top: calc(100% + 6px); }
+  }
+  @media (hover: none), (pointer: coarse) {
+    .peek { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); width: min(320px, calc(100vw - 32px)); }
+  }
 
 </style>
