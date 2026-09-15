@@ -54,8 +54,8 @@ const announcement = announcements[0];
   <!-- Philosophy -->
   <section class="creed stage">
     <div class="container creed__inner">
-      <T k="home.creed.title" as="p" class="creed__title display-2" data-reveal />
-      <p class="voice creed__quote" data-reveal style="--reveal-delay:120ms">“<T k="home.creed.quote" />”<T k="home.creed.who" class="label creed__who" /></p>
+      <p class="voice creed__quote" data-reveal><span>“<T k="home.creed.quote" />”</span><T k="home.creed.who" class="label creed__who" /></p>
+      <T k="home.creed.title" as="p" class="creed__title display-3" data-reveal style="--reveal-delay:120ms" />
     </div>
   </section>
 
@@ -167,9 +167,10 @@ const announcement = announcements[0];
   @keyframes wash-in { from { transform: scale(1.06); opacity: 0; } }
 
   .creed { padding-block: clamp(40px, 6vw, 72px); }
-  .creed__inner { display: grid; gap: var(--s-3); align-items: center; }
-  @media (min-width: 900px) { .creed__inner { grid-template-columns: 1fr 1.2fr; gap: var(--s-8); } }
-  .creed__quote { display: flex; flex-direction: column; gap: 12px; color: var(--ivory-80); border-left: 3px solid var(--brass); padding-left: var(--s-3); }
+  .creed__inner { display: grid; gap: var(--s-4); align-items: end; }
+  @media (min-width: 900px) { .creed__inner { grid-template-columns: 1.6fr 1fr; gap: var(--s-8); } }
+  .creed__quote { display: flex; flex-direction: column; gap: 16px; color: var(--ivory); font-size: clamp(28px, 3.6vw, 52px); line-height: 1.15; max-width: 22ch; }
+  .creed__title { font-family: var(--font-display); text-transform: uppercase; line-height: var(--display-leading); letter-spacing: .01em; color: var(--ivory-65); border-left: 3px solid var(--brass); padding-left: var(--s-3); max-width: 16ch; }
   .creed__who { color: var(--brass); }
 
   .ticker { display: block; background: var(--royal); color: var(--ivory); }
