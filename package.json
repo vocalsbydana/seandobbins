@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
-    "prebuild": "node scripts/hash-pdfs.mjs",
+    "prebuild": "node scripts/hash-pdfs.mjs && node scripts/fetch-people.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",

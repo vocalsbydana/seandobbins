@@ -7,5 +7,7 @@ dist/
 !.env.example
 # Hashed PDF copies are generated at build time from private/resources
 public/files/
+# Played-with photos fetched from Wikimedia at build time (scripts/fetch-people.mjs)
+public/people/
 .DS_Store
 .astro/admin-blobs/

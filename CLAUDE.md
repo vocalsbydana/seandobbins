@@ -58,7 +58,7 @@ src/lib/admin/            auth, store (GitHub + local), schema (what is editable
 src/lib/copy.ts + components/T.astro   copy lookup and the data-edit tag
 src/data/                 code-owned data (socials, icons, photos.json = the About-page photo wall + downloads)   src/pages/og/   build-time OG images
 public/photos/            full-size originals served by the photo wall's download links (sean-dobbins-<name>)
-src/data/played-with.json + src/assets/people/   hover/tap photo cards on the About 'Played with' list (name → file + photographer credit; real, licensed photos only)
+src/data/played-with.json   hover/tap photo cards on the About 'Played with' list. `wiki` = Wikipedia title candidates → scripts/fetch-people.mjs pulls the article's free lead photo + Commons credit at build into public/people/ (gitignored); `file` = Sean's own photo in src/assets/people/ (wins over wiki). Real, licensed photos only.
 private/resources/        PDFs (uploaded via the editor)       public/uploads/          images (uploaded via the editor)
 scripts/hash-pdfs.mjs     stages hashed PDF copies at build
 ```
