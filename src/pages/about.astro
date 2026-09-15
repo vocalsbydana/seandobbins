@@ -7,8 +7,6 @@ import T from '../components/T.astro';
 import { copy } from '../lib/copy';
 import profile from '../assets/photos/profile-brushes.jpg';
 import laugh from '../assets/photos/laugh-warm.jpg';
-import laughVest from '../assets/photos/laugh-vest.jpg';
-import kit from '../assets/photos/stage-kit.jpg';
 import PhotoGallery from '../components/PhotoGallery.astro';
 
 const c = copy.about;
@@ -68,19 +66,6 @@ const description = 'Sean Dobbins, jazz drummer: Detroit sideman, bandleader, Wo
     </div>
   </section>
 
-  <section class="section--tight strip">
-    <div class="container container--wide strip__grid">
-      <figure class="photo strip__a" data-reveal="scale">
-        <Image src={laughVest} alt="Sean mid-laugh at the kit in a waistcoat, sticks up. Photo: Jeff Dunn Jazz Photography." widths={[600, 800]} sizes="(min-width: 900px) 40vw, 100vw" />
-        <T k="about.strip.captionA" as="figcaption" class="small muted" />
-      </figure>
-      <figure class="photo strip__b" data-reveal="scale" style="--reveal-delay:120ms">
-        <Image src={kit} alt="Sean behind a Yamaha kit against blue curtains." widths={[600, 1000, 1400]} sizes="(min-width: 900px) 58vw, 100vw" />
-        <T k="about.strip.captionB" as="figcaption" class="small muted" />
-      </figure>
-    </div>
-  </section>
-
   <PhotoGallery />
 </Base>
 
@@ -113,10 +98,4 @@ const description = 'Sean Dobbins, jazz drummer: Detroit sideman, bandleader, Wo
   .names { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px 24px; margin-top: var(--s-6); font-size: 14px; color: var(--ivory-80); }
   .names li { padding: 6px 0; border-top: var(--hairline-dark); }
 
-  .strip__grid { display: grid; gap: var(--s-3); }
-  @media (min-width: 900px) { .strip__grid { grid-template-columns: 1fr 1.45fr; align-items: end; } }
-  .strip figure { background: none; display: flex; flex-direction: column; }
-  .strip figure :global(img) { width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; }
-  .strip__b :global(img) { aspect-ratio: 4 / 5; }
-  .strip figcaption { margin-top: 8px; }
 </style>
