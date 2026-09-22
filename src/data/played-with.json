@@ -19,7 +19,7 @@
   {"name": "Claude Black", "wiki": ["Claude Black (pianist)", "Claude Black (musician)"]},
   {"name": "Donald Walden", "wiki": ["Donald Walden"]},
   {"name": "Marion Hayden", "wiki": ["Marion Hayden"]},
-  {"name": "Randy Johnston", "wiki": ["Randy Johnston"]},
+  {"name": "Randy Johnston", "file": "randy-johnston.jpg", "url": "https://en.wikipedia.org/wiki/Randy_Johnston_(musician)"},
   {"name": "Paul Keller", "file": "paul-keller.jpg", "url": "https://paulkellerjazz.com/about.php"},
   {"name": "Tad Weed", "wiki": ["Tad Weed"]},
   {"name": "Kurt Krahnke", "wiki": ["Kurt Krahnke"]},
