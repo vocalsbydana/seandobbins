@@ -62,12 +62,10 @@ const description = 'Sean Dobbins, jazz drummer: Detroit sideman, bandleader, Wo
       </aside>
       <div class="bio__body prose" data-reveal>
         <p class="lede"><T k="about.bio.lede" as="strong" /></p>
-        {c.bio.paragraphs.map((_, i) => <T k={`about.bio.paragraphs.${i}`} as="p" />)}
-        <T k="about.bio.educatorHeading" as="h3" />
-        {c.bio.educatorParagraphs.map((_, i) => (
-          i === c.bio.educatorParagraphs.length - 1
-            ? <p><T k={`about.bio.educatorParagraphs.${i}`} /> <a href="/barbershop" data-edit="about.bio.closingLink">{c.bio.closingLink}</a>.</p>
-            : <T k={`about.bio.educatorParagraphs.${i}`} as="p" />
+        {c.bio.paragraphs.map((_, i) => (
+          i === c.bio.paragraphs.length - 1
+            ? <p><T k={`about.bio.paragraphs.${i}`} /> <a href="/barbershop" data-edit="about.bio.closingLink">{c.bio.closingLink}</a>.</p>
+            : <T k={`about.bio.paragraphs.${i}`} as="p" />
         ))}
         <div class="bio__actions">
           <a href="/contact" class="btn btn--primary" data-edit="about.bio.book">{c.bio.book}</a>

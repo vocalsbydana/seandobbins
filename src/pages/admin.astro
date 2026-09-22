@@ -724,7 +724,7 @@ import '../styles/global.css';
       // --- preview bridge (same-origin iframe: we reach in directly, no postMessage needed) ---
       function pushToPreview(key: string, v: unknown) {
         const doc = frame?.contentDocument; if (!doc) return;
-        doc.querySelectorAll<HTMLElement>(`[data-edit="${CSS.escape(key)}"]`).forEach((n) => { n.innerHTML = esc(String(v)).replace(/\n/g, '<br>'); });
+        doc.querySelectorAll<HTMLElement>(`[data-edit="${CSS.escape(key)}"]`).forEach((n) => { n.innerHTML = esc(String(v)).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>'); });
       }
       function replayIntoPreview() {
         const p = page; if (!p) return;
