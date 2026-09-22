@@ -87,11 +87,15 @@ const description = 'Sean Dobbins, jazz drummer: Detroit sideman, bandleader, Wo
       <ul role="list" class="names" aria-label="Full list">
         {c.playedWith.map((n, i) => { const p = photoFor(n); return p ? (
           <li class="names__item has-peek" data-reveal style={`--reveal-delay:${(i % 8) * 40}ms`}>
-            <button type="button" class="names__btn" aria-expanded="false" aria-controls={`peek-${i}`} data-peek data-edit={`about.playedWith.${i}`}>{n}</button>
+            {p.url
+              ? <a class="names__btn" href={p.url} target="_blank" rel="noopener" aria-controls={`peek-${i}`} data-peek data-edit={`about.playedWith.${i}`}>{n}</a>
+              : <button type="button" class="names__btn" aria-expanded="false" aria-controls={`peek-${i}`} data-peek data-edit={`about.playedWith.${i}`}>{n}</button>}
             <div class="peek paper" id={`peek-${i}`} role="group" aria-label={n}>
+              <button type="button" class="peek__close" data-peek-close aria-label="Close">×</button>
               <div class="peek__photo">{p.img ? <Image src={p.img} alt={n} widths={[240, 480]} sizes="240px" loading="lazy" /> : <img src={p.src} alt={n} width="480" height="480" loading="lazy" />}</div>
               <div class="peek__meta">
-                {p.url ? <a class="peek__name peek__site" href={p.url} target="_blank" rel="noopener">{n} ↗</a> : <strong class="peek__name">{n}</strong>}
+                <strong class="peek__name">{n}</strong>
+                {p.url && <a class="link peek__site" href={p.url} target="_blank" rel="noopener">Visit website ↗</a>}
                 {(p.credit || p.license || p.source) && <span class="small muted">{[p.credit && `Photo: ${p.credit}`, p.license].filter(Boolean).join(' · ')}{p.source && <>{(p.credit || p.license) && ' · '}<a class="peek__src" href={p.source} target="_blank" rel="noopener">Wikimedia Commons</a></>}</span>}
               </div>
             </div>
@@ -129,15 +133,20 @@ const description = 'Sean Dobbins, jazz drummer: Detroit sideman, bandleader, Wo
 </Base>
 
 <script>
-  // Tap (or click) toggles a person's photo card; tapping elsewhere or Escape closes it. Hover is handled in CSS on pointer devices.
+  // Computer (hover + mouse): hovering a name shows the photo card (CSS), clicking a linked name opens the site in a new tab.
+  // Phone/tablet (touch): tapping a name opens the card with a close cross; the link under the photo opens the site.
   function bind() {
     const list = document.querySelector<HTMLElement>('.names:not([data-bound])');
     if (!list) return; list.dataset.bound = '1';
+    const hoverDevice = () => matchMedia('(hover: hover) and (pointer: fine)').matches;
     const closeAll = () => list.querySelectorAll('.has-peek.is-open').forEach((li) => { li.classList.remove('is-open'); li.querySelector('[data-peek]')?.setAttribute('aria-expanded', 'false'); });
-    list.querySelectorAll<HTMLButtonElement>('[data-peek]').forEach((btn) => btn.addEventListener('click', () => {
-      const li = btn.closest('li')!; const open = li.classList.contains('is-open'); closeAll();
-      if (!open) { li.classList.add('is-open'); btn.setAttribute('aria-expanded', 'true'); }
+    list.querySelectorAll<HTMLElement>('[data-peek]').forEach((el) => el.addEventListener('click', (e) => {
+      if (hoverDevice()) { if (el.tagName === 'BUTTON') e.preventDefault(); setTimeout(() => el.blur(), 0); return; } // hover shows the card; a link just follows; drop focus so the card doesn't linger
+      e.preventDefault();
+      const li = el.closest('li')!; const open = li.classList.contains('is-open'); closeAll();
+      if (!open) { li.classList.add('is-open'); el.setAttribute('aria-expanded', 'true'); }
     }));
+    list.querySelectorAll<HTMLElement>('[data-peek-close]').forEach((b) => b.addEventListener('click', closeAll));
     document.addEventListener('click', (e) => { if (!(e.target as Element).closest('.has-peek')) closeAll(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAll(); });
   }
@@ -184,16 +193,19 @@ const description = 'Sean Dobbins, jazz drummer: Detroit sideman, bandleader, Wo
   a.press__title:hover { border-bottom-width: 2px; color: var(--stage); }
   .press__arrow { color: var(--brass); }
   @media (max-width: 520px) { .press__row { grid-template-columns: 60px 1fr; } .press__arrow { display: none; } }
-  .names__btn { all: unset; cursor: pointer; color: inherit; display: block; width: 100%; padding: 0; border-bottom: 1.5px dotted var(--brass); width: max-content; max-width: 100%; }
+  .names__btn { all: unset; cursor: pointer; color: inherit; display: block; padding: 0; border-bottom: 1.5px dotted var(--brass); width: max-content; max-width: 100%; }
+  a.names__btn { cursor: pointer; }
+  button.names__btn { cursor: default; }
   .names__btn:hover, .names__btn:focus-visible, .has-peek.is-open .names__btn { color: var(--ivory); border-bottom-style: solid; }
   .names__btn:focus-visible { outline: 2px solid var(--royal); outline-offset: 3px; }
-  .peek { display: none; z-index: 5; width: 240px; color: var(--ink); padding: 8px; box-shadow: 0 12px 32px rgba(11, 11, 20, .45); }
+  .peek { display: none; z-index: 5; width: 240px; color: var(--ink); padding: 8px; box-shadow: 0 12px 32px rgba(11, 11, 20, .45); position: relative; }
+  .peek__close { position: absolute; top: 12px; right: 12px; z-index: 1; width: 32px; height: 32px; border: 0; background: var(--paper); color: var(--ink); font-size: 22px; line-height: 1; cursor: pointer; display: none; }
+  .peek__close:focus-visible { outline: 2px solid var(--royal); }
   .peek__photo { aspect-ratio: 1; background: var(--ink); overflow: hidden; }
   .peek__photo :global(img) { width: 100%; height: 100%; object-fit: cover; }
   .peek__meta { display: flex; flex-direction: column; gap: 2px; padding: 10px 4px 4px; }
   .peek__name { font-size: 15px; color: var(--ink); font-weight: 600; }
-  .peek__site { border-bottom: 1.5px solid var(--brass); width: max-content; }
-  .peek__site:hover { color: var(--royal); }
+  .peek__site { width: max-content; margin-top: 4px; font-size: 14px; }
   .names__site { color: inherit; border-bottom: 1.5px dotted var(--brass); }
   .names__site:hover { color: var(--ivory); border-bottom-style: solid; }
   .peek .muted { color: var(--walnut); font-size: 12px; line-height: 1.4; }
@@ -201,11 +213,14 @@ const description = 'Sean Dobbins, jazz drummer: Detroit sideman, bandleader, Wo
   .has-peek.is-open .peek { display: block; }
   @media (hover: hover) and (pointer: fine) {
     .peek { position: absolute; left: 0; bottom: calc(100% + 6px); }
+    .has-peek.is-open .peek { display: none; }
     .has-peek:hover .peek, .has-peek:focus-within .peek { display: block; }
     .names__item:nth-child(-n + 4) .peek { bottom: auto; top: calc(100% + 6px); }
   }
   @media (hover: none), (pointer: coarse) {
     .peek { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); width: min(320px, calc(100vw - 32px)); }
+    .peek__close { display: block; }
+    button.names__btn { cursor: pointer; }
   }
 
 </style>
