@@ -14,6 +14,15 @@ const MUSIC = /jazz|music|pianist|bassist|drummer|saxophon|trumpet|singer|organi
 
 export const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const strip = (html) => String(html || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+/** Commons author fields are messy: "Photo by X", "X (talk)", "User:X", doubled text. Reduce to a name. */
+export const cleanArtist = (raw) => {
+  let s = strip(raw);
+  s = s.replace(/^(photo(graph)?|picture|image|portrait)\s+(by|©|\(c\))\s*/i, '').replace(/^by\s+/i, '').replace(/^user:/i, '');
+  s = s.replace(/\s*\((talk|contribs?|discussion)[^)]*\)/gi, '').replace(/\s*,?\s*own work.*$/i, '').replace(/\s*·.*$/, '').replace(/\s+,/g, ',').replace(/[.,;\s]+$/, '');
+  const half = Math.floor(s.length / 2); if (s.length > 6 && s.slice(0, half) === s.slice(half)) s = s.slice(0, half);
+  if (/^unknown/i.test(s) || !s) return '';
+  return s.length > 60 ? s.slice(0, 57).trimEnd() + '…' : s;
+};
 
 async function getJson(url, fetchImpl) {
   const ctrl = new AbortController(); const t = setTimeout(() => ctrl.abort(), 12000);
@@ -43,7 +52,7 @@ export async function fileInfo(file, fetchImpl = fetch) {
     const page = Object.values(data?.query?.pages || {})[0];
     const ii = page?.imageinfo?.[0]; if (!ii?.thumburl) continue;
     const m = ii.extmetadata || {};
-    return { thumb: ii.thumburl, mime: ii.mime, source: ii.descriptionurl, artist: strip(m.Artist?.value), license: strip(m.LicenseShortName?.value), licenseUrl: strip(m.LicenseUrl?.value) };
+    return { thumb: ii.thumburl, mime: ii.mime, source: ii.descriptionurl, artist: cleanArtist(m.Artist?.value), license: strip(m.LicenseShortName?.value), licenseUrl: strip(m.LicenseUrl?.value) };
   }
   return null;
 }

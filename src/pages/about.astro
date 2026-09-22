@@ -89,7 +89,7 @@ const description = 'Sean Dobbins, jazz drummer: Detroit sideman, bandleader, Wo
               <div class="peek__photo">{p.img ? <Image src={p.img} alt={n} widths={[240, 480]} sizes="240px" loading="lazy" /> : <img src={p.src} alt={n} width="480" height="480" loading="lazy" />}</div>
               <div class="peek__meta">
                 <strong class="peek__name">{n}</strong>
-                {(p.credit || p.license) && <span class="small muted">Photo: {p.credit}{p.license && ` · ${p.license}`}{p.source && <> · <a class="peek__src" href={p.source} target="_blank" rel="noopener">Wikimedia Commons</a></>}</span>}
+                {(p.credit || p.license || p.source) && <span class="small muted">{[p.credit && `Photo: ${p.credit}`, p.license].filter(Boolean).join(' · ')}{p.source && <>{(p.credit || p.license) && ' · '}<a class="peek__src" href={p.source} target="_blank" rel="noopener">Wikimedia Commons</a></>}</span>}
               </div>
             </div>
           </li>
@@ -186,8 +186,9 @@ const description = 'Sean Dobbins, jazz drummer: Detroit sideman, bandleader, Wo
   .peek__photo { aspect-ratio: 1; background: var(--ink); overflow: hidden; }
   .peek__photo :global(img) { width: 100%; height: 100%; object-fit: cover; }
   .peek__meta { display: flex; flex-direction: column; gap: 2px; padding: 10px 4px 4px; }
-  .peek__name { font-size: 15px; }
-  .peek__src { color: var(--walnut); text-decoration: underline; }
+  .peek__name { font-size: 15px; color: var(--ink); }
+  .peek .muted { color: var(--walnut); font-size: 12px; line-height: 1.4; }
+  .peek__src { color: var(--walnut); text-decoration: underline; white-space: nowrap; }
   .has-peek.is-open .peek { display: block; }
   @media (hover: hover) and (pointer: fine) {
     .peek { position: absolute; left: 0; bottom: calc(100% + 6px); }
