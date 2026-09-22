@@ -13,6 +13,7 @@ import people from '../data/played-with.json';
 
 // Played-with photos. Two sources, checked in this order:
 //  1. src/data/played-with.json entries with `file` → a photo in src/assets/people/ (Sean's own photos, credit in the entry).
+//     Any entry may also carry `url` (the person's website): the name in the card links to it, or the name itself if there is no photo.
 //  2. public/people/manifest.json → real, free-licensed photos fetched from Wikipedia/Wikimedia Commons at build
 //     by scripts/fetch-people.mjs for entries with `wiki`, with photographer + licence pulled from Commons.
 // Names with neither render as plain text. Matching is by name, so renaming a person in the editor unlinks the photo.
@@ -22,12 +23,14 @@ const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 type Fetched = { name: string; src: string; artist?: string; license?: string; licenseUrl?: string; source?: string };
 let fetched: Fetched[] = [];
 try { fetched = JSON.parse(readFileSync(`${process.cwd()}/public/people/manifest.json`, 'utf8')); } catch { /* not staged (offline build) */ }
+type Entry = { name: string; file?: string; credit?: string; url?: string; wiki?: string[] };
+const entryFor = (name: string) => (people as Entry[]).find((x) => slug(x.name) === slug(name));
 const photoFor = (name: string) => {
-  const p = people.find((x) => slug(x.name) === slug(name));
+  const p = entryFor(name);
   const mod = p && 'file' in p && Object.entries(peopleMods).find(([k]) => k.endsWith('/' + (p as { file: string }).file));
-  if (p && mod) return { img: mod[1].default as ImageMetadata, src: undefined, credit: (p as { credit?: string }).credit || '', license: '', source: '' };
+  if (p && mod) return { img: mod[1].default as ImageMetadata, src: undefined, credit: p.credit || '', license: '', source: '', url: p.url || '' };
   const f = fetched.find((x) => slug(x.name) === slug(name));
-  if (f) return { img: undefined, src: f.src, credit: f.artist || '', license: f.license || '', source: f.source || '' };
+  if (f) return { img: undefined, src: f.src, credit: f.artist || '', license: f.license || '', source: f.source || '', url: p?.url || '' };
   return null;
 };
 
@@ -88,11 +91,13 @@ const description = 'Sean Dobbins, jazz drummer: Detroit sideman, bandleader, Wo
             <div class="peek paper" id={`peek-${i}`} role="group" aria-label={n}>
               <div class="peek__photo">{p.img ? <Image src={p.img} alt={n} widths={[240, 480]} sizes="240px" loading="lazy" /> : <img src={p.src} alt={n} width="480" height="480" loading="lazy" />}</div>
               <div class="peek__meta">
-                <strong class="peek__name">{n}</strong>
+                {p.url ? <a class="peek__name peek__site" href={p.url} target="_blank" rel="noopener">{n} ↗</a> : <strong class="peek__name">{n}</strong>}
                 {(p.credit || p.license || p.source) && <span class="small muted">{[p.credit && `Photo: ${p.credit}`, p.license].filter(Boolean).join(' · ')}{p.source && <>{(p.credit || p.license) && ' · '}<a class="peek__src" href={p.source} target="_blank" rel="noopener">Wikimedia Commons</a></>}</span>}
               </div>
             </div>
           </li>
+        ) : entryFor(n)?.url ? (
+          <li class="names__item" data-reveal style={`--reveal-delay:${(i % 8) * 40}ms`}><a class="names__site" href={entryFor(n)!.url} target="_blank" rel="noopener" data-edit={`about.playedWith.${i}`}>{n}</a></li>
         ) : (
           <li class="names__item" data-reveal style={`--reveal-delay:${(i % 8) * 40}ms`} data-edit={`about.playedWith.${i}`}>{n}</li>
         ); })}
@@ -186,7 +191,11 @@ const description = 'Sean Dobbins, jazz drummer: Detroit sideman, bandleader, Wo
   .peek__photo { aspect-ratio: 1; background: var(--ink); overflow: hidden; }
   .peek__photo :global(img) { width: 100%; height: 100%; object-fit: cover; }
   .peek__meta { display: flex; flex-direction: column; gap: 2px; padding: 10px 4px 4px; }
-  .peek__name { font-size: 15px; color: var(--ink); }
+  .peek__name { font-size: 15px; color: var(--ink); font-weight: 600; }
+  .peek__site { border-bottom: 1.5px solid var(--brass); width: max-content; }
+  .peek__site:hover { color: var(--royal); }
+  .names__site { color: inherit; border-bottom: 1.5px dotted var(--brass); }
+  .names__site:hover { color: var(--ivory); border-bottom-style: solid; }
   .peek .muted { color: var(--walnut); font-size: 12px; line-height: 1.4; }
   .peek__src { color: var(--walnut); text-decoration: underline; white-space: nowrap; }
   .has-peek.is-open .peek { display: block; }
