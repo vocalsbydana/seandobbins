@@ -8,7 +8,8 @@
     "engagements": "Engagements",
     "cities": "Cities",
     "countries": "Countries",
-    "years": "Years"
+    "years": "Years playing",
+    "playingSince": 1999
   },
   "cta": {
     "label": "Bring Sean to your school",

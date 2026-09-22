@@ -13,8 +13,8 @@ const when = (d: { year?: number; yearEnd?: number; ongoing: boolean }) => !d.ye
 const groups = REGIONS.map((region) => ({ region, items: all.filter((o) => o.data.region === region) })).filter((g) => g.items.length);
 const countries = new Set(all.map((o) => o.data.country));
 const cities = new Set(all.map((o) => o.data.city));
-const years = all.flatMap((o) => [o.data.year, o.data.yearEnd]).filter((y): y is number => typeof y === 'number');
-const span = years.length ? `${Math.min(...years)}–${all.some((o) => o.data.ongoing) ? new Date().getFullYear() : Math.max(...years)}` : '';
+const since = Number(c.stats.playingSince) || 1999;
+const yearsPlaying = new Date().getFullYear() - since;
 const description = 'Clinics, masterclasses, residencies and concerts Sean Dobbins has given for students across the United States and around the world.';
 ---
 <Base title="Outreach" description={description}>
@@ -25,7 +25,7 @@ const description = 'Clinics, masterclasses, residencies and concerts Sean Dobbi
         <li><span class="stats__n" data-count={all.length}>{all.length}</span><T k="outreach.stats.engagements" class="label" /></li>
         <li><span class="stats__n" data-count={cities.size}>{cities.size}</span><T k="outreach.stats.cities" class="label" /></li>
         <li><span class="stats__n" data-count={countries.size}>{countries.size}</span><T k="outreach.stats.countries" class="label" /></li>
-        <li><span class="stats__n">{span}</span><T k="outreach.stats.years" class="label" /></li>
+        <li><span class="stats__n" data-count={yearsPlaying} data-since={since}>{yearsPlaying}</span><T k="outreach.stats.years" class="label" /></li>
       </ul>
       <nav class="regions" aria-label="Regions" data-reveal>
         {groups.map((g) => <a href={`#${g.region.toLowerCase().replace(/[^a-z]+/g, '-')}`}>{g.region} <span>{g.items.length}</span></a>)}
@@ -87,6 +87,8 @@ const description = 'Clinics, masterclasses, residencies and concerts Sean Dobbi
       for (const e of entries) {
         if (!e.isIntersecting) continue;
         const el = e.target as HTMLElement; el.dataset.done = '1'; io.unobserve(el);
+        // 'Years playing' is recomputed in the browser so it stays right without a rebuild.
+        if (el.dataset.since) el.dataset.count = String(new Date().getFullYear() - Number(el.dataset.since));
         const target = Number(el.dataset.count); const t0 = performance.now(); const dur = 900;
         const tick = (t: number) => { const p = Math.min(1, (t - t0) / dur); el.textContent = String(Math.round(target * (1 - Math.pow(1 - p, 3)))); if (p < 1) requestAnimationFrame(tick); };
         requestAnimationFrame(tick);
