@@ -24,7 +24,7 @@
     "heading": "Notes from the drum chair",
     "blurb": "New free resources, dates, and the occasional story from the road. One email a month at most.",
     "emailLabel": "Email",
-    "placeholder": "you@venue.com",
+    "placeholder": "you@example.com",
     "button": "Subscribe",
     "success": "You’re on the list. Check your inbox to confirm.",
     "invalid": "Please enter a valid email."
@@ -38,7 +38,8 @@
     "emailLabel": "Email",
     "button": "Unlock & download",
     "unlocking": "Unlocking…",
-    "downloading": "Downloading…"
+    "downloading": "Downloading…",
+    "emailPlaceholder": "you@example.com"
   },
   "gigsFeed": {
     "loading": "Loading upcoming dates…"

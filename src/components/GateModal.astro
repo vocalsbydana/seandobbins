@@ -18,7 +18,7 @@ const g = copy.global.gate;
       </div>
       <div class="field">
         <label for="gate-email" data-edit="global.gate.emailLabel">{g.emailLabel}</label>
-        <input id="gate-email" type="email" name="email" autocomplete="email" required placeholder="you@venue.com" />
+        <input id="gate-email" type="email" name="email" autocomplete="email" required placeholder={g.emailPlaceholder} />
       </div>
       <label class="hp" aria-hidden="true">Leave this empty <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
       <button class="btn btn--primary btn--block" type="submit" data-edit="global.gate.button">{g.button}</button>

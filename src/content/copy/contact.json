@@ -18,7 +18,7 @@
   "form": {
     "name": "Name",
     "email": "Email",
-    "emailPlaceholder": "you@venue.com",
+    "emailPlaceholder": "you@example.com",
     "subject": "What's it about?",
     "subjects": [
       "Booking a gig",
