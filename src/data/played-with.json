@@ -9,7 +9,7 @@
   {"name": "Jon Hendricks", "wiki": ["Jon Hendricks"]},
   {"name": "Cyrus Chestnut", "wiki": ["Cyrus Chestnut"]},
   {"name": "James \"Blood\" Ulmer", "wiki": ["James Blood Ulmer"]},
-  {"name": "Marcus Belgrave", "wiki": ["Marcus Belgrave"]},
+  {"name": "Marcus Belgrave", "file": "marcus-belgrave.jpg", "url": "https://en.wikipedia.org/wiki/Marcus_Belgrave"},
   {"name": "Larry Willis", "wiki": ["Larry Willis"]},
   {"name": "Rodney Whitaker", "wiki": ["Rodney Whitaker"]},
   {"name": "David \"Fathead\" Newman", "wiki": ["David Newman (saxophonist)", "David Fathead Newman", "David \"Fathead\" Newman"]},
