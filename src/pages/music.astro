@@ -63,7 +63,7 @@ const description = 'Watch and listen: Sean Dobbins live, on record, and on the 
   <section class="section">
     <div class="container disc">
       <div class="disc__list">
-        <SectionHead numKey="music.disc.num" titleKey="music.disc.title" blurbKey="music.disc.blurb" />
+        <SectionHead titleKey="music.disc.title" blurbKey="music.disc.blurb" />
         <ol role="list">
           {c.discography.map((d, i) => (
             <li class="disc__row" data-reveal style={`--reveal-delay:${Math.min(i, 6) * 60}ms`}>
