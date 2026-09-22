@@ -18,7 +18,14 @@ const c = copy.about.photos;
 <section class="section gallery" id="photos">
   <div class="container container--wide">
     <SectionHead numKey="about.photos.num" titleKey="about.photos.title" blurbKey="about.photos.blurb" />
-    <ul role="list" class="gallery__grid">
+    <div class="gallery__bar">
+      <span class="small muted gallery__count" aria-live="polite"></span>
+      <div class="gallery__nav">
+        <button type="button" class="gallery__arrow" data-scroll="-1" aria-label={c.prev}>←</button>
+        <button type="button" class="gallery__arrow" data-scroll="1" aria-label={c.next}>→</button>
+      </div>
+    </div>
+    <ul role="list" class="gallery__grid" tabindex="0" aria-label={c.title}>
       {items.map((p, i) => (
         <li class="gallery__item" data-reveal="scale" style={`--reveal-delay:${(i % 3) * 70}ms`}>
           <button type="button" class="gallery__open photo" data-lightbox={i} data-src={p.href} data-alt={p.alt} data-size={`${p.img.width} × ${p.img.height}`} aria-label={`${c.view}: ${p.alt}`}>
@@ -46,9 +53,21 @@ const c = copy.about.photos;
 </section>
 
 <style>
-  .gallery__grid { display: grid; gap: var(--s-4) var(--s-3); margin-top: var(--s-5); grid-template-columns: 1fr; }
-  @media (min-width: 600px) { .gallery__grid { grid-template-columns: 1fr 1fr; } }
-  @media (min-width: 900px) { .gallery__grid { grid-template-columns: 1fr 1fr 1fr; } }
+  .gallery.section { padding-top: 0; }
+  /* Carousel: a scroll-snapping row. One-and-a-bit photos per view on phones, two on tablets, three on computers. */
+  .gallery__bar { display: flex; justify-content: space-between; align-items: center; margin-top: var(--s-4); }
+  .gallery__nav { display: flex; gap: 8px; }
+  .gallery__arrow { width: 44px; height: 44px; border: 1.5px solid var(--ink); background: none; color: var(--ink); font-size: 20px; line-height: 1; cursor: pointer; transition: background-color var(--dur-fast), color var(--dur-fast); }
+  .gallery__arrow:hover { background: var(--ink); color: var(--ivory); }
+  .gallery__arrow:disabled { opacity: .3; cursor: default; background: none; color: var(--ink); }
+  .gallery__arrow:focus-visible { outline: 2px solid var(--royal); outline-offset: 2px; }
+  .gallery__grid { --per-view: 1.15; display: grid; grid-auto-flow: column; grid-auto-columns: calc((100% - (var(--per-view) - 1) * var(--s-3)) / var(--per-view)); gap: var(--s-3); margin-top: var(--s-3); overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+  .gallery__grid::-webkit-scrollbar { display: none; }
+  .gallery__grid:focus-visible { outline: 2px solid var(--royal); outline-offset: 4px; }
+  .gallery__item { scroll-snap-align: start; }
+  @media (min-width: 600px) { .gallery__grid { --per-view: 2; } }
+  @media (min-width: 900px) { .gallery__grid { --per-view: 3; } }
+  @media (prefers-reduced-motion: no-preference) { .gallery__grid { scroll-behavior: smooth; } }
   .gallery__open { display: block; width: 100%; aspect-ratio: 3 / 2; padding: 0; border: 0; cursor: zoom-in; background: var(--ink); }
   .gallery__open :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-slow) var(--ease-out); }
   @media (prefers-reduced-motion: no-preference) { .gallery__open:hover :global(img) { transform: scale(1.03); } }
@@ -75,6 +94,21 @@ const c = copy.about.photos;
     const dlg = document.querySelector<HTMLDialogElement>('.lightbox:not([data-bound])');
     if (!dlg) return; dlg.dataset.bound = '1';
     const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('.gallery__open[data-lightbox]'));
+    // Carousel arrows + "n of m" readout
+    const track = document.querySelector<HTMLElement>('.gallery__grid');
+    const arrows = Array.from(document.querySelectorAll<HTMLButtonElement>('.gallery__arrow'));
+    const count = document.querySelector<HTMLElement>('.gallery__count');
+    if (track) {
+      const items = Array.from(track.children) as HTMLElement[];
+      const step = () => (items[1]?.offsetLeft ?? 0) - (items[0]?.offsetLeft ?? 0) || track.clientWidth;
+      const update = () => {
+        const max = track.scrollWidth - track.clientWidth - 1;
+        arrows[0].disabled = track.scrollLeft <= 0; arrows[1].disabled = track.scrollLeft >= max;
+        if (count) { const first = Math.round(track.scrollLeft / step()) + 1; const perView = Math.max(1, Math.round(track.clientWidth / step())); const last = Math.min(items.length, first + perView - 1); count.textContent = `${first === last ? first : `${first}–${last}`} of ${items.length}`; }
+      };
+      arrows.forEach((a) => a.addEventListener('click', () => track.scrollBy({ left: Number(a.dataset.scroll) * step() * Math.max(1, Math.floor(track.clientWidth / step())), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })));
+      track.addEventListener('scroll', update, { passive: true }); addEventListener('resize', update); update();
+    }
     const img = dlg.querySelector<HTMLImageElement>('.lightbox__img')!;
     const dl = dlg.querySelector<HTMLAnchorElement>('.lightbox__dl')!;
     const size = dlg.querySelector<HTMLElement>('.lightbox__size')!;
