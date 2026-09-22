@@ -1,7 +1,6 @@
 # Editing seandobbinsmusic.com — a guide for Sean
 
-Everything you can change on the site lives in one place: **https://seandobbinsmusic.com/admin**
-(the "Edit site" link in the footer of every page goes there too). One password, no accounts, nothing to install. Type, upload, press **Publish**. The site rebuilds itself in a couple of minutes and the editor tells you when your change is live.
+Everything you can change on the site lives in one place: **https://seandobbinsmusic.com/admin**. One password, no accounts, nothing to install. Type, upload, press **Publish**. The site rebuilds itself in a couple of minutes and the editor tells you when your change is live.
 
 If anything looks wrong, email Dana. Nothing you do in the editor can break the site, and every change is saved in the site's history so it can always be undone.
 

@@ -33,8 +33,6 @@ const year = new Date().getFullYear();
     </div>
     <div class="site-footer__bottom">
       <span>© {year} Sean Dobbins. <T k="global.footer.rights" /></span>
-      <T k="global.footer.photoCredit" as="span" class="site-footer__credit" />
-      <a href="/admin" class="site-footer__admin" rel="nofollow" data-edit="global.footer.edit">{f.edit}</a>
     </div>
   </div>
 </footer>
@@ -52,6 +50,4 @@ const year = new Date().getFullYear();
   .bs-ring span { display: block; width: 100%; height: 100%; border-radius: 50%; background: var(--ink); }
   .bs-text { font-family: var(--font-display) !important; font-size: 20px !important; letter-spacing: .04em !important; text-transform: uppercase; color: var(--ivory) !important; }
   .site-footer__bottom { display: flex; flex-wrap: wrap; gap: 8px 24px; padding-top: var(--s-3); font-size: 12px; color: var(--ivory-55); }
-  .site-footer__credit { flex: 1; }
-  .site-footer__admin { font-size: 12px !important; letter-spacing: .06em !important; text-transform: none !important; }
 </style>

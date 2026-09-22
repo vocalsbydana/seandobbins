@@ -3,7 +3,7 @@
     "label": "About",
     "firstName": "Sean",
     "lastName": "Dobbins",
-    "lede": "Drummer. Bandleader. Professor of Jazz Drumset at the Jacobs School of Music."
+    "lede": "Drummer. Bandleader.\nProfessor of Jazz Drumset at the Jacobs School of Music."
   },
   "facts": {
     "nowLabel": "Now",
@@ -153,7 +153,7 @@
   "photos": {
     "num": "03",
     "title": "Photos",
-    "blurb": "Stage photos, free to use for print, press and posters. Please credit the photographer.",
+    "blurb": "Stage photos, free to use for print, press and posters.",
     "view": "View",
     "download": "Download full size",
     "close": "Close",

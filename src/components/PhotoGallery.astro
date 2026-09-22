@@ -21,11 +21,10 @@ const c = copy.about.photos;
     <ul role="list" class="gallery__grid">
       {items.map((p, i) => (
         <li class="gallery__item" data-reveal="scale" style={`--reveal-delay:${(i % 3) * 70}ms`}>
-          <button type="button" class="gallery__open photo" data-lightbox={i} data-src={p.href} data-alt={p.alt} data-credit={p.credit} data-size={`${p.img.width} × ${p.img.height}`} aria-label={`${c.view}: ${p.alt}`}>
+          <button type="button" class="gallery__open photo" data-lightbox={i} data-src={p.href} data-alt={p.alt} data-size={`${p.img.width} × ${p.img.height}`} aria-label={`${c.view}: ${p.alt}`}>
             <Image src={p.img} alt={p.alt} widths={[420, 840]} sizes="(min-width: 900px) 30vw, (min-width: 600px) 46vw, 100vw" />
           </button>
           <div class="gallery__meta small">
-            <span class="muted">{p.credit ? `Photo: ${p.credit}` : ''}</span>
             <a class="link gallery__dl" href={p.href} download><T k="about.photos.download" /></a>
           </div>
         </li>
@@ -39,7 +38,6 @@ const c = copy.about.photos;
     <figure class="lightbox__fig">
       <img class="lightbox__img" alt="" />
       <figcaption class="lightbox__cap small">
-        <span class="lightbox__credit muted"></span>
         <a class="link lightbox__dl" href="#" download><T k="about.photos.download" /> <span class="lightbox__size muted"></span></a>
       </figcaption>
     </figure>
@@ -55,7 +53,7 @@ const c = copy.about.photos;
   .gallery__open :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-slow) var(--ease-out); }
   @media (prefers-reduced-motion: no-preference) { .gallery__open:hover :global(img) { transform: scale(1.03); } }
   .gallery__open:focus-visible { outline: 2px solid var(--royal); outline-offset: 2px; }
-  .gallery__meta { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding-top: 10px; border-top: var(--hairline); margin-top: 10px; }
+  .gallery__meta { display: flex; justify-content: flex-end; align-items: baseline; gap: 12px; padding-top: 10px; border-top: var(--hairline); margin-top: 10px; }
   .gallery__dl { white-space: nowrap; }
 
   .lightbox { border: 0; padding: 0; margin: 0; width: 100vw; height: 100dvh; max-width: none; max-height: none; background: var(--ink); color: var(--ivory); }
@@ -78,7 +76,6 @@ const c = copy.about.photos;
     if (!dlg) return; dlg.dataset.bound = '1';
     const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('.gallery__open[data-lightbox]'));
     const img = dlg.querySelector<HTMLImageElement>('.lightbox__img')!;
-    const credit = dlg.querySelector<HTMLElement>('.lightbox__credit')!;
     const dl = dlg.querySelector<HTMLAnchorElement>('.lightbox__dl')!;
     const size = dlg.querySelector<HTMLElement>('.lightbox__size')!;
     let index = 0;
@@ -86,7 +83,6 @@ const c = copy.about.photos;
       index = (i + buttons.length) % buttons.length;
       const b = buttons[index].dataset;
       img.src = b.src!; img.alt = b.alt || '';
-      credit.textContent = b.credit ? `Photo: ${b.credit}` : '';
       dl.href = b.src!; size.textContent = b.size || '';
     };
     buttons.forEach((b, i) => b.addEventListener('click', () => { show(i); dlg.showModal(); }));
