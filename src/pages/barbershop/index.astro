@@ -110,14 +110,16 @@ const description = "The Barbershop is Sean Dobbins' jazz drumset studio at the 
     <div class="container study__inner">
       <div class="study__copy">
         <SectionHead numKey="barbershop.study.num" titleKey="barbershop.study.title" blurbKey="barbershop.study.blurb" />
-        <div class="prose">
-          <T k="barbershop.study.text" as="p" />
-          <ul>
-            {c.study.links.map((l, i) => <li><a href={l.url} target="_blank" rel="noopener" data-edit={`barbershop.study.links.${i}.label`}>{l.label}</a></li>)}
-          </ul>
-          <T k="barbershop.study.also" as="p" />
+        <div class="study__body">
+          <div class="study__pole"><Pole height={200} /></div>
+          <div class="prose">
+            <T k="barbershop.study.text" as="p" />
+            <ul>
+              {c.study.links.map((l, i) => <li><a href={l.url} target="_blank" rel="noopener" data-edit={`barbershop.study.links.${i}.label`}>{l.label}</a></li>)}
+            </ul>
+            <T k="barbershop.study.also" as="p" />
+          </div>
         </div>
-        <Pole height={200} class="study__pole" />
       </div>
       <form class="study__form paper" data-prospective data-success={c.form.success} novalidate>
         <T k="barbershop.form.label" as="p" class="label" />
@@ -174,7 +176,10 @@ const description = "The Barbershop is Sean Dobbins' jazz drumset studio at the 
   .study__inner { display: grid; gap: var(--s-6); }
   @media (min-width: 960px) { .study__inner { grid-template-columns: 1.1fr 1fr; gap: clamp(40px, 6vw, 96px); align-items: start; } }
   .study__copy { position: relative; }
-  .study__pole { margin-top: var(--s-6); }
+  /* The pole stands to the left of the text, top-aligned with it, like a shop sign. */
+  .study__body { display: grid; grid-template-columns: auto 1fr; gap: var(--s-4); align-items: start; margin-top: var(--s-4); }
+  .study__pole { margin-top: 4px; }
+  @media (max-width: 520px) { .study__body { grid-template-columns: 1fr; } .study__pole { display: none; } }
   .study__form { display: flex; flex-direction: column; gap: 14px; padding: clamp(20px, 3vw, 32px); color: var(--ink); }
   .study__form .label { color: var(--walnut); }
   .form-msg:empty { display: none; }
