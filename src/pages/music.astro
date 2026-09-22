@@ -70,7 +70,7 @@ const description = 'Watch and listen: Sean Dobbins live, on record, and on the 
               <T k={`music.discography.${i}.year`} class="disc__year" />
               <div class="disc__main">
                 <div class="disc__title">{d.url ? <a href={d.url} target="_blank" rel="noopener"><T k={`music.discography.${i}.title`} /></a> : <T k={`music.discography.${i}.title`} />}</div>
-                <div class="small muted"><T k={`music.discography.${i}.artist`} /> · <T k={`music.discography.${i}.label`} /></div>
+                <div class="small muted"><T k={`music.discography.${i}.artist`} />{d.label && <> · <T k={`music.discography.${i}.label`} /></>}</div>
               </div>
               <T k={`music.discography.${i}.role`} class="label" />
             </li>

@@ -54,39 +54,23 @@
   "disc": {
     "num": "01",
     "title": "Selected discography",
-    "blurb": "As leader and as sideman. Not everything; the ones that matter."
+    "blurb": "As leader and as sideman."
   },
   "discography": [
     {
-      "title": "Placeholder Album Title",
-      "artist": "Sean Dobbins Trio",
-      "label": "Label",
-      "year": 2024,
-      "role": "Leader",
-      "url": ""
-    },
-    {
-      "title": "Placeholder Album Title",
+      "title": "The Journey",
       "artist": "Sean Dobbins Organ Quartet",
-      "label": "Label",
-      "year": 2021,
+      "label": "",
+      "year": 2015,
       "role": "Leader",
       "url": ""
     },
     {
-      "title": "Placeholder Album Title",
-      "artist": "Artist Name",
-      "label": "Label",
-      "year": 2019,
-      "role": "Drums",
-      "url": ""
-    },
-    {
-      "title": "Placeholder Album Title",
-      "artist": "Artist Name",
-      "label": "Label",
-      "year": 2016,
-      "role": "Drums",
+      "title": "Blue Horizons",
+      "artist": "Sean Dobbins and the Modern Jazz Messengers",
+      "label": "",
+      "year": 2013,
+      "role": "Leader",
       "url": ""
     }
   ]
