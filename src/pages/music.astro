@@ -97,7 +97,8 @@ const description = 'Watch and listen: Sean Dobbins live, on record, and on the 
   @media (min-width: 1100px) { .shorts__row { grid-template-columns: repeat(3, 300px); justify-content: center; } }
   .stream { display: grid; gap: var(--s-4); align-items: center; }
   @media (min-width: 800px) { .stream { grid-template-columns: 1fr 1fr; } }
-  .stream__links { display: grid; grid-template-columns: 1fr 1fr; gap: 0 var(--s-3); }
+  .stream__links { display: grid; grid-template-columns: 1fr; max-width: 520px; }
+  .stream__links li:first-child .stream__link { border-top: var(--hairline-dark); }
   .stream__link { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: var(--hairline-dark); font-family: var(--font-display); font-size: 30px; letter-spacing: .03em; text-transform: uppercase; color: var(--ivory); }
   .stream__link:hover { color: var(--brass); }
   .stream__link--soon { color: var(--ivory-55); pointer-events: none; }
