@@ -64,7 +64,7 @@ h3, .display-3 { font-size: clamp(28px, 3.2vw, 44px); }
   text-transform: uppercase;
   color: var(--walnut);
 }
-.dark .label { color: var(--brass); }
+.dark .label, .stage .label { color: var(--brass); }
 
 .voice {
   font-family: var(--font-voice);
