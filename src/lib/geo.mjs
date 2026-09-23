@@ -1,4 +1,4 @@
-// Mercator projection into the map's SVG viewBox, cropped to 80°N–56°S (src/data/world-map.json, the OutreachMap
+// Mercator projection into the map's SVG viewBox, cropped to 84°N–56°S (src/data/world-map.json, the OutreachMap
 // component). Shared by the build-time outline generator (which uses d3's geoMercator with the same scale/translate)
 // and the page, so pins land on the right spot.
 const PI = Math.PI;
@@ -9,8 +9,8 @@ export const MAP_W = 1000;
 export const SCALE = MAP_W / (2 * XMAX);
 export const MAP_H = Math.round(2 * YMAX * SCALE);
 export const ORIGIN_Y = YMAX * SCALE;                       // exact y of the equator (d3 translate uses this, not MAP_H / 2)
-/** The part of the projection the map shows: 80°N down to 56°S. [x, y, w, h] in viewBox units. */
-export const WORLD = (() => { const top = Math.floor(project(0, 80)[1]), bottom = Math.ceil(project(0, -56)[1]); return [0, top, MAP_W, bottom - top]; })();
+/** The part of the projection the map shows: 84°N (the top of the Arctic islands) down to 56°S. [x, y, w, h] in viewBox units. */
+export const WORLD = (() => { const top = Math.floor(project(0, 84)[1]), bottom = Math.ceil(project(0, -56)[1]); return [0, top, MAP_W, bottom - top]; })();
 
 /** [lon, lat] in degrees → [x, y] in viewBox units. */
 export function project(lon, lat) {
