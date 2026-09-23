@@ -7,7 +7,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { feature, mesh } from 'topojson-client';
 import { geoMercator, geoPath, geoArea } from 'd3-geo';
-import { project, zoomTree, MAP_W, SCALE, ORIGIN_Y, WORLD } from '../src/lib/geo.mjs';
+import { project, zoomTree, TREES, MAP_W, SCALE, ORIGIN_Y, WORLD } from '../src/lib/geo.mjs';
 
 const require = createRequire(import.meta.url);
 const c110 = require('world-atlas/countries-110m.json'), c50 = require('world-atlas/countries-50m.json'), c10 = require('world-atlas/countries-10m.json'), us = require('us-atlas/states-10m.json');
@@ -33,7 +33,10 @@ const layer = (countries, lakes, box, digits) => ({
 
 const world = layer(c110, lakesWorld, null, 1);
 const pins = Object.entries(places).filter(([k]) => !k.startsWith('_')).map(([name, [lat, lon]]) => ({ name, xy: project(lon, lat) }));
-const zooms = zoomTree(pins.map((p) => p.xy)).map((z) => {
+// Layers for every zoom box in both clusterings (wide screens and phones), without duplicates.
+const boxes = new Map();
+for (const opts of Object.values(TREES)) for (const z of zoomTree(pins.map((p) => p.xy), opts)) boxes.set(z.box.join(' '), z);
+const zooms = [...boxes.values()].map((z) => {
   const close = z.box[2] < 40; // metro-scale zooms (under 4% of the world's width) get the 10m coastline and 1 km lakes
   return {
     box: z.box, names: z.members.map((i) => pins[i].name),

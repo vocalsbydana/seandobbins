@@ -22,6 +22,7 @@
     "aria": "World map of teaching engagements",
     "pinsLabel": "engagements on the map",
     "placesLabel": "places",
+    "countriesLabel": "countries",
     "one": "engagement",
     "many": "engagements",
     "credit": "Map: Natural Earth · © OpenStreetMap contributors"

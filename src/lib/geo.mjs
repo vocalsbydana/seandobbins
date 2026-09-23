@@ -49,20 +49,23 @@ export function placeOf(places, city) {
 /** Stable key for a place so entries in the same city share one pin. */
 export function placeKey(places, city) { const ll = placeOf(places, city); return ll ? ll.join(',') : ''; }
 
+/** Two clusterings of the same pins: wide screens can show dots closer together than a phone can. */
+export const TREES = { wide: { radius: 12, nestedRadius: 16, prefix: 'w' }, narrow: { radius: 48, prefix: 'n' } };
+
 /**
  * Zoom levels for a set of pins: clusters that would overlap at world scale become a zoom step, and clusters that
  * still overlap inside that step become a nested one (up to maxDepth). Flat list, parents before children:
  * { id, parent ('' = world), members (pin indices), box (viewBox), at (group pin position) }.
  */
-export function zoomTree(points, { radius = 48, minW = 70, maxDepth = 3 } = {}) {
+export function zoomTree(points, { radius = 48, nestedRadius = radius, minW = 70, maxDepth = 3, prefix = 'z' } = {}) {
   const zooms = [];
   const walk = (idx, parent, scale, depth) => {
-    const groups = cluster(idx.map((i) => points[i]), radius * scale).map((g) => g.map((k) => idx[k])).filter((g) => g.length > 1);
+    const groups = cluster(idx.map((i) => points[i]), (depth === 1 ? radius : nestedRadius) * scale).map((g) => g.map((k) => idx[k])).filter((g) => g.length > 1);
     for (const g of groups) {
       const pts = g.map((i) => points[i]), box = zoomBox(pts, minW * scale);
       const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]);
       const at = [round((Math.max(...xs) + Math.min(...xs)) / 2), round((Math.max(...ys) + Math.min(...ys)) / 2)];
-      const z = { id: `z${zooms.length}`, parent, members: g, box, at };
+      const z = { id: `${prefix}${zooms.length}`, parent, members: g, box, at };
       zooms.push(z);
       if (depth < maxDepth) walk(g, z.id, box[2] / MAP_W, depth + 1);
     }

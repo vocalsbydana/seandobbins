@@ -10,7 +10,7 @@ import T from './T.astro';
 import { copy } from '../lib/copy';
 import places from '../data/places.json';
 import map from '../data/world-map.json';
-import { project, zoomTree, placeOf } from '../lib/geo.mjs';
+import { project, zoomTree, TREES, placeOf } from '../lib/geo.mjs';
 
 interface Entry { id: string; data: { institution: string; city: string; country: string; year?: number; yearEnd?: number; ongoing: boolean; type: string; note?: string } }
 const { entries, when } = Astro.props as { entries: Entry[]; when: (d: Entry['data']) => string };
@@ -22,26 +22,48 @@ const missing: string[] = [];
 for (const e of entries) {
   const ll = placeOf(places, e.data.city);
   if (!ll) { missing.push(e.data.city); continue; }
-  const key = ll.join(','); const label = e.data.city.replace(/^Detroit Public Schools, /, '');
+  const key = ll.join(',');
+  const city = e.data.city.replace(/^Detroit Public Schools, /, '');
+  const label = e.data.country === 'United States' ? city : `${city}, ${e.data.country}`; // "Detroit, MI" · "Tokyo, Japan"
   const pin = pinsByKey.get(key) || { key, label, xy: project(ll[1], ll[0]) as [number, number], items: [] };
   if (label.length < pin.label.length) pin.label = label; // cities sharing a spot (Rochester / Rochester Hills) take the shorter name
   pin.items.push(e); pinsByKey.set(key, pin);
 }
 if (missing.length) console.warn('[map] no pin for city (add to src/data/places.json):', [...new Set(missing)].join('; '));
 const pins = [...pinsByKey.values()];
-// Zoom steps (nested where a cluster is still crowded) and the pre-generated fine dot layer that covers each, if any.
+// A cluster is named after where it is: the country, or the state(s) inside the US.
+const STATES: Record<string, string> = { MI: 'Michigan', IN: 'Indiana', OH: 'Ohio', KY: 'Kentucky', GA: 'Georgia', TX: 'Texas', IL: 'Illinois', NY: 'New York', CA: 'California', WI: 'Wisconsin', PA: 'Pennsylvania', TN: 'Tennessee' };
+const stateOf = (city: string) => { const m = city.match(/, ([A-Z]{2})$/); if (m) return STATES[m[1]] || m[1]; return Object.values(STATES).find((n) => city.includes(n)) || ''; };
+const nameFor = (members: number[]) => {
+  const items = members.flatMap((k) => pins[k].items);
+  const countries = new Map<string, number>(); for (const e of items) countries.set(e.data.country, (countries.get(e.data.country) || 0) + 1);
+  if (countries.size > 1) return `${countries.size} ${c.countriesLabel}`;
+  const country = [...countries.keys()][0];
+  if (country !== 'United States') return country;
+  const states = new Map<string, number>(); for (const e of items) for (const st of stateOf(e.data.city).split(' and ')) if (st) states.set(st, (states.get(st) || 0) + 1);
+  const names = [...states.entries()].sort((a, b) => b[1] - a[1]).map(([n]) => n);
+  if (names.length === 0 || names.length > 4) return country;
+  return names.length === 1 ? names[0] : `${names.slice(0, -1).join(', ')} & ${names[names.length - 1]}`;
+};
+// Zoom steps (nested where a cluster is still crowded) and the pre-generated layer that covers each, if any. Two
+// clusterings: wide screens can keep dots closer together than a phone can; CSS shows one tree or the other.
 type Zoom = { id: string; parent: string; members: number[]; box: number[]; at: [number, number] };
-const tree: Zoom[] = zoomTree(pins.map((p) => p.xy));
 const inside = (xy: [number, number], b: number[], t = 0.5) => xy[0] >= b[0] - t && xy[0] <= b[0] + b[2] + t && xy[1] >= b[1] - t && xy[1] <= b[1] + b[3] + t;
-const zooms = tree.map((z) => {
-  const layer = map.zooms.filter((l) => z.members.every((k) => inside(pins[k].xy, l.box))).sort((a, b) => a.box[2] - b.box[2])[0];
-  return { ...z, box: layer ? layer.box : z.box, d: layer ? { land: layer.land, lakes: layer.lakes, borders: layer.borders, states: layer.states } : null, count: z.members.reduce((n, k) => n + pins[k].items.length, 0) };
+const trees = Object.entries(TREES).map(([name, opts]) => {
+  const tree: Zoom[] = zoomTree(pins.map((p) => p.xy), opts);
+  const zooms = tree.map((z) => {
+    const layer = map.zooms.filter((l) => z.members.every((k) => inside(pins[k].xy, l.box))).sort((a, b) => a.box[2] - b.box[2])[0];
+    return { ...z, box: layer ? layer.box : z.box, d: layer ? { land: layer.land, lakes: layer.lakes, borders: layer.borders, states: layer.states } : null, count: z.members.reduce((n, k) => n + pins[k].items.length, 0), name: nameFor(z.members) };
+  });
+  const homeOf = (k: number) => { let h = ''; for (const z of tree) if (z.members.includes(k)) h = z.id; return h; };
+  return { name, zooms, homeOf };
 });
-const homeOf = (k: number) => { let h = ''; for (const z of tree) if (z.members.includes(k)) h = z.id; return h; };
+const layers = new Map<string, NonNullable<(typeof trees)[0]['zooms'][0]['d']> & { box: number[] }>();
+for (const t of trees) for (const z of t.zooms) if (z.d && !layers.has(z.id)) layers.set(z.id, { ...z.d, box: z.box });
 const total = pins.reduce((n, p) => n + p.items.length, 0);
 const r = (n: number) => Math.round(n * 100) / 100;
 ---
-<div class="omap" data-omap data-world={map.world.join(' ')} data-one={c.one} data-many={c.many}>
+<div class="omap" data-omap data-world={map.world.join(' ')} data-one={c.one} data-many={c.many} data-places={c.placesLabel}>
   <div class="omap__bar">
     <T k="outreach.map.hint" as="p" class="small muted omap__hint" />
     <button type="button" class="btn btn--secondary omap__back" data-back hidden><T k="outreach.map.back" /></button>
@@ -53,26 +75,30 @@ const r = (n: number) => Math.round(n * 100) / 100;
         <path class="omap__lakes" d={map.lakes} />
         <path class="omap__borders" d={map.borders} />
       </g>
-      {zooms.map((z) => z.d && (
-        <g class="is-off" data-fine={z.id} data-box={z.box.join(' ')}>
-          <path class="omap__land" d={z.d.land} />
-          <path class="omap__lakes" d={z.d.lakes} />
-          <path class="omap__borders omap__borders--state" d={z.d.states} />
-          <path class="omap__borders" d={z.d.borders} />
+      {[...layers.entries()].map(([id, l]) => (
+        <g class="is-off" data-fine={id} data-box={l.box.join(' ')}>
+          <path class="omap__land" d={l.land} />
+          <path class="omap__lakes" d={l.lakes} />
+          <path class="omap__borders omap__borders--state" d={l.states} />
+          <path class="omap__borders" d={l.borders} />
         </g>
       ))}
-      {pins.map((p, i) => (
-        <g class:list={['omap__pin', { 'is-off': !!homeOf(i) }]} data-pin={p.key} data-zoom={homeOf(i)} data-label={p.label} data-n={p.items.length} tabindex="0" role="button" aria-label={`${p.label}: ${p.items.length}`}>
-          <circle class="omap__pulse" cx={r(p.xy[0])} cy={r(p.xy[1])} r="15" />
-          <circle class="omap__hit" cx={r(p.xy[0])} cy={r(p.xy[1])} r="15" />
-          <circle class="omap__dot" cx={r(p.xy[0])} cy={r(p.xy[1])} r="6" />
-        </g>
-      ))}
-      {zooms.map((z) => (
-        <g class:list={['omap__pin omap__pin--group', { 'is-off': !!z.parent }]} data-group={z.id} data-parent={z.parent} data-label={`${z.members.length} ${c.placesLabel}`} data-n={z.count} tabindex="0" role="button" aria-label={`${z.members.length} ${c.placesLabel}: ${z.count}`}>
-          <circle class="omap__pulse" cx={r(z.at[0])} cy={r(z.at[1])} r="15" />
-          <circle class="omap__hit" cx={r(z.at[0])} cy={r(z.at[1])} r="15" />
-          <circle class="omap__dot" cx={r(z.at[0])} cy={r(z.at[1])} r="8.5" />
+      {trees.map((t) => (
+        <g class={`omap__tree omap__tree--${t.name}`} data-tree={t.name}>
+          {pins.map((p, i) => (
+            <g class:list={['omap__pin', { 'is-off': !!t.homeOf(i) }]} data-pin={p.key} data-zoom={t.homeOf(i)} data-label={p.label} data-n={p.items.length} tabindex="0" role="button" aria-label={`${p.label}: ${p.items.length}`}>
+              <circle class="omap__pulse" cx={r(p.xy[0])} cy={r(p.xy[1])} r="15" />
+              <circle class="omap__hit" cx={r(p.xy[0])} cy={r(p.xy[1])} r="15" />
+              <circle class="omap__dot" cx={r(p.xy[0])} cy={r(p.xy[1])} r="6" />
+            </g>
+          ))}
+          {t.zooms.map((z) => (
+            <g class:list={['omap__pin omap__pin--group', { 'is-off': !!z.parent }]} data-group={z.id} data-parent={z.parent} data-label={z.name} data-n={z.count} data-m={z.members.length} tabindex="0" role="button" aria-label={`${z.name}: ${z.count} ${c.many}, ${z.members.length} ${c.placesLabel}`}>
+              <circle class="omap__pulse" cx={r(z.at[0])} cy={r(z.at[1])} r="15" />
+              <circle class="omap__hit" cx={r(z.at[0])} cy={r(z.at[1])} r="15" />
+              <circle class="omap__dot" cx={r(z.at[0])} cy={r(z.at[1])} r="8.5" />
+            </g>
+          ))}
         </g>
       ))}
     </svg>
@@ -105,6 +131,8 @@ const r = (n: number) => Math.round(n * 100) / 100;
   .omap__borders { fill: none; stroke: var(--stage); stroke-opacity: .45; stroke-width: 1px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
   .omap__borders--state { stroke-opacity: .22; }
   .omap__svg .is-off { display: none; }
+  .omap__tree--narrow { display: none; }
+  @media (max-width: 640px) { .omap__tree--wide { display: none; } .omap__tree--narrow { display: inline; } }
   .omap__back[hidden] { display: none; }
   .omap__pin { cursor: pointer; outline: none; }
   .omap__pin.is-off { display: none; }
@@ -166,6 +194,8 @@ const r = (n: number) => Math.round(n * 100) / 100;
     const currentW = () => Number(svg.getAttribute('viewBox')!.split(' ')[2]);
     scalePulses(currentW());
     window.addEventListener('resize', () => scalePulses(currentW()));
+    // Phone and desktop use different clusterings (data-tree); if the screen crosses the breakpoint mid-zoom, start over.
+    matchMedia('(max-width: 640px)').addEventListener('change', (e) => { if (zoomed && zoomed.startsWith('n') !== e.matches) { toWorld(); hideTip(); } });
     const boxFor = (ps: SVGGElement[]) => {
       const pts = ps.map((p) => { const c = p.querySelector('circle')!; return [Number(c.getAttribute('cx')), Number(c.getAttribute('cy'))]; });
       const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]); const [W, H] = world.split(' ').slice(2).map(Number);
@@ -189,7 +219,7 @@ const r = (n: number) => Math.round(n * 100) / 100;
       const r = pin.querySelector('.omap__dot')!.getBoundingClientRect(), s = root.querySelector('.omap__stage')!.getBoundingClientRect();
       if (!r.width) return;
       tipName.textContent = pin.dataset.label || '';
-      tipCount.textContent = `${pin.dataset.n} ${Number(pin.dataset.n) === 1 ? root.dataset.one || 'engagement' : root.dataset.many || 'engagements'}`;
+      tipCount.textContent = `${pin.dataset.n} ${Number(pin.dataset.n) === 1 ? root.dataset.one || 'engagement' : root.dataset.many || 'engagements'}${pin.dataset.m ? ` · ${pin.dataset.m} ${root.dataset.places || 'places'}` : ''}`;
       tip.style.left = `${r.left + r.width / 2 - s.left}px`; tip.style.top = `${r.top - s.top}px`; tip.hidden = false;
     };
     const hideTip = () => { tip.hidden = true; };
