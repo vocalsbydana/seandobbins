@@ -21,6 +21,10 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9",
-    "typescript": "^5"
+    "@geo-maps/earth-lakes-10km": "^0.6.0",
+    "d3-geo": "^3.1.1",
+    "topojson-client": "^3.1.0",
+    "typescript": "^5",
+    "world-atlas": "^2.0.2"
   }
 }

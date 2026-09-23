@@ -3,8 +3,11 @@ import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import SectionHead from '../components/SectionHead.astro';
 import T from '../components/T.astro';
+import OutreachMap from '../components/OutreachMap.astro';
 import { REGIONS } from '../content.config';
 import { copy } from '../lib/copy';
+import places from '../data/places.json';
+import { placeKey } from '../lib/geo.mjs';
 
 const c = copy.outreach;
 const sortKey = (d: { year?: number; yearEnd?: number; ongoing: boolean }) => (d.ongoing ? 9999 : d.yearEnd ?? d.year ?? -1);
@@ -27,15 +30,16 @@ const description = 'Clinics, masterclasses, residencies and concerts Sean Dobbi
         <li><span class="stats__n" data-count={countries.size}>{countries.size}</span><T k="outreach.stats.countries" class="label" /></li>
         <li><span class="stats__n" data-count={yearsPlaying} data-since={since}>{yearsPlaying}</span><T k="outreach.stats.years" class="label" /></li>
       </ul>
+      <OutreachMap entries={all} when={when} />
       <nav class="regions" aria-label="Regions" data-reveal>
         {groups.map((g) => <a href={`#${g.region.toLowerCase().replace(/[^a-z]+/g, '-')}`}>{g.region} <span>{g.items.length}</span></a>)}
       </nav>
       {groups.map((g) => (
-        <section class="region" id={g.region.toLowerCase().replace(/[^a-z]+/g, '-')}>
+        <section class="region" id={g.region.toLowerCase().replace(/[^a-z]+/g, '-')} data-region>
           <h2 class="region__title" data-reveal><span class="region__dot" aria-hidden="true"></span>{g.region}</h2>
           <ol role="list" class="rows">
             {g.items.map((o, i) => (
-              <li class="row" data-reveal style={`--reveal-delay:${Math.min(i, 6) * 50}ms`}>
+              <li class="row" data-reveal style={`--reveal-delay:${Math.min(i, 6) * 50}ms`} data-row-city={placeKey(places, o.data.city)}>
                 <span class="row__year">{when(o.data)}</span>
                 <div class="row__main">
                   <div class="row__inst">{o.data.institution}</div>

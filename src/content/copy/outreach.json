@@ -14,5 +14,16 @@
     "label": "Bring Sean to your school",
     "text": "Clinics, masterclasses and residencies for high school, college and community programs. Sean tailors each visit to the room: rhythm section basics, comping, brushes, or a full ensemble workshop.",
     "button": "Ask about a clinic"
+  },
+  "map": {
+    "hint": "Hover a dot for the city. Click a busy area to zoom in, and a dot to see the work there.",
+    "back": "Back to world",
+    "showAll": "Show all",
+    "aria": "World map of teaching engagements",
+    "pinsLabel": "engagements on the map",
+    "placesLabel": "places",
+    "one": "engagement",
+    "many": "engagements",
+    "credit": "Map: Natural Earth · © OpenStreetMap contributors"
   }
 }
