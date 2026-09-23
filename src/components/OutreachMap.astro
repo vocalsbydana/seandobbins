@@ -62,14 +62,14 @@ const r = (n: number) => Math.round(n * 100) / 100;
         </g>
       ))}
       {pins.map((p, i) => (
-        <g class:list={['omap__pin', { 'is-off': !!homeOf(i) }]} data-pin={p.key} data-zoom={homeOf(i)} data-label={p.label} data-count={p.items.length} tabindex="0" role="button" aria-label={`${p.label}: ${p.items.length}`}>
+        <g class:list={['omap__pin', { 'is-off': !!homeOf(i) }]} data-pin={p.key} data-zoom={homeOf(i)} data-label={p.label} data-n={p.items.length} tabindex="0" role="button" aria-label={`${p.label}: ${p.items.length}`}>
           <circle class="omap__pulse" cx={r(p.xy[0])} cy={r(p.xy[1])} r="15" />
           <circle class="omap__hit" cx={r(p.xy[0])} cy={r(p.xy[1])} r="15" />
           <circle class="omap__dot" cx={r(p.xy[0])} cy={r(p.xy[1])} r="6" />
         </g>
       ))}
       {zooms.map((z) => (
-        <g class:list={['omap__pin omap__pin--group', { 'is-off': !!z.parent }]} data-group={z.id} data-parent={z.parent} data-label={`${z.members.length} ${c.placesLabel}`} data-count={z.count} tabindex="0" role="button" aria-label={`${z.members.length} ${c.placesLabel}: ${z.count}`}>
+        <g class:list={['omap__pin omap__pin--group', { 'is-off': !!z.parent }]} data-group={z.id} data-parent={z.parent} data-label={`${z.members.length} ${c.placesLabel}`} data-n={z.count} tabindex="0" role="button" aria-label={`${z.members.length} ${c.placesLabel}: ${z.count}`}>
           <circle class="omap__pulse" cx={r(z.at[0])} cy={r(z.at[1])} r="15" />
           <circle class="omap__hit" cx={r(z.at[0])} cy={r(z.at[1])} r="15" />
           <circle class="omap__dot" cx={r(z.at[0])} cy={r(z.at[1])} r="8.5" />
@@ -93,7 +93,7 @@ const r = (n: number) => Math.round(n * 100) / 100;
 </div>
 
 <style>
-  .omap { margin-block: var(--s-4) var(--s-6); }
+  .omap { margin-block: var(--s-4) var(--s-6); max-width: 880px; margin-inline: auto; }
   .omap__bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px var(--s-3); min-height: 44px; margin-bottom: var(--s-2); }
   .omap__hint { flex: 1 1 320px; margin: 0; }
   .omap__back { margin-left: auto; }
@@ -189,7 +189,7 @@ const r = (n: number) => Math.round(n * 100) / 100;
       const r = pin.querySelector('.omap__dot')!.getBoundingClientRect(), s = root.querySelector('.omap__stage')!.getBoundingClientRect();
       if (!r.width) return;
       tipName.textContent = pin.dataset.label || '';
-      tipCount.textContent = `${pin.dataset.count} ${Number(pin.dataset.count) === 1 ? root.dataset.one || 'engagement' : root.dataset.many || 'engagements'}`;
+      tipCount.textContent = `${pin.dataset.n} ${Number(pin.dataset.n) === 1 ? root.dataset.one || 'engagement' : root.dataset.many || 'engagements'}`;
       tip.style.left = `${r.left + r.width / 2 - s.left}px`; tip.style.top = `${r.top - s.top}px`; tip.hidden = false;
     };
     const hideTip = () => { tip.hidden = true; };
