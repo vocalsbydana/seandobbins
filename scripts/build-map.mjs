@@ -11,6 +11,21 @@ import { project, zoomTree, TREES, MAP_W, SCALE, ORIGIN_Y, WORLD } from '../src/
 
 const require = createRequire(import.meta.url);
 const c110 = require('world-atlas/countries-110m.json'), c50 = require('world-atlas/countries-50m.json'), c10 = require('world-atlas/countries-10m.json'), us = require('us-atlas/states-10m.json');
+
+// d3 expects exterior rings wound clockwise on the sphere and holes the other way; the 10m land set breaks that (its
+// "area" comes out larger than the sphere), which makes d3's clipping draw close-up land inside-out. Rewind every ring.
+function rewind(geometry) {
+  const fixPolygon = (rings) => {
+    const outer = rings[0].slice();
+    if (geoArea({ type: 'Polygon', coordinates: [outer] }) > 2 * Math.PI) outer.reverse();
+    const base = geoArea({ type: 'Polygon', coordinates: [outer] });
+    return [outer, ...rings.slice(1).map((h) => { const hole = h.slice(); if (geoArea({ type: 'Polygon', coordinates: [outer, hole] }) > base) hole.reverse(); return hole; })];
+  };
+  if (geometry.type === 'Polygon') return { ...geometry, coordinates: fixPolygon(geometry.coordinates) };
+  if (geometry.type === 'MultiPolygon') return { ...geometry, coordinates: geometry.coordinates.map(fixPolygon) };
+  return geometry;
+}
+const landOf = (countries) => { const f = feature(countries, countries.objects.land); const feats = f.features || [f]; return { type: 'GeometryCollection', geometries: feats.map((x) => rewind(x.geometry)) }; };
 const lakesAll = require('@geo-maps/earth-lakes-10km')(), lakesFine = require('@geo-maps/earth-lakes-1km')();
 // Some OSM polygons wind the wrong way, which makes geoArea report the rest of the sphere; take the smaller side.
 const area = (g) => { const a = geoArea(g); return Math.min(a, 4 * Math.PI - a); };
@@ -26,7 +41,7 @@ const draw = (geometry, box, digits = 1) => {
   return geoPath(projection).digits(digits)(geometry) || '';
 };
 const layer = (countries, lakes, box, digits) => ({
-  land: draw(feature(countries, countries.objects.land), box, digits),
+  land: draw(landOf(countries), box, digits),
   borders: draw(mesh(countries, countries.objects.countries, (a, b) => a !== b), box, digits),
   lakes: draw(lakes, box, digits),
 });
