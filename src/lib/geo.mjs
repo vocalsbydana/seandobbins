@@ -63,6 +63,11 @@ export function zoomTree(points, { radius = 48, nestedRadius = radius, minW = 70
     const groups = cluster(idx.map((i) => points[i]), (depth === 1 ? radius : nestedRadius) * scale).map((g) => g.map((k) => idx[k])).filter((g) => g.length > 1);
     for (const g of groups) {
       const pts = g.map((i) => points[i]), box = zoomBox(pts, minW * scale);
+      if (parent && g.length === idx.length) { // still one crowd at this scale: tighten the parent's box instead of adding a step
+        const p = zooms.find((z) => z.id === parent); p.box = box;
+        if (depth < maxDepth) walk(g, parent, box[2] / MAP_W, depth + 1);
+        continue;
+      }
       const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]);
       const at = [round((Math.max(...xs) + Math.min(...xs)) / 2), round((Math.max(...ys) + Math.min(...ys)) / 2)];
       const z = { id: `${prefix}${zooms.length}`, parent, members: g, box, at };
