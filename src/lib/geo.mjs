@@ -1,19 +1,20 @@
-// Natural Earth projection into the map's SVG viewBox. Shared by the build-time dot generator and the page.
+// Mercator projection into the map's SVG viewBox, cropped to 80°N–56°S (src/data/world-map.json, the OutreachMap
+// component). Shared by the build-time outline generator (which uses d3's geoMercator with the same scale/translate)
+// and the page, so pins land on the right spot.
 const PI = Math.PI;
-const XMAX = PI * 0.8707;               // projected x at longitude 180
-const YMAX = 1.4224;                    // projected y at latitude 90
+const XMAX = PI;                                          // projected x at longitude 180
+const merc = (lat) => Math.log(Math.tan(PI / 4 + (lat * PI) / 360));
+const YMAX = merc(84);                                    // projected y at the top of d3's default Mercator clip
 export const MAP_W = 1000;
 export const SCALE = MAP_W / (2 * XMAX);
 export const MAP_H = Math.round(2 * YMAX * SCALE);
-/** The part of the projection the map shows: 84°N down to 56°S (no Antarctica, no empty polar band). [x, y, w, h]. */
-export const WORLD = (() => { const top = Math.floor(project(0, 84)[1]), bottom = Math.ceil(project(0, -56)[1]); return [0, top, MAP_W, bottom - top]; })();
+export const ORIGIN_Y = YMAX * SCALE;                       // exact y of the equator (d3 translate uses this, not MAP_H / 2)
+/** The part of the projection the map shows: 80°N down to 56°S. [x, y, w, h] in viewBox units. */
+export const WORLD = (() => { const top = Math.floor(project(0, 80)[1]), bottom = Math.ceil(project(0, -56)[1]); return [0, top, MAP_W, bottom - top]; })();
 
 /** [lon, lat] in degrees → [x, y] in viewBox units. */
 export function project(lon, lat) {
-  const l = (lon * PI) / 180, p = (lat * PI) / 180, p2 = p * p, p4 = p2 * p2;
-  const x = l * (0.8707 - 0.131979 * p2 + p4 * (-0.013791 + p4 * (0.003971 * p2 - 0.001529 * p4)));
-  const y = p * (1.007226 + p2 * (0.015085 + p4 * (-0.044475 + 0.028874 * p2 - 0.005916 * p4)));
-  return [(x + XMAX) * SCALE, (YMAX - y) * SCALE];
+  return [((lon * PI) / 180 + XMAX) * SCALE, (YMAX - merc(Math.max(-84, Math.min(84, lat)))) * SCALE];
 }
 
 /** Group pins that would overlap at world scale. Returns arrays of indices. */
@@ -53,7 +54,7 @@ export function placeKey(places, city) { const ll = placeOf(places, city); retur
  * still overlap inside that step become a nested one (up to maxDepth). Flat list, parents before children:
  * { id, parent ('' = world), members (pin indices), box (viewBox), at (group pin position) }.
  */
-export function zoomTree(points, { radius = 26, minW = 70, maxDepth = 2 } = {}) {
+export function zoomTree(points, { radius = 48, minW = 70, maxDepth = 3 } = {}) {
   const zooms = [];
   const walk = (idx, parent, scale, depth) => {
     const groups = cluster(idx.map((i) => points[i]), radius * scale).map((g) => g.map((k) => idx[k])).filter((g) => g.length > 1);

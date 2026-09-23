@@ -6,8 +6,8 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { feature, mesh } from 'topojson-client';
-import { geoNaturalEarth1, geoPath, geoArea } from 'd3-geo';
-import { project, zoomTree, MAP_W, MAP_H, SCALE, WORLD } from '../src/lib/geo.mjs';
+import { geoMercator, geoPath, geoArea } from 'd3-geo';
+import { project, zoomTree, MAP_W, SCALE, ORIGIN_Y, WORLD } from '../src/lib/geo.mjs';
 
 const require = createRequire(import.meta.url);
 const c110 = require('world-atlas/countries-110m.json'), c50 = require('world-atlas/countries-50m.json'), c10 = require('world-atlas/countries-10m.json'), us = require('us-atlas/states-10m.json');
@@ -19,8 +19,8 @@ const bigLakes = (gc, min) => ({ type: 'GeometryCollection', geometries: polys(g
 const lakesWorld = bigLakes(lakesAll, 2.5e-4), lakesZoom = bigLakes(lakesAll, 2e-5), lakesClose = bigLakes(lakesFine, 5e-6); // ≈10,000 / 800 / 200 km² and up
 const places = JSON.parse(readFileSync(new URL('../src/data/places.json', import.meta.url), 'utf8'));
 
-// Same Natural Earth projection as src/lib/geo.mjs (d3's raw projection is the identical formula), so pins line up.
-const projection = geoNaturalEarth1().scale(SCALE).translate([MAP_W / 2, MAP_H / 2]);
+// Same Mercator projection as src/lib/geo.mjs (identical scale and translate), so pins line up.
+const projection = geoMercator().scale(SCALE).translate([MAP_W / 2, ORIGIN_Y]);
 const draw = (geometry, box, digits = 1) => {
   projection.clipExtent(box ? [[box[0], box[1]], [box[0] + box[2], box[1] + box[3]]] : null);
   return geoPath(projection).digits(digits)(geometry) || '';
@@ -33,14 +33,15 @@ const layer = (countries, lakes, box, digits) => ({
 
 const world = layer(c110, lakesWorld, null, 1);
 const pins = Object.entries(places).filter(([k]) => !k.startsWith('_')).map(([name, [lat, lon]]) => ({ name, xy: project(lon, lat) }));
-const tree = zoomTree(pins.map((p) => p.xy));
-const depth = (z) => (z.parent ? 1 + depth(tree.find((p) => p.id === z.parent)) : 1);
-const zooms = tree.map((z) => ({
-  box: z.box, names: z.members.map((i) => pins[i].name),
-  ...(depth(z) >= 2 ? layer(c10, lakesClose, z.box, 2) : layer(c50, lakesZoom, z.box, 1)), // metro-scale zooms get the 10m coastline
-  states: draw(mesh(us, us.objects.states, (a, b) => a !== b), z.box, depth(z) >= 2 ? 2 : 1),
-}));
-const out = { w: MAP_W, h: MAP_H, world: WORLD, ...world, zooms };
+const zooms = zoomTree(pins.map((p) => p.xy)).map((z) => {
+  const close = z.box[2] < 40; // metro-scale zooms (under 4% of the world's width) get the 10m coastline and 1 km lakes
+  return {
+    box: z.box, names: z.members.map((i) => pins[i].name),
+    ...(close ? layer(c10, lakesClose, z.box, 2) : layer(c50, lakesZoom, z.box, 1)),
+    states: draw(mesh(us, us.objects.states, (a, b) => a !== b), z.box, close ? 2 : 1),
+  };
+});
+const out = { w: MAP_W, h: WORLD[1] + WORLD[3], world: WORLD, ...world, zooms };
 writeFileSync(new URL('../src/data/world-map.json', import.meta.url), JSON.stringify(out));
 const kb = (s) => `${Math.round(s.length / 1024)} KB`;
 console.log(`[map] world land ${kb(world.land)}, borders ${kb(world.borders)}, lakes ${kb(world.lakes)}; ${zooms.length} zoom regions: ${zooms.map((z) => `${z.names.length} places (${kb(z.land + z.borders + z.lakes + z.states)})`).join(', ')}`);

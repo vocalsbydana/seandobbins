@@ -97,11 +97,11 @@ const r = (n: number) => Math.round(n * 100) / 100;
   .omap__bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px var(--s-3); min-height: 44px; margin-bottom: var(--s-2); }
   .omap__hint { flex: 1 1 320px; margin: 0; }
   .omap__back { margin-left: auto; }
-  .omap__stage { position: relative; background: var(--paper); border: var(--hairline); }
+  .omap__stage { position: relative; }
   .omap__svg { display: block; width: 100%; height: auto; touch-action: manipulation; }
   .omap__svg path { pointer-events: none; }
-  .omap__land { fill: var(--ivory); stroke: var(--stage); stroke-opacity: .55; stroke-width: 1px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
-  .omap__lakes { fill: var(--paper); stroke: var(--stage); stroke-opacity: .35; stroke-width: 1px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+  .omap__land { fill: var(--paper); stroke: var(--stage); stroke-opacity: .55; stroke-width: 1px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+  .omap__lakes { fill: var(--ivory); stroke: var(--stage); stroke-opacity: .35; stroke-width: 1px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
   .omap__borders { fill: none; stroke: var(--stage); stroke-opacity: .45; stroke-width: 1px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
   .omap__borders--state { stroke-opacity: .22; }
   .omap__svg .is-off { display: none; }
@@ -109,7 +109,7 @@ const r = (n: number) => Math.round(n * 100) / 100;
   .omap__pin { cursor: pointer; outline: none; }
   .omap__pin.is-off { display: none; }
   .omap__hit { fill: transparent; stroke: none; pointer-events: all; }
-  .omap__dot { fill: var(--royal); stroke: var(--paper); stroke-width: 1.5px; vector-effect: non-scaling-stroke; pointer-events: none; transition: fill var(--dur-fast); }
+  .omap__dot { fill: var(--royal); stroke: var(--ivory); stroke-width: 1.5px; vector-effect: non-scaling-stroke; pointer-events: none; transition: fill var(--dur-fast); }
   .omap__pin:hover .omap__dot, .omap__pin:focus-visible .omap__dot, .omap__pin.is-active .omap__dot { fill: var(--stage); }
   .omap__pin:focus-visible .omap__pulse { stroke: var(--royal); stroke-width: 2px; vector-effect: non-scaling-stroke; fill: none; animation: none; fill-opacity: 1; }
   .omap__pulse { fill: var(--royal); fill-opacity: .16; stroke: none; pointer-events: none; }
@@ -155,11 +155,12 @@ const r = (n: number) => Math.round(n * 100) / 100;
     // Pin sizes are set in viewBox units so that they come out at a fixed pixel size at any zoom and any screen width
     // (r = px × viewBox width ÷ rendered width). Plain circles: no stroke tricks, so every browser draws them.
     const PX = { dot: 6.5, group: 9, pulse: 16, hit: 18 };
+    const HIT_SMALL = 12; // phones: pins can sit closer together, so keep tap areas from swallowing a neighbour
     const small = () => matchMedia('(max-width: 640px)').matches;
     const scalePulses = (w: number) => {
       const k = w / Math.max(1, svg.clientWidth || svg.getBoundingClientRect().width), m = small() ? 0.8 : 1;
       root.querySelectorAll<SVGCircleElement>('.omap__pulse').forEach((c) => c.setAttribute('r', String(PX.pulse * m * k)));
-      root.querySelectorAll<SVGCircleElement>('.omap__hit').forEach((c) => c.setAttribute('r', String(PX.hit * k)));
+      root.querySelectorAll<SVGCircleElement>('.omap__hit').forEach((c) => c.setAttribute('r', String((small() ? HIT_SMALL : PX.hit) * k)));
       root.querySelectorAll<SVGCircleElement>('.omap__dot').forEach((c) => c.setAttribute('r', String((c.closest('.omap__pin--group') ? PX.group : PX.dot) * m * k)));
     };
     const currentW = () => Number(svg.getAttribute('viewBox')!.split(' ')[2]);
