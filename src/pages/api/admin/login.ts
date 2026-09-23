@@ -13,6 +13,7 @@ export const POST: APIRoute = async ({ request }) => {
   const password = (body?.password || '').toString();
   if (!checkPassword(password)) {
     rateLimited(key, 8, 15 * 60 * 1000); // only failures count
+    await new Promise((r) => setTimeout(r, 1500)); // slow every wrong guess; the in-memory limit resets on cold starts
     return json({ error: 'That password isn’t right. Try again.' }, { status: 401 });
   }
   return json({ ok: true }, { headers: { 'set-cookie': sessionCookie(request) } });

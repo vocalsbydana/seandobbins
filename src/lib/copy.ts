@@ -11,8 +11,9 @@ import barbershop from '../content/copy/barbershop.json';
 import resources from '../content/copy/resources.json';
 import contact from '../content/copy/contact.json';
 import notfound from '../content/copy/notfound.json';
+import privacy from '../content/copy/privacy.json';
 
-export const copy = { global, home, about, music, gigs, outreach, barbershop, resources, contact, notfound };
+export const copy = { global, home, about, music, gigs, outreach, barbershop, resources, contact, notfound, privacy };
 export type CopyPage = keyof typeof copy;
 
 /** Resolve a dotted key like "home.hero.tagline" or "about.playedWith.3". */

@@ -94,6 +94,12 @@ Each of these tabs works the same way: a list, a **+ Add** button, and a short f
 
 ---
 
+## 6. Site check
+
+The **Site check** tab runs the site's health checks on demand: is the site up, does the resource gate lock and unlock, are the contact form, newsletter and Publish button connected, and when does the editor's GitHub token expire. The same checks run automatically on the 1st of every month and the report is emailed to Dana. If something shows a ✗, the row says how to fix it; most fixes are Dana's (they involve Vercel settings).
+
+Visitor numbers are counted by Vercel Web Analytics (no cookies, no banner) and live in Dana's Vercel dashboard under Analytics.
+
 ## Good to know
 
 - **Publish is the only button that matters.** Until you press it, nothing changes on the live site.
@@ -130,6 +136,12 @@ Environment variables (Project → Settings → Environment Variables), see `.en
 - `DOWNLOAD_SECRET`: long random string (also used for the editor session).
 - Leave "Automatically expose System Environment Variables" on; the editor relies on `VERCEL_GIT_COMMIT_SHA` and `VERCEL_GIT_COMMIT_REF`.
 - Optional `CONTENT_BRANCH` if you ever want edits pinned to a branch other than the one deployed.
+- `CRON_SECRET`: any long random string. Vercel sends it with the monthly self-test call (1st of the month, 13:00 UTC, see `scripts/vercel-config.mjs`). Without it the cron is refused.
+- `SELFTEST_TO_EMAIL`: where the monthly report goes (Dana). Falls back to `CONTACT_TO_EMAIL`.
+- **Analytics**: Vercel → the project → Analytics → Enable. The pages already load `/_vercel/insights/script.js`; until analytics is enabled that file 404s harmlessly.
+- **Security headers and the cron** are merged into `.vercel/output/config.json` after every build by `scripts/vercel-config.mjs` (the adapter ignores `vercel.json`). HSTS, nosniff, frame-options (DENY on /admin), referrer and permissions policies.
+
+**When the GitHub token expires** (the monthly email counts down the days; Publish fails with a GitHub 401): make a new fine-grained token exactly as below, paste it over `GITHUB_TOKEN` in Vercel, Redeploy, then publish a small change from /admin to confirm.
 
 **GitHub token** (under your account for now; move it to Sean's once he has GitHub):
 GitHub → Settings → Developer settings → Personal access tokens → **Fine-grained tokens** → Generate. Repository access: *Only select repositories* → this repo. Permissions: **Contents: Read and write**. Nothing else. Set an expiry you're comfortable with (a year is fine; put a reminder in your calendar, because when it expires Publish will fail with a GitHub 401 in the bottom bar). Paste it into `GITHUB_TOKEN` on Vercel and redeploy.
@@ -138,7 +150,9 @@ GitHub → Settings → Developer settings → Personal access tokens → **Fine
 
 - **Uploads are capped at 4 MB per PDF and 2 MB per image** because Vercel functions cap request bodies at 4.5 MB. Bigger files would need an external store (Cloudflare R2 has a free 10 GB tier); not needed now.
 - **The first programmatic save of a file** may reformat it slightly (JSON re-indented, frontmatter quoted). Harmless; the diff looks bigger than the edit once.
-- **Rate limit and login attempts** are in-memory per function instance: good enough against casual abuse, not a security boundary. The password and the SameSite cookie are.
+- **Rate limit and login attempts** are in-memory per function instance (plus a 1.5 s delay on every wrong password): good enough against casual abuse, not a security boundary. A long password and the SameSite cookie are.
+- **Dependabot** opens one grouped PR a month with dependency updates (`.github/dependabot.yml`). Vercel builds it as a preview; if the preview works, merge it.
+- **Privacy page** at `/privacy` (copy in the editor under Page text → Privacy). Update it if a new service starts receiving visitor data.
 - **Concurrent edits**: page-copy saves re-fetch the file and apply changes by key, so two people editing different fields don't clobber each other. If nothing can be applied, the editor asks to reload.
 - **Vercel Hobby limits**: each Publish is one build (a few minutes). Heavy editing days could approach the 100 builds/day soft limit; unlikely for this site.
 

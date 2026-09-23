@@ -1,0 +1,38 @@
+{
+  "page": {
+    "num": "Privacy",
+    "title": "What this site keeps, and what it doesn't",
+    "blurb": "Short version: as little as possible, and none of it is sold or shared for advertising."
+  },
+  "updated": "Last updated September 2026",
+  "sections": [
+    {
+      "title": "The contact form",
+      "text": "When you write to Sean through the contact form, your name, email address and message are emailed to him. The website itself stores nothing; Resend, the service that delivers the email, handles it in transit. Sean keeps your message the way anyone keeps an email, and replies from his own address."
+    },
+    {
+      "title": "The Barbershop library and the newsletter",
+      "text": "To open the free PDFs or join the list, you leave an email address and, if you like, a first name. Both go to MailerLite, which sends the occasional note from Sean. MailerLite asks you to confirm your address by email first, and every note has an unsubscribe link at the bottom. The site also notes which PDF you opened first, so Sean knows what people actually find useful."
+    },
+    {
+      "title": "Cookies",
+      "text": "One cookie, called barbershop_unlocked, remembers that you've left your email so the library stays open on this device for about two years. It holds no personal details, only a signed timestamp. Clearing your browser's cookies removes it. The site's editor sets a separate login cookie that only Sean uses. There are no advertising or tracking cookies."
+    },
+    {
+      "title": "Visitor numbers",
+      "text": "Page views are counted by Vercel Web Analytics, which works without cookies and without identifying anyone: which page, which country, what kind of device, all in aggregate."
+    },
+    {
+      "title": "Other people's embeds",
+      "text": "Videos come from YouTube and load only when you press play; from that moment YouTube's own privacy policy applies. The gig list is provided by Auralis. Streaming and social links take you to those services and their rules."
+    },
+    {
+      "title": "Your rights",
+      "text": "Ask, and Sean will tell you what he holds about you, correct it, or delete it, including removing you from the list. Write to sean@seandobbinsmusic.com or use the contact form."
+    },
+    {
+      "title": "Who's responsible",
+      "text": "This site belongs to Sean Dobbins, Bloomington, Indiana. It is hosted by Vercel. If this page changes, the date at the top changes with it."
+    }
+  ]
+}

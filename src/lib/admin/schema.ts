@@ -88,6 +88,7 @@ export const PAGES: PageDef[] = [
   { id: 'barbershop', label: 'The Barbershop', path: '/barbershop', file: 'src/content/copy/barbershop.json' },
   { id: 'resources', label: 'Resource library', path: '/barbershop/resources', file: 'src/content/copy/resources.json' },
   { id: 'contact', label: 'Contact', path: '/contact', file: 'src/content/copy/contact.json' },
+  { id: 'privacy', label: 'Privacy', path: '/privacy', file: 'src/content/copy/privacy.json' },
   { id: 'notfound', label: 'Not-found page', path: '/this-page-does-not-exist', file: 'src/content/copy/notfound.json' },
   { id: 'global', label: 'Menu, footer & shared', path: '/', file: 'src/content/copy/global.json', note: 'Text that appears on every page.' },
 ];

@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+import SectionHead from '../components/SectionHead.astro';
+import T from '../components/T.astro';
+import { copy } from '../lib/copy';
+const c = copy.privacy;
+const description = 'What seandobbinsmusic.com collects (a contact form, an email list, one cookie) and what it does with it.';
+---
+<Base title="Privacy" description={description} ogImage="/og/home.png">
+  <section class="section">
+    <div class="container privacy">
+      <SectionHead numKey="privacy.page.num" titleKey="privacy.page.title" as="h1" blurbKey="privacy.page.blurb" />
+      <T k="privacy.updated" as="p" class="label privacy__updated" />
+      <div class="privacy__body prose">
+        {c.sections.map((s, i) => (
+          <section class="privacy__section" data-reveal>
+            <h2 data-edit={`privacy.sections.${i}.title`}>{s.title}</h2>
+            <T k={`privacy.sections.${i}.text`} as="p" />
+          </section>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>
+<style>
+  .privacy { max-width: 760px; }
+  .privacy__updated { margin-top: -8px; margin-bottom: var(--s-4); color: var(--walnut); }
+  .privacy__section { padding: var(--s-3) 0; border-top: var(--hairline); }
+  .privacy__section:last-child { border-bottom: var(--hairline); }
+  .privacy__section h2 { font-family: var(--font-text); font-weight: 600; font-size: 19px; letter-spacing: -.01em; text-transform: none; line-height: 1.25; margin: 0 0 8px; }
+</style>

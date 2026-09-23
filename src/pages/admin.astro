@@ -46,6 +46,7 @@ import '../styles/global.css';
         <button type="button" data-view="testimonials">Testimonials</button>
         <button type="button" data-view="announcements">Announcements</button>
         <button type="button" data-view="outreach">Outreach</button>
+        <button type="button" data-view="health">Site check</button>
       </nav>
       <main id="view" class="ad-view"></main>
       <div id="dock" class="ad-dock">
@@ -100,6 +101,15 @@ import '../styles/global.css';
       .ad-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding-top: 8px; }
       .ad-danger { color: var(--walnut); font-size: 13px; font-weight: 600; border-bottom: 1.5px solid var(--brass); margin-left: auto; }
       .ad-note { font-size: 13px; color: var(--walnut); }
+      .hc__sum { font-weight: 600; font-size: 18px; margin: 4px 0 12px; color: var(--royal); }
+      .hc__sum--bad { color: var(--walnut); }
+      .hc__row { display: grid; grid-template-columns: 28px 1fr; gap: 12px; padding: 12px 0; border-top: var(--hairline); font-size: 15px; }
+      .hc__row:last-child { border-bottom: var(--hairline); }
+      .hc__mark { font-weight: 700; color: var(--royal); }
+      .hc__row--bad .hc__mark { color: var(--walnut); }
+      .hc__fix { margin-top: 6px; font-size: 13px; color: var(--walnut); max-width: 70ch; }
+      .hc__visitors { margin-top: 40px; padding-top: 20px; border-top: var(--hairline); max-width: 70ch; display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+      .hc__visitors h3 { font-size: 28px; }
       .ad-error { color: var(--walnut); font-weight: 600; font-size: 14px; }
       .ad-error:empty { display: none; }
       .ad-preview-label { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--walnut); margin-bottom: 10px; }
@@ -255,9 +265,9 @@ import '../styles/global.css';
         navButtons.forEach((b) => b.classList.toggle('is-active', b.dataset.view === name));
         location.hash = name;
         view.replaceChildren(el('p', { class: 'ad-empty', text: 'Loading…' }));
-        const known = ['resources', 'pages', 'videos', ...COLLECTIONS.map((c) => c.name)];
+        const known = ['resources', 'pages', 'videos', 'health', ...COLLECTIONS.map((c) => c.name)];
         if (!known.includes(name)) name = 'resources';
-        const fn = ({ resources: renderResources, pages: renderPages, videos: renderVideos } as Record<string, () => Promise<void>>)[name];
+        const fn = ({ resources: renderResources, pages: renderPages, videos: renderVideos, health: renderHealth } as Record<string, () => Promise<void>>)[name];
         (fn ? fn() : renderCollection(name)).catch((e) => view.replaceChildren(el('p', { class: 'ad-error', text: (e as Error).message })));
       }
       window.addEventListener('beforeunload', (e) => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
@@ -313,6 +323,41 @@ import '../styles/global.css';
         discard.onclick = onDiscard; save.onclick = onSave;
       }
       function hideSaveBar() { saveBar.hidden = true; }
+
+      // ---------- Site check ----------
+      type Check = { name: string; ok: boolean; detail: string; fix?: string };
+      type Report = { ok: boolean; ran: string; site: string; checks: Check[]; email: { sent: boolean; to?: string; error?: string } };
+      async function renderHealth() {
+        const my = viewSeq;
+        const out = el('div', { class: 'hc' });
+        const run = async (email: boolean) => {
+          out.replaceChildren(el('p', { class: 'ad-empty', text: 'Checking… this takes a few seconds.' }));
+          try {
+            const r = await api<Report>(`selftest${email ? '?email=1' : ''}`);
+            if (my !== viewSeq) return;
+            const problems = r.checks.filter((c) => !c.ok).length;
+            out.replaceChildren(
+              el('p', { class: problems ? 'hc__sum hc__sum--bad' : 'hc__sum', text: problems ? `${problems} thing${problems === 1 ? '' : 's'} need${problems === 1 ? 's' : ''} attention.` : `All ${r.checks.length} checks passed.` }),
+              el('ul', { class: 'hc__list', role: 'list' }, ...r.checks.map((c) => el('li', { class: c.ok ? 'hc__row' : 'hc__row hc__row--bad' },
+                el('span', { class: 'hc__mark', text: c.ok ? '✓' : '✗', 'aria-label': c.ok ? 'OK' : 'Problem' }),
+                el('div', {}, el('strong', { text: c.name }), el('div', { class: 'ad-row__sub', text: c.detail }), c.fix && !c.ok ? el('div', { class: 'hc__fix', text: `How to fix: ${c.fix}` }) : el('span')),
+              ))),
+              el('p', { class: 'ad-note', text: email ? (r.email.sent ? `Emailed the report to ${r.email.to}.` : `Could not email the report: ${r.email.error || 'unknown error'}.`) : `Checked ${new Date(r.ran).toLocaleString()}.` }),
+            );
+          } catch (e) { if (my === viewSeq) out.replaceChildren(el('p', { class: 'ad-error', text: (e as Error).message })); }
+        };
+        view.replaceChildren(
+          el('div', { class: 'ad-h' }, el('div', {}, el('h2', { text: 'Site check' }), el('p', { text: 'The same checks that run on the 1st of every month and land in Dana’s inbox: is the site up, does the resource gate work, are the contact form, newsletter and Publish button connected, and when does the editor’s GitHub token expire.' })),
+            el('div', { class: 'ad-actions' }, el('button', { class: 'btn btn--primary', type: 'button', text: 'Run the checks now', onclick: () => run(false) }), el('button', { class: 'btn btn--secondary', type: 'button', text: 'Run and email the report', onclick: () => run(true) }))),
+          out,
+          el('div', { class: 'hc__visitors' },
+            el('h3', { text: 'Visitors' }),
+            el('p', { text: 'Visitor numbers are counted by Vercel Web Analytics: no cookies, no banner, nothing personal. They live in the Vercel dashboard under the project’s Analytics tab, which needs Dana’s Vercel login. Ask her for a monthly screenshot, or she can share the page.' }),
+            el('a', { class: 'link', href: 'https://vercel.com/dashboard', target: '_blank', rel: 'noopener', text: 'Open Vercel ↗' }),
+          ),
+        );
+        out.append(el('p', { class: 'ad-empty', text: 'Press “Run the checks now”.' }));
+      }
 
       // ---------- Resources ----------
       interface Entry { file: string; path: string; sha: string; data: Record<string, string | number | boolean>; body: string }

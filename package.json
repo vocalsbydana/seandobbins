@@ -7,17 +7,18 @@
     "dev": "astro dev",
     "prebuild": "node scripts/hash-pdfs.mjs && node scripts/fetch-people.mjs",
     "build": "astro build",
+    "postbuild": "node scripts/vercel-config.mjs",
     "preview": "astro preview",
     "check": "astro check",
     "cms": "npx decap-server"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3",
-    "@astrojs/vercel": "^11",
+    "@astrojs/vercel": "^11.0.11",
     "@resvg/resvg-js": "^2.6",
-    "astro": "^7.3",
-    "satori": "^0.33",
-    "sharp": "^0.34"
+    "astro": "^7.3.4",
+    "satori": "^0.33.5",
+    "sharp": "^0.35.4"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9",

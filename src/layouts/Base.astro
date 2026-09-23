@@ -54,6 +54,7 @@ const buildBranch = process.env.VERCEL_GIT_COMMIT_REF || import.meta.env.VERCEL_
     <link rel="preload" href="/fonts/bebas-neue-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/bricolage-latin.woff2" as="font" type="font/woff2" crossorigin />
     <ClientRouter />
+    {import.meta.env.PROD && <script is:inline defer src="/_vercel/insights/script.js"></script>}
     <slot name="head" />
   </head>
   <body class={bodyClass}>
