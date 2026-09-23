@@ -5,6 +5,8 @@ const YMAX = 1.4224;                    // projected y at latitude 90
 export const MAP_W = 1000;
 export const SCALE = MAP_W / (2 * XMAX);
 export const MAP_H = Math.round(2 * YMAX * SCALE);
+/** The part of the projection the map shows: 84°N down to 56°S (no Antarctica, no empty polar band). [x, y, w, h]. */
+export const WORLD = (() => { const top = Math.floor(project(0, 84)[1]), bottom = Math.ceil(project(0, -56)[1]); return [0, top, MAP_W, bottom - top]; })();
 
 /** [lon, lat] in degrees → [x, y] in viewBox units. */
 export function project(lon, lat) {
@@ -31,8 +33,8 @@ export function cluster(points, radius = 26) {
 /** A zoom box (viewBox units) around a set of points, padded and kept at the map's aspect ratio. */
 export function zoomBox(points, minW = 70) {
   const xs = points.map((p) => p[0]), ys = points.map((p) => p[1]);
-  let w = Math.max(minW, (Math.max(...xs) - Math.min(...xs)) * 1.9), h = w * (MAP_H / MAP_W);
-  const need = (Math.max(...ys) - Math.min(...ys)) * 1.9; if (need > h) { h = need; w = h * (MAP_W / MAP_H); }
+  let w = Math.max(minW, (Math.max(...xs) - Math.min(...xs)) * 1.9), h = w * (WORLD[3] / WORLD[2]);
+  const need = (Math.max(...ys) - Math.min(...ys)) * 1.9; if (need > h) { h = need; w = h * (WORLD[2] / WORLD[3]); }
   const cx = (Math.max(...xs) + Math.min(...xs)) / 2, cy = (Math.max(...ys) + Math.min(...ys)) / 2;
   return [round(cx - w / 2), round(cy - h / 2), round(w), round(h)];
 }

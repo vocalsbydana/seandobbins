@@ -5,6 +5,17 @@ updates:
     directory: /
     schedule:
       interval: monthly
+    ignore:
+      # Major versions of the build tools need a human look (and usually code changes); Dependabot only proposes
+      # minors and patches for them.
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
+      - dependency-name: astro
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@astrojs/*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: sharp
+        update-types: ["version-update:semver-major"]
     groups:
       all:
         patterns: ["*"]
