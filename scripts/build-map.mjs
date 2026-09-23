@@ -29,7 +29,7 @@ const landOf = (countries) => { const f = feature(countries, countries.objects.l
 const lakesAll = require('@geo-maps/earth-lakes-10km')(), lakesFine = require('@geo-maps/earth-lakes-1km')();
 // Some OSM polygons wind the wrong way, which makes geoArea report the rest of the sphere; take the smaller side.
 const area = (g) => { const a = geoArea(g); return Math.min(a, 4 * Math.PI - a); };
-const polys = (gc) => gc.geometries.flatMap((g) => (g.type === 'MultiPolygon' ? g.coordinates : [g.coordinates]).map((c) => ({ type: 'Polygon', coordinates: c })));
+const polys = (gc) => gc.geometries.flatMap((g) => (g.type === 'MultiPolygon' ? g.coordinates : [g.coordinates]).map((c) => rewind({ type: 'Polygon', coordinates: c })));
 const bigLakes = (gc, min) => ({ type: 'GeometryCollection', geometries: polys(gc).filter((g) => area(g) > min) });
 const lakesWorld = bigLakes(lakesAll, 2.5e-4), lakesZoom = bigLakes(lakesAll, 2e-5), lakesClose = bigLakes(lakesFine, 5e-6); // ≈10,000 / 800 / 200 km² and up
 const places = JSON.parse(readFileSync(new URL('../src/data/places.json', import.meta.url), 'utf8'));
