@@ -244,6 +244,8 @@
         ]
       }
     ],
+    "showAll": "See all the names",
+    "hide": "Fewer",
     "ensemblesTitle": "Ensembles",
     "ensembles": [
       {

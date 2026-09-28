@@ -70,29 +70,35 @@ const description = "The Barbershop is Sean Dobbins' jazz drumset studio at the 
   <section class="section alumni">
     <div class="container">
       <SectionHead numKey="barbershop.alumni.num" titleKey="barbershop.alumni.title" blurbKey="barbershop.alumni.blurb" />
-      <div class="alumni__groups">
-        {c.alumni.groups.map((g, gi) => (
-          <div class="alumni__group" data-reveal style={`--reveal-delay:${gi * 80}ms`}>
-            <T k={`barbershop.alumni.groups.${gi}.title`} as="h3" class="display-4 alumni__title" />
-            <ul role="list" class="alumni__list">
-              {g.people.map((p, pi) => (
-                <li>
-                  <strong data-edit={`barbershop.alumni.groups.${gi}.people.${pi}.name`}>{p.name}</strong>
-                  <span class="small muted"><span data-edit={`barbershop.alumni.groups.${gi}.people.${pi}.role`}>{p.role}</span> · <span data-edit={`barbershop.alumni.groups.${gi}.people.${pi}.place`}>{p.place}</span></span>
-                </li>
+      <details class="alumni__details" data-reveal>
+        <summary class="alumni__summary">
+          <span class="alumni__counts">{[...c.alumni.groups.map((g) => `${g.people.length} ${g.title.toLowerCase()}`), `${c.alumni.ensembles.length} ${c.alumni.ensemblesTitle.toLowerCase()}`].join(' · ')}</span>
+          <span class="link alumni__toggle"><span class="alumni__open"><T k="barbershop.alumni.showAll" /></span><span class="alumni__close"><T k="barbershop.alumni.hide" /></span> <span class="arrow" aria-hidden="true">↓</span></span>
+        </summary>
+        <div class="alumni__groups">
+          {c.alumni.groups.map((g, gi) => (
+            <div class="alumni__group">
+              <T k={`barbershop.alumni.groups.${gi}.title`} as="h3" class="display-4 alumni__title" />
+              <p class="alumni__names">
+                {g.people.map((p, pi) => (
+                  <span class="alumni__person">
+                    <strong data-edit={`barbershop.alumni.groups.${gi}.people.${pi}.name`}>{p.name}</strong>{' '}
+                    <span class="muted"><span data-edit={`barbershop.alumni.groups.${gi}.people.${pi}.role`}>{p.role}</span> (<span data-edit={`barbershop.alumni.groups.${gi}.people.${pi}.place`}>{p.place}</span>)</span>
+                  </span>
+                ))}
+              </p>
+            </div>
+          ))}
+          <div class="alumni__group">
+            <T k="barbershop.alumni.ensemblesTitle" as="h3" class="display-4 alumni__title" />
+            <p class="alumni__names">
+              {c.alumni.ensembles.map((e, ei) => (
+                <span class="alumni__person"><strong data-edit={`barbershop.alumni.ensembles.${ei}.name`}>{e.name}</strong> <span class="muted" data-edit={`barbershop.alumni.ensembles.${ei}.note`}>{e.note}</span></span>
               ))}
-            </ul>
+            </p>
           </div>
-        ))}
-        <div class="alumni__group" data-reveal style="--reveal-delay:240ms">
-          <T k="barbershop.alumni.ensemblesTitle" as="h3" class="display-4 alumni__title" />
-          <ul role="list" class="alumni__list">
-            {c.alumni.ensembles.map((e, ei) => (
-              <li><strong data-edit={`barbershop.alumni.ensembles.${ei}.name`}>{e.name}</strong><span class="small muted" data-edit={`barbershop.alumni.ensembles.${ei}.note`}>{e.note}</span></li>
-            ))}
-          </ul>
         </div>
-      </div>
+      </details>
     </div>
   </section>
 
@@ -140,12 +146,21 @@ const description = "The Barbershop is Sean Dobbins' jazz drumset studio at the 
 </Base>
 
 <style>
-  .alumni__groups { display: grid; gap: var(--s-5); margin-top: var(--s-5); }
-  @media (min-width: 800px) { .alumni__groups { grid-template-columns: 1fr 1fr; gap: var(--s-5) var(--s-6); } }
-  .alumni__title { margin-bottom: 8px; color: var(--royal); }
-  .alumni__list li { display: flex; flex-direction: column; gap: 2px; padding: 10px 0; border-top: var(--hairline); }
-  .alumni__list li:last-child { border-bottom: var(--hairline); }
-  .alumni__list strong { font-size: 15px; }
+  /* Alumni: a one-line summary until opened; then names run inline, credits-style, so 40 people take a few lines each. */
+  .alumni__details { margin-top: var(--s-3); }
+  .alumni__summary { list-style: none; cursor: pointer; display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 24px; padding: 14px 0; border-top: var(--hairline); border-bottom: var(--hairline); }
+  .alumni__summary::-webkit-details-marker { display: none; }
+  .alumni__summary:focus-visible { outline: 2px solid var(--royal); outline-offset: 4px; }
+  .alumni__counts { font-size: 15px; color: var(--walnut); }
+  .alumni__toggle { margin-left: auto; white-space: nowrap; }
+  .alumni__close, .alumni__details[open] .alumni__open { display: none; }
+  .alumni__details[open] .alumni__close { display: inline; }
+  .alumni__details[open] .alumni__toggle .arrow { transform: rotate(180deg); }
+  .alumni__toggle .arrow { display: inline-block; transition: transform var(--dur-fast); }
+  .alumni__groups { display: grid; gap: var(--s-4); padding-top: var(--s-4); max-width: 80ch; }
+  .alumni__title { margin-bottom: 6px; color: var(--royal); }
+  .alumni__names { font-size: 15px; line-height: 1.7; text-wrap: pretty; }
+  .alumni__person + .alumni__person::before { content: '·'; color: var(--brass); margin: 0 .55em; }
   .bs-hero { padding-block: clamp(48px, 8vw, 112px); }
   .bs-hero__inner { display: grid; gap: var(--s-5); align-items: center; }
   @media (min-width: 800px) { .bs-hero__inner { grid-template-columns: auto 1fr; gap: clamp(32px, 6vw, 80px); } }
