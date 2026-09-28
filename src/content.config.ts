@@ -34,6 +34,7 @@ const testimonials = defineCollection({
     quote: z.string(),
     photo: z.string().optional(),
     order: z.number().default(50),
+    placement: z.enum(['The Barbershop', 'Home page']).default('The Barbershop'),
   }),
 });
 

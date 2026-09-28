@@ -41,6 +41,7 @@ export const RESOURCE_FIELDS: Field[] = [
   { name: 'featured', label: 'Feature on the home page', type: 'boolean', default: false },
 ];
 
+export const PLACEMENTS = ['The Barbershop', 'Home page'] as const;
 export const COLLECTIONS: Collection[] = [
   {
     name: 'testimonials', label: 'Testimonials', singular: 'testimonial', dir: 'src/content/testimonials', fileFrom: 'name', titleField: 'name', subtitleFields: ['role'], sortBy: 'order',
@@ -48,6 +49,7 @@ export const COLLECTIONS: Collection[] = [
       { name: 'name', label: 'Name', type: 'text', required: true },
       { name: 'role', label: 'Role', type: 'text', required: true, hint: 'e.g. Jacobs alum, 2019' },
       { name: 'quote', label: 'Quote', type: 'textarea', required: true, hint: 'Two or three sentences in their own words.' },
+      { name: 'placement', label: 'Show on', type: 'select', options: PLACEMENTS, default: 'The Barbershop', hint: 'The Barbershop page lists them side by side; the home page rotates through them one at a time.' },
       { name: 'photo', label: 'Photo', type: 'image', hint: 'Optional square headshot.' },
       { name: 'order', label: 'Order', type: 'number', default: 50, hint: 'Lower numbers show first.' },
     ],

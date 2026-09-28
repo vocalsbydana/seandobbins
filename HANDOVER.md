@@ -84,6 +84,8 @@ You can't leave a slot empty, and a link that YouTube doesn't recognise (mistype
 
 ## 5. Testimonials, announcements, outreach
 
+Each testimonial has a **Show on** choice: *The Barbershop* lists it on that page with the others; *Home page* puts it in the rotating quotes on the home page. Order decides the sequence in both places.
+
 Each of these tabs works the same way: a list, a **+ Add** button, and a short form.
 
 ![Add a testimonial](docs/handover/05-add-testimonial.png)

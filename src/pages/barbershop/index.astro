@@ -11,7 +11,7 @@ import { copy } from '../../lib/copy';
 import stand from '../../assets/photos/stand-cream.jpg';
 
 const c = copy.barbershop;
-const testimonials = (await getCollection('testimonials')).sort((a, b) => a.data.order - b.data.order);
+const testimonials = (await getCollection('testimonials')).filter((t) => t.data.placement !== 'Home page').sort((a, b) => a.data.order - b.data.order);
 const resources = (await getCollection('resources')).sort((a, b) => b.data.publishedDate.getTime() - a.data.publishedDate.getTime()).slice(0, 3);
 const description = "The Barbershop is Sean Dobbins' jazz drumset studio at the Indiana University Jacobs School of Music, and a free library of drum resources for everyone else. Serve the music. Keep the joy.";
 ---

@@ -30,8 +30,16 @@
   "played": {
     "label": "Performed, toured and recorded with"
   },
-  "barbershop": {
+  "quotes": {
     "num": "02",
+    "title": "In their words",
+    "blurb": "Bandmates and teachers on Sean.",
+    "prev": "Previous quote",
+    "next": "Next quote",
+    "goTo": "Quote"
+  },
+  "barbershop": {
+    "num": "03",
     "title": "From The Barbershop",
     "blurb": "Sean's studio at IU, and a library of free PDFs for drummers everywhere. ",
     "asideLabel": "Study with Sean",

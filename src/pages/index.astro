@@ -14,6 +14,7 @@ import stageBlue from '../assets/photos/stage-blue.jpg';
 import bwStars from '../assets/photos/bw-stars.jpg';
 import { SITE, fmtDate } from '../lib/site';
 import { copy } from '../lib/copy';
+const quotes = (await getCollection('testimonials')).filter((t) => t.data.placement === 'Home page').sort((a, b) => a.data.order - b.data.order);
 
 const c = copy.home;
 const resources = (await getCollection('resources')).sort((a, b) => b.data.publishedDate.getTime() - a.data.publishedDate.getTime());
@@ -94,6 +95,32 @@ const announcement = announcements[0];
     </div>
   </section>
 
+  <!-- What people say: rotates through the testimonials marked "Home page" in the editor -->
+  {quotes.length > 0 && (
+    <section class="section quotes">
+      <div class="container">
+        <SectionHead numKey="home.quotes.num" titleKey="home.quotes.title" blurbKey="home.quotes.blurb" />
+        <div class="qcar" data-qcar data-reveal>
+          <ul role="list" class="qcar__track" aria-live="polite">
+            {quotes.map((t, i) => (
+              <li class:list={['qcar__item', { 'is-current': i === 0 }]} aria-hidden={i !== 0}>
+                <blockquote class="qcar__quote voice">“{t.data.quote}”</blockquote>
+                <p class="qcar__who"><span class="qcar__name">{t.data.name}</span><span class="qcar__role label">{t.data.role}</span></p>
+              </li>
+            ))}
+          </ul>
+          {quotes.length > 1 && (
+            <div class="qcar__nav">
+              <button type="button" class="qcar__arrow" data-q="-1" aria-label={c.quotes.prev}>←</button>
+              <div class="qcar__dots" role="tablist">{quotes.map((t, i) => <button type="button" class:list={['qcar__dot', { 'is-current': i === 0 }]} data-go={i} role="tab" aria-selected={i === 0} aria-label={`${c.quotes.goTo} ${i + 1}: ${t.data.name}`}></button>)}</div>
+              <button type="button" class="qcar__arrow" data-q="1" aria-label={c.quotes.next}>→</button>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  )}
+
   <!-- Played with -->
   <section class="section--tight played dark">
     <div class="container container--wide">
@@ -132,6 +159,23 @@ const announcement = announcements[0];
 </Base>
 
 <style>
+  /* Quote carousel: items stacked in one grid cell and cross-faded, so the section never changes height. */
+  .qcar { max-width: 880px; }
+  .qcar__track { display: grid; }
+  .qcar__item { grid-area: 1 / 1; opacity: 0; transition: opacity var(--dur-slow) var(--ease-out); pointer-events: none; }
+  .qcar__item.is-current { opacity: 1; pointer-events: auto; }
+  .qcar__quote { font-size: clamp(22px, 2.4vw, 32px); line-height: 1.3; margin: 0; }
+  .qcar__who { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; margin-top: var(--s-3); }
+  .qcar__name { font-weight: 600; }
+  .qcar__role { color: var(--walnut); }
+  .qcar__nav { display: flex; align-items: center; gap: var(--s-3); margin-top: var(--s-4); }
+  .qcar__arrow { width: 44px; height: 44px; border: 1.5px solid var(--ink); background: none; color: var(--ink); font-size: 20px; line-height: 1; cursor: pointer; transition: background-color var(--dur-fast), color var(--dur-fast); }
+  .qcar__arrow:hover { background: var(--ink); color: var(--ivory); }
+  .qcar__arrow:focus-visible, .qcar__dot:focus-visible { outline: 2px solid var(--royal); outline-offset: 2px; }
+  .qcar__dots { display: flex; gap: 10px; }
+  .qcar__dot { width: 10px; height: 10px; padding: 0; border: 1.5px solid var(--ink); background: none; cursor: pointer; transition: background-color var(--dur-fast); }
+  .qcar__dot.is-current { background: var(--royal); border-color: var(--royal); }
+  @media (prefers-reduced-motion: reduce) { .qcar__item { transition: none; } }
   .hero { position: relative; overflow: hidden; min-height: min(calc(100svh - 64px), 880px); display: flex; }
   .hero__photo { position: absolute; inset: 0; }
   .hero__photo img { width: 100%; height: 100%; object-fit: cover; object-position: 70% 20%; }
@@ -198,3 +242,31 @@ const announcement = announcements[0];
   .latest__aside { padding: 28px; display: flex; flex-direction: column; gap: 12px; justify-content: center; }
   .newsletter-panel { padding: clamp(24px, 4vw, 48px); }
 </style>
+
+<script>
+  // Rotate the home-page quotes: every 7 s, paused while hovered or focused, off entirely when motion is reduced.
+  function bindQuotes() {
+    const root = document.querySelector<HTMLElement>('[data-qcar]:not([data-bound])');
+    if (!root) return; root.dataset.bound = '1';
+    const items = Array.from(root.querySelectorAll<HTMLElement>('.qcar__item'));
+    const dots = Array.from(root.querySelectorAll<HTMLButtonElement>('.qcar__dot'));
+    if (items.length < 2) return;
+    let i = 0, timer = 0;
+    const show = (n: number) => {
+      i = (n + items.length) % items.length;
+      items.forEach((el, k) => { el.classList.toggle('is-current', k === i); el.setAttribute('aria-hidden', String(k !== i)); });
+      dots.forEach((d, k) => { d.classList.toggle('is-current', k === i); d.setAttribute('aria-selected', String(k === i)); });
+    };
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+    const start = () => { stop(); if (!reduce.matches) timer = window.setInterval(() => show(i + 1), 7000); };
+    const stop = () => { if (timer) { clearInterval(timer); timer = 0; } };
+    root.querySelectorAll<HTMLButtonElement>('[data-q]').forEach((b) => b.addEventListener('click', () => { show(i + Number(b.dataset.q)); start(); }));
+    dots.forEach((d) => d.addEventListener('click', () => { show(Number(d.dataset.go)); start(); }));
+    root.addEventListener('pointerenter', stop); root.addEventListener('pointerleave', start);
+    root.addEventListener('focusin', stop); root.addEventListener('focusout', start);
+    document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+    start();
+  }
+  bindQuotes();
+  document.addEventListener('astro:page-load', bindQuotes);
+</script>
