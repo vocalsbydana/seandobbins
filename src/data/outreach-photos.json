@@ -1,0 +1,46 @@
+{
+  "_comment": "Photos shown with outreach entries (map panel and list). Key = the entry's file name in src/content/outreach without .md. file = src/assets/outreach/<file>. credit = who posted it, when not Sean (all cleared for use). Order = display order.",
+  "mahidol-university": [
+    { "file": "2026-bangkok-mahidol-3.jpg", "alt": "Sean Dobbins with two Mahidol University musicians" },
+    { "file": "2026-bangkok-mahidol-1.jpg", "alt": "The Mahidol University entrance sign" },
+    { "file": "2026-bangkok-mahidol-2.jpg", "alt": "The Mahidol Music 30th anniversary sign" }
+  ],
+  "showa-university-of-music-2022": [
+    { "file": "2022-tokyo-showa-2.jpg", "alt": "Sean Dobbins on drums in a trio demonstration at the Detroit Jazz Workshop, Showa University of Music", "credit": "Kumiko Hirama" },
+    { "file": "2022-tokyo-showa-3.jpg", "alt": "Students listening at the Detroit Jazz Workshop, Showa University of Music", "credit": "Kumiko Hirama" },
+    { "file": "2022-tokyo-showa-1.jpg", "alt": "The workshop panel seated with students at Showa University of Music", "credit": "Kumiko Hirama" }
+  ],
+  "jen-conference-2022": [
+    { "file": "2022-dallas-jen-2.jpg", "alt": "Sean Dobbins on a panel at the Jazz Education Network conference" },
+    { "file": "2022-dallas-jen-3.jpg", "alt": "The panelists at the Jazz Education Network conference" }
+  ],
+  "morehouse-college-2022": [
+    { "file": "2022-atlanta-morehouse-1.jpg", "alt": "Sean Dobbins coaching a student drummer at Morehouse College", "credit": "Chad Hughes" },
+    { "file": "2022-atlanta-morehouse-3.jpg", "alt": "Sean Dobbins working with a student drummer at Morehouse College", "credit": "Chad Hughes" },
+    { "file": "2022-atlanta-morehouse-2.jpg", "alt": "Sean Dobbins with the Morehouse College jazz ensemble", "credit": "Chad Hughes" }
+  ],
+  "pat-harbison-jazz-retreat-2022": [
+    { "file": "2022-nashville-jazzretreat-3.jpg", "alt": "Sean Dobbins coaching the horn section at Pat Harbison's Jazz Retreat", "credit": "Barb Pletcher Kaufman" },
+    { "file": "2022-nashville-jazzretreat-1.jpg", "alt": "Sean Dobbins directing the Jazz Retreat ensemble", "credit": "Barb Pletcher Kaufman" },
+    { "file": "2022-nashville-jazzretreat-2.jpg", "alt": "Sean Dobbins at the front of the Jazz Retreat ensemble", "credit": "Barb Pletcher Kaufman" }
+  ],
+  "university-of-indianapolis-2022": [
+    { "file": "2022-indianapolis-uindy-1.jpg", "alt": "Sean Dobbins and Paul Keller with the University of Indianapolis jazz ensemble" }
+  ],
+  "interlochen-center-for-the-arts-2021": [
+    { "file": "2021-interlochen-percussion-1.jpg", "alt": "Sean Dobbins with the Interlochen Percussion Intensive students" },
+    { "file": "2021-interlochen-percussion-2.jpg", "alt": "Sean Dobbins' Interlochen Arts Camp guest artist badge" }
+  ],
+  "mackinaw-island-jazz-festival-2022": [
+    { "file": "2023-mackinaw-grandhotel-1.jpg", "alt": "Sean Dobbins' trio at soundcheck on the Grand Hotel porch, Grand Hotel Jazz Festival 2023" }
+  ],
+  "emory-university-jazz-festival-2016": [
+    { "file": "2016-atlanta-emory-jazzfest-1.jpg", "alt": "Sean Dobbins on stage with the Emory jazz ensemble and strings at Emory JazzFest 2016", "credit": "Richard Prior" }
+  ],
+  "emory-university-jazz-festival-2014": [
+    { "file": "2014-atlanta-emory-1.jpg", "alt": "Sean Dobbins backstage at Emory with Rodney Whitaker, Gary Motley and Barbara Morrison" }
+  ],
+  "jalc-jazz-outreach-detroit-2014-17": [
+    { "file": "2015-detroit-jalc-carrcenter-1.jpg", "alt": "The Jazz at Lincoln Center Carr Center residency band playing for Cody High School students, Sean Dobbins on drums", "credit": "Oliver Ragsdale" }
+  ]
+}

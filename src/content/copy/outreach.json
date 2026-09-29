@@ -15,6 +15,15 @@
     "text": "Clinics, masterclasses and residencies for high school, college and community programs. Sean tailors each visit to the room: rhythm section basics, comping, brushes, or a full ensemble workshop.",
     "button": "Ask about a clinic"
   },
+  "photos": {
+    "title": "Photos",
+    "view": "View photo",
+    "close": "Close",
+    "prev": "Previous photo",
+    "next": "Next photo",
+    "credit": "Photo:",
+    "of": "of"
+  },
   "map": {
     "hint": "Hover a dot for the city. Click a busy area to zoom in, and a dot to see the work there.",
     "back": "Back to world",

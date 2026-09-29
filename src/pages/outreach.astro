@@ -8,6 +8,9 @@ import { REGIONS } from '../content.config';
 import { copy } from '../lib/copy';
 import places from '../data/places.json';
 import { placeKey } from '../lib/geo.mjs';
+import OutreachPhotoStrip from '../components/OutreachPhotoStrip.astro';
+import OutreachLightbox from '../components/OutreachLightbox.astro';
+import { outreachPhotos } from '../lib/outreach-photos';
 
 const c = copy.outreach;
 const sortKey = (d: { year?: number; yearEnd?: number; ongoing: boolean }) => (d.ongoing ? 9999 : d.yearEnd ?? d.year ?? -1);
@@ -18,6 +21,7 @@ const countries = new Set(all.map((o) => o.data.country));
 const cities = new Set(all.map((o) => o.data.city));
 const since = Number(c.stats.playingSince) || 1999;
 const yearsPlaying = new Date().getFullYear() - since;
+const photos = await outreachPhotos();
 const description = 'Clinics, masterclasses, residencies and concerts Sean Dobbins has given for students across the United States and around the world.';
 ---
 <Base title="Outreach" description={description}>
@@ -30,7 +34,7 @@ const description = 'Clinics, masterclasses, residencies and concerts Sean Dobbi
         <li><span class="stats__n" data-count={countries.size}>{countries.size}</span><T k="outreach.stats.countries" class="label" /></li>
         <li><span class="stats__n" data-count={yearsPlaying} data-since={since}>{yearsPlaying}</span><T k="outreach.stats.years" class="label" /></li>
       </ul>
-      <OutreachMap entries={all} when={when} />
+      <OutreachMap entries={all} when={when} photos={photos} />
       <nav class="regions" aria-label="Regions" data-reveal>
         {groups.map((g) => <a href={`#${g.region.toLowerCase().replace(/[^a-z]+/g, '-')}`}>{g.region} <span>{g.items.length}</span></a>)}
       </nav>
@@ -44,6 +48,7 @@ const description = 'Clinics, masterclasses, residencies and concerts Sean Dobbi
                 <div class="row__main">
                   <div class="row__inst">{o.data.institution}</div>
                   <div class="row__place small muted">{o.data.city}, {o.data.country}{o.data.note ? ` · ${o.data.note}` : ''}</div>
+                  <OutreachPhotoStrip id={o.id} photos={photos[o.id] || []} />
                 </div>
                 <span class="row__type label">{o.data.type}</span>
               </li>
@@ -60,6 +65,7 @@ const description = 'Clinics, masterclasses, residencies and concerts Sean Dobbi
       </div>
     </div>
   </section>
+  <OutreachLightbox photos={photos} />
 </Base>
 <style>
   .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--s-3); padding: var(--s-3) 0; border-bottom: var(--hairline); margin-bottom: var(--s-4); }

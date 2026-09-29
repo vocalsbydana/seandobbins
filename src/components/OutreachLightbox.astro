@@ -1,0 +1,61 @@
+---
+/** One full-screen viewer for every outreach photo on the page. Opened by OutreachPhotoStrip buttons (data-ph-set/-i). */
+import type { OutreachPhoto } from '../lib/outreach-photos';
+import { copy } from '../lib/copy';
+interface Props { photos: Record<string, OutreachPhoto[]> }
+const { photos } = Astro.props;
+const c = copy.outreach.photos;
+const sets = Object.fromEntries(Object.entries(photos).map(([k, v]) => [k, v.map((p) => ({ src: p.full, alt: p.alt, credit: p.credit }))]));
+---
+<dialog class="olb dark" aria-label={c.title} data-olb data-sets={JSON.stringify(sets)} data-credit={c.credit} data-of={c.of}>
+  <button type="button" class="olb__close" data-olb-close aria-label={c.close}>×</button>
+  <button type="button" class="olb__nav" data-olb-step="-1" aria-label={c.prev}>←</button>
+  <figure class="olb__fig">
+    <img class="olb__img" alt="" />
+    <figcaption class="olb__cap small"><span class="olb__alt"></span><span class="olb__meta muted"></span></figcaption>
+  </figure>
+  <button type="button" class="olb__nav" data-olb-step="1" aria-label={c.next}>→</button>
+</dialog>
+<style>
+  .olb { border: 0; padding: 0; margin: 0; width: 100vw; height: 100dvh; max-width: none; max-height: none; background: var(--ink); color: var(--ivory); }
+  .olb::backdrop { background: rgba(11, 11, 20, .96); }
+  .olb[open] { display: grid; grid-template-columns: 56px 1fr 56px; align-items: center; }
+  .olb__fig { display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 0; min-width: 0; max-height: 100dvh; padding: 56px 0 24px; }
+  .olb__img { max-width: 100%; max-height: calc(100dvh - 150px); width: auto; height: auto; object-fit: contain; }
+  .olb__cap { display: flex; flex-direction: column; gap: 4px; align-items: center; text-align: center; padding-inline: 16px; max-width: 70ch; }
+  .olb__close, .olb__nav { background: none; border: 0; color: var(--ivory); font: inherit; font-size: 28px; line-height: 1; cursor: pointer; padding: 12px; }
+  .olb__close { position: absolute; top: 8px; right: 8px; font-size: 34px; }
+  .olb__nav { justify-self: center; }
+  .olb__nav[hidden] { display: none; }
+  .olb__close:hover, .olb__nav:hover { color: var(--brass); }
+  .olb__close:focus-visible, .olb__nav:focus-visible { outline: 2px solid var(--ivory); outline-offset: 2px; }
+</style>
+<script>
+  function bindOlb() {
+    const dlg = document.querySelector<HTMLDialogElement>('[data-olb]:not([data-bound])');
+    if (!dlg) return; dlg.dataset.bound = '1';
+    const sets = JSON.parse(dlg.dataset.sets || '{}') as Record<string, { src: string; alt: string; credit: string }[]>;
+    const img = dlg.querySelector<HTMLImageElement>('.olb__img')!, alt = dlg.querySelector<HTMLElement>('.olb__alt')!, meta = dlg.querySelector<HTMLElement>('.olb__meta')!;
+    const navs = Array.from(dlg.querySelectorAll<HTMLButtonElement>('[data-olb-step]'));
+    let set: { src: string; alt: string; credit: string }[] = [], i = 0, opener: HTMLElement | null = null;
+    const show = (n: number) => {
+      i = (n + set.length) % set.length; const p = set[i];
+      img.src = p.src; img.alt = p.alt; alt.textContent = p.alt;
+      const bits = [p.credit ? `${dlg.dataset.credit || 'Photo:'} ${p.credit}` : '', set.length > 1 ? `${i + 1} ${dlg.dataset.of || 'of'} ${set.length}` : ''].filter(Boolean);
+      meta.textContent = bits.join(' · ');
+      navs.forEach((b) => { b.hidden = set.length < 2; });
+    };
+    document.addEventListener('click', (e) => {
+      const b = (e.target as HTMLElement).closest<HTMLElement>('[data-ph-set]');
+      if (!b || !sets[b.dataset.phSet!]) return;
+      set = sets[b.dataset.phSet!]; opener = b; show(Number(b.dataset.phI) || 0); dlg.showModal();
+    });
+    navs.forEach((b) => b.addEventListener('click', () => show(i + Number(b.dataset.olbStep))));
+    dlg.querySelector('[data-olb-close]')!.addEventListener('click', () => dlg.close());
+    dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+    dlg.addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') show(i - 1); if (e.key === 'ArrowRight') show(i + 1); });
+    dlg.addEventListener('close', () => { opener?.focus(); });
+  }
+  bindOlb();
+  document.addEventListener('astro:page-load', bindOlb);
+</script>

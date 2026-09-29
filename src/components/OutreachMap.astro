@@ -7,13 +7,15 @@
  * below. Cities come from the outreach entries; positions from src/data/places.json.
  */
 import T from './T.astro';
+import OutreachPhotoStrip from './OutreachPhotoStrip.astro';
+import type { OutreachPhoto } from '../lib/outreach-photos';
 import { copy } from '../lib/copy';
 import places from '../data/places.json';
 import map from '../data/world-map.json';
 import { project, zoomTree, TREES, placeOf } from '../lib/geo.mjs';
 
 interface Entry { id: string; data: { institution: string; city: string; country: string; year?: number; yearEnd?: number; ongoing: boolean; type: string; note?: string } }
-const { entries, when } = Astro.props as { entries: Entry[]; when: (d: Entry['data']) => string };
+const { entries, when, photos = {} } = Astro.props as { entries: Entry[]; when: (d: Entry['data']) => string; photos?: Record<string, OutreachPhoto[]> };
 const c = copy.outreach.map;
 
 type Pin = { key: string; label: string; xy: [number, number]; items: Entry[] };
@@ -111,7 +113,7 @@ const r = (n: number) => Math.round(n * 100) / 100;
     </div>
     {pins.map((p) => (
       <ol role="list" class="omap__list" data-list={p.key} hidden>
-        {p.items.map((e) => <li><span class="omap__year">{when(e.data)}</span><span><strong>{e.data.institution}</strong>{e.data.note ? <span class="small muted"> · {e.data.note}</span> : ''}</span><span class="label omap__type">{e.data.type}</span></li>)}
+        {p.items.map((e) => <li><span class="omap__year">{when(e.data)}</span><span><strong>{e.data.institution}</strong>{e.data.note ? <span class="small muted"> · {e.data.note}</span> : ''}<OutreachPhotoStrip id={e.id} photos={photos[e.id] || []} size="md" /></span><span class="label omap__type">{e.data.type}</span></li>)}
       </ol>
     ))}
   </div>

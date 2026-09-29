@@ -1,0 +1,25 @@
+---
+/** A row of thumbnails for one outreach entry; each opens the page's OutreachLightbox at that photo. */
+import type { OutreachPhoto } from '../lib/outreach-photos';
+import { copy } from '../lib/copy';
+interface Props { id: string; photos: OutreachPhoto[]; size?: 'sm' | 'md' }
+const { id, photos, size = 'sm' } = Astro.props;
+---
+{photos.length > 0 && (
+  <ul role="list" class:list={['ophotos', `ophotos--${size}`]}>
+    {photos.map((p, i) => (
+      <li><button type="button" class="ophotos__btn" data-ph-set={id} data-ph-i={i} aria-label={`${copy.outreach.photos.view}: ${p.alt}`}>
+        <img src={p.thumb} alt="" loading="lazy" decoding="async" width="160" height={Math.round((160 * p.h) / p.w)} />
+      </button></li>
+    ))}
+  </ul>
+)}
+<style>
+  .ophotos { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .ophotos__btn { display: block; padding: 0; border: 0; background: var(--ink); cursor: zoom-in; overflow: hidden; }
+  .ophotos__btn img { display: block; height: 56px; width: auto; max-width: 110px; object-fit: cover; transition: transform var(--dur-fast), opacity var(--dur-fast); }
+  .ophotos--md .ophotos__btn img { height: 72px; max-width: 140px; }
+  .ophotos__btn:hover img { transform: scale(1.04); opacity: .9; }
+  .ophotos__btn:focus-visible { outline: 2px solid var(--royal); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) { .ophotos__btn img { transition: none; } }
+</style>
